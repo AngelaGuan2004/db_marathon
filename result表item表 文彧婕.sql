@@ -8,12 +8,12 @@ Rank integer,
 Gender_rank integer,
 Primary key(Result_id),
 FOREIGN KEY(player_id) REFERENCES Player(ID),
-FOREIGN KEY(event_id) REFERENCES Event(ID),
+FOREIGN KEY(event_id) REFERENCES Event(ID)
 )；
 
 Create table Item_(
 ID integer,
 Name varchar(10),
-Primary key(ID),
+Primary key(ID)
 )；
 
