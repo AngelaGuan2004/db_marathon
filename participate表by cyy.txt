@@ -1,0 +1,10 @@
+Create table participate
+(
+ROLE_ varchar(20) NOT NULL,
+NUMBER_ varchar(10) NOT NULL, 
+Player_id integer,
+Event_id integer,
+Primary key (NUMBER_),
+foreign key (Player_id) references Player(id),
+foreign key (Event_id) references event(id)
+);
