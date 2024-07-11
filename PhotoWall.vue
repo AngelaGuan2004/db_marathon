@@ -37,7 +37,7 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'PhotoWall',
   props: {
     msg: String
   },
