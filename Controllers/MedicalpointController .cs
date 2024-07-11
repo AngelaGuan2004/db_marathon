@@ -20,39 +20,39 @@ namespace db_marathon.Controllers
     [Route("/[controller]/[action]")]
     [ApiController]
     [EnableCors("any")]
-    public class ItemController : Controller
+    public class MedicalpointController : Controller
     {
-        //添加item
+        //添加Medicalpoint
         [HttpPost]
-        public bool add_item(int Id, string Name)
+        public bool add_medicalpoint(int Id, string Place)
         {
             //获取数据库连接
             dbORM dborm = new dbORM();
             SqlSugarClient db = dborm.getInstance();
 
-            Item item = new Item();
-            item.Id = Id;
-            item.Name = Name;
+            Medicalpoint medicalpoint = new Medicalpoint();
+            medicalpoint.Id = Id;
+            medicalpoint.Place = Place;
 
-            int count = db.Insertable(item).ExecuteCommand();
+            int count = db.Insertable(medicalpoint).ExecuteCommand();
             if (count == 1)
                 return true;
             else
                 return false;
         }
 
-        //查询id的物资
+        //查询id的医疗点位置
         [HttpGet]
         public string get_by_id(int Id)
         {
-            Item item = new Item();
+            Medicalpoint medicalpoint = new Medicalpoint();
             dbORM dborm = new dbORM();
             SqlSugarClient db = dborm.getInstance();//获取数据库连接
 
-            item = db.Queryable<Item>().Where(it => it.Id == Id).First();
-            if (item != null)
+            medicalpoint = db.Queryable<Medicalpoint>().Where(it => it.Id == Id).First();
+            if (medicalpoint != null)
             {
-                return item.Name;
+                return medicalpoint.Place;
             }
             else
             {
@@ -60,28 +60,9 @@ namespace db_marathon.Controllers
             }
         }
 
-        //查询name的物资
-        [HttpGet]
-        public int get_by_name(string Name)
-        {
-            Item item = new Item();
-            dbORM dborm = new dbORM();
-            SqlSugarClient db = dborm.getInstance();//获取数据库连接
-
-            item = db.Queryable<Item>().Where(it => it.Name == Name).First();
-            if (item != null)
-            {
-                return item.Id;
-            }
-            else
-            {
-                return -1; // 或者返回一个适当的错误信息
-            }
-        }
-
-        //删除物资
+        //删除医疗点
         [HttpDelete]
-        public bool delete_item(int Id, string Name)
+        public bool delete_medicalpoint(int Id, string Place)
         {
             //获取数据库连接
             dbORM dborm = new dbORM();
@@ -89,7 +70,7 @@ namespace db_marathon.Controllers
             //删除
             try
             {
-                int count = db.Deleteable<Item>().Where(it => it.Id == Id && it.Name == Name).ExecuteCommand();
+                int count = db.Deleteable<Medicalpoint>().Where(it => it.Id == Id && it.Place == Place).ExecuteCommand();
                 if (count == 1)
                     return true;
                 else

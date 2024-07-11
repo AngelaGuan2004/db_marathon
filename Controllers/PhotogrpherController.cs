@@ -17,6 +17,9 @@ using System.Security.Cryptography;
 
 namespace db_marathon.Controllers
 {
+    [Route("/[controller]/[action]")]
+    [ApiController]
+    [EnableCors("any")]
     public class PhotographerController : Controller
     {
         //登录

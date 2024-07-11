@@ -17,6 +17,9 @@ using System.Security.Cryptography;
 
 namespace db_marathon.Controllers
 {
+    [Route("/[controller]/[action]")]
+    [ApiController]
+    [EnableCors("any")]
     public class PlayerController : Controller
     {
         //添加Player（注册需要手动输入Name、Id_Number、Password、Gender、Age、Region、Region、Telephone_Number 。平台分配id）

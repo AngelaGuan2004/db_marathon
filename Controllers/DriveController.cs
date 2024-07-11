@@ -17,8 +17,12 @@ using System.Security.Cryptography;
 
 namespace db_marathon.Controllers
 {
+    [Route("/[controller]/[action]")]
+    [ApiController]
+    [EnableCors("any")]
     public class DriveController : Controller
     {
+        [HttpPost]
         //添加drive
         public bool add_drive(int Volunteer_Id, int Shuttlecar_Id)
         {
@@ -58,7 +62,7 @@ namespace db_marathon.Controllers
 
         //查询Shuttlecar_Id的volunteer_id
         [HttpGet]
-        public int get_by_shuttlecar_Id(int Shuttlecar_Id)
+        public int get_by_shuttlecar_id(int Shuttlecar_Id)
         {
             Drive drive = new Drive();
             dbORM dborm = new dbORM();
@@ -72,6 +76,24 @@ namespace db_marathon.Controllers
             else
             {
                 return -1; // 或者返回一个适当的错误信息
+            }
+        }
+
+        // 查询所有drive记录
+        [HttpGet]
+        public List<Drive> get_all()
+        {
+            dbORM dborm = new dbORM();
+            SqlSugarClient db = dborm.getInstance(); // 获取数据库连接
+
+            try
+            {
+                List<Drive> driveList = db.Queryable<Drive>().ToList();
+                return driveList;
+            }
+            catch (Exception ex)
+            {
+                return null; // 或者返回适当的错误信息
             }
         }
 
