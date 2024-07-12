@@ -67,7 +67,7 @@
           </div>
         </div>
 
-        <button type="submit" :disabled="role === 'athlete' && !isValidIdNumber">登录</button>
+        <button type="submit" :disabled="!isFormValid">登录</button>
       </form>
       <div class="links">
         <a href="#" @click.prevent="goToRegister">没有账号，立刻注册</a>
@@ -95,8 +95,19 @@ export default {
   },
   computed: {
     isValidIdNumber() {
-      const regex = /^\d{17}(\d|X)$/i;
+      const regex = /^[1-9]\d{5}(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i;
       return regex.test(this.idNumber);
+    },
+    isFormValid() {
+      if (this.role === 'athlete') {
+        return this.idNumber && this.isValidIdNumber && this.athletePassword;
+      } else if (this.role === 'photographer') {
+        return this.name && this.photoPassword;
+      } else if (this.role === 'admin') {
+        return this.adminKey;
+      } else {
+        return false;
+      }
     }
   },
   methods: {

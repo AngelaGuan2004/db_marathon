@@ -21,7 +21,7 @@
           <div class="form-row">
             <label>密码</label>
             <div class="password-input">
-              <input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="请输入密码">
+              <input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="请输入密码" @input="validatePasswordMatch">
               <span class="password-toggle" @click="togglePasswordVisibility('password')">
                 <img v-if="showPassword" src="@/assets/eye-open.png" class="eye-icon" alt="显示密码">
                 <img v-else src="@/assets/eye-closed.png" class="eye-icon" alt="隐藏密码">
@@ -31,13 +31,13 @@
           <div class="form-row">
             <label>确认密码</label>
             <div class="password-input">
-              <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" placeholder="请确认密码">
+              <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" placeholder="请确认密码" @input="validatePasswordMatch">
               <span class="password-toggle" @click="togglePasswordVisibility('confirmPassword')">
                 <img v-if="showConfirmPassword" src="@/assets/eye-open.png" class="eye-icon" alt="显示密码">
                 <img v-else src="@/assets/eye-closed.png" class="eye-icon" alt="隐藏密码">
               </span>
-              <p v-if="confirmPassword && password !== confirmPassword" class="error-message">确认密码与密码不符！</p>
             </div>
+            <p v-if="confirmPassword && passwordMismatch" class="error-message">确认密码与密码不一致！</p>
           </div>
         </div>
         <div class="form-group">
@@ -49,7 +49,7 @@
             </select>
           </div>
         </div>
-        <button type="submit" :disabled="!isValidIdNumber || password !== confirmPassword">注册</button>
+        <button type="submit" :disabled="!isValidIdNumber || passwordMismatch">注册</button>
       </form>
       <div class="links">
         <a href="#" @click.prevent="goToLogin">已有账号？请登录</a>
@@ -71,11 +71,20 @@ export default {
       role: '',
       showPassword: false, // 控制密码显示/隐藏
       showConfirmPassword: false, // 控制确认密码显示/隐藏
-      isValidIdNumber: true, // 身份证号格式是否正确
+      passwordMismatch: false, // 表示密码是否不匹配
+      isValidIdNumber: true // 表示身份证号格式是否正确
     }
   },
   methods: {
     register() {
+      // 检查密码是否一致
+      if (this.password !== this.confirmPassword) {
+        this.passwordMismatch = true;
+        return;
+      } else {
+        this.passwordMismatch = false;
+      }
+
       // 处理注册逻辑，例如 API 请求
       console.log('注册信息:', this.name, this.phone, this.password, this.gender, this.role);
     },
@@ -92,6 +101,9 @@ export default {
     validateIdNumber() {
       const regex = /^[1-9]\d{5}(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i;
       this.isValidIdNumber = regex.test(this.phone);
+    },
+    validatePasswordMatch() {
+      this.passwordMismatch = this.password !== this.confirmPassword;
     }
   }
 }
@@ -142,6 +154,11 @@ form {
   margin-right: 0;
 }
 
+label {
+  text-align: left;
+  margin: 10px 0 5px;
+}
+
 .input-container {
   position: relative;
 }
@@ -156,15 +173,13 @@ input, select {
 }
 
 .password-input {
-  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .password-toggle {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
   cursor: pointer;
+  margin-left: -30px;
 }
 
 .eye-icon {
