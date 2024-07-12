@@ -2,20 +2,20 @@
 using SqlSugar;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging; 
-using backend;
+using MarathonMaster;
 using Microsoft.AspNetCore.Cors;
-using db_marathon.Models;
+using MarathonMaster.Models;
 using System.Numerics;
 
 namespace MarathonMaster.Controllers
 {
-    [Route("/[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     [EnableCors("any")]
     public class PlayerController : ControllerBase
     {
         private readonly SqlSugarClient _db;
-        private readonly ILogger<PlayerController> _logger; // 声明日志记录器
+        private readonly ILogger<PlayerController> _logger;
 
         public PlayerController(ILogger<PlayerController> logger)
         {

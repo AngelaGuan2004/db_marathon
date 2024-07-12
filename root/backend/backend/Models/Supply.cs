@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 using SqlSugar;
 
-namespace db_marathon.Models
+namespace MarathonMaster.Models
 {
     [SugarTable("SUPPLY")]
     public class Supply
@@ -15,6 +15,14 @@ namespace db_marathon.Models
         public int Item_Id { get; set; }            //物资id
         [SugarColumn(IsPrimaryKey = true)]
         public int Supplypoint_Id { get; set; }     //物资点id
+        public int Amount { get; set; }             //量
+    }
+
+    public class Supply_With_Name
+    {
+        public int Supplypoint_Id { get; set; }     //物资点id
+        public int Id { get; set; }             //物品id
+        public string Name { get; set; }        //物品名称
         public int Amount { get; set; }             //量
     }
 }

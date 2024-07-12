@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 using SqlSugar;
 
-namespace db_marathon.Models
+namespace MarathonMaster.Models
 {
     [SugarTable("PLAYER")]
     public class Player
@@ -15,10 +15,10 @@ namespace db_marathon.Models
         public int Id { get; set; }             //选手id
         public string Name { get; set; }        //选手名字
         public string Gender { get; set; }      //选手性别
-        public int Age { get; set; }            //选手年龄
+        public int? Age { get; set; }            //选手年龄
         public string Id_Number { get; set; }   //选手身份证号
-        public string Region { get; set; }      //选手国籍
-        public string Telephone_Number { get; set; }//选手电话
+        public string? Region { get; set; }      //选手国籍
+        public string? Telephone_Number { get; set; }//选手电话
 
     }
 }

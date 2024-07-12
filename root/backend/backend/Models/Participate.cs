@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 using SqlSugar;
 
-namespace db_marathon.Models
+namespace MarathonMaster.Models
 {
     [SugarTable("PARTICIPATE")]
     public class Participate
