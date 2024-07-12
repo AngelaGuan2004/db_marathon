@@ -144,6 +144,8 @@ CREATE TABLE PHOTO
   Location VARCHAR(20),
   Photographer_id INTEGER NOT NULL,
   Event_Id  INTEGER NOT NULL,
+Address VARCHAR(20),
+Good  INTEGER，
 PRIMARY KEY (ID ),
 Foreign key (Photographer_id) references Photographer(id),
 Foreign key (Event_id) references Event(id)
