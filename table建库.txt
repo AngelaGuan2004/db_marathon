@@ -1,0 +1,267 @@
+create table player 
+(
+  id integer not null 
+, name varchar2(10) not null 
+, gender varchar2(2) not null
+,age integer not null
+, id_number char(18) not null 
+, region varchar2(20) 
+, telephone_number varchar2(20)
+,password varchar2(20) not null
+, constraint player_pk primary key 
+  (
+    id 
+  )
+  enable 
+);
+
+comment on column player.id is '选手id';
+
+comment on column player.name is '姓名';
+
+comment on column player.gender is '性别';
+
+comment on column player.age is '年龄';
+
+comment on column player.id_number is '身份证号';
+
+comment on column player.region is '地区，如：广东广州';
+
+comment on column player.telephone_number is '联系方式';
+
+create table event 
+(
+  id char(5) not null 
+, category varchar2(20) not null 
+, name varchar2(20) not null 
+, start_date date not null 
+, end_date date not null 
+, event_date date not null 
+,scale int not null
+, constraint event_pk primary key 
+  (
+    id 
+  )
+  enable 
+);
+
+comment on column event.id is '赛事id';
+
+comment on column event.category is '赛事类型（全马、半马）';
+
+comment on column event.name is '赛事名称，如：苏州太湖马拉松';
+
+comment on column event.start_date is '报名开始时间';
+
+comment on column event.scale is '赛事规模';
+
+comment on column event.end_date is '报名结束时间';
+
+comment on column event.event_date is '正式比赛时间';
+
+create table result_
+(
+id integer,
+gun_result integer,
+net_result integer,
+player_id integer,
+event_id char(5),
+rank integer,
+gender_rank integer,
+primary key(id),
+foreign key(player_id) references player(id),
+foreign key(event_id) references event(id)
+);
+
+create table supplypoint
+(
+id char(8),
+place varchar2(20),
+kind varchar2(20),
+primary key(id)
+);
+
+create table medicalpoint 
+(
+  id char(8) not null 
+, place varchar2(20 byte) not null 
+, constraint medicalpoint_pk1 primary key (id)
+  );
+
+comment on column medicalpoint.id is '医疗点id,按照起点到终点的顺序编号';
+
+comment on column medicalpoint.place is '如：赛道15公里处';
+
+create table volunteer 
+(
+  id number(*, 0) not null , 
+telephone_number varchar2(20) not null , 
+name varchar2(20 byte)  not null, 
+password varchar2(20)  not null, 
+constraint volunteer_pk primary key (id )
+);
+
+
+create table photographer 
+(
+  id integer not null , 
+name varchar2(10) not null , 
+password varchar2(20) not null,
+constraint photographer_pk primary key (id )
+);
+
+
+create table photo 
+(
+  id integer not null , 
+  time date not null ,
+  location varchar(20),
+  photographer_id integer not null,
+  event_id  char(5) not null,
+  address varchar(20),
+  good  integer,
+primary key(id),
+foreign key (photographer_id) references photographer(id),
+foreign key (event_id) references event(id)
+
+);
+
+create table item
+(
+id integer,
+name varchar(10),
+primary key(id)
+);
+
+
+create table shuttlecar 
+(
+    event_id char(5) not null,  
+    id integer not null,        
+    departure_time varchar(10),      
+    arrival_time varchar(10),       
+    primary key (id),
+foreign key (event_id) references event(id)
+);
+
+create table weather
+ (
+    id char(5) not null,               
+time integer not null,              
+    temperature integer,              
+condition varchar(20),                
+whether_to_proceed integer,         
+primary key (id, time),                
+foreign key (id) references event(id)
+);
+
+create table participate
+(
+role_ varchar(20) not null,
+number_ varchar(10) not null, 
+player_id integer,
+event_id char(5),
+primary key (number_),
+foreign key (player_id) references player(id),
+foreign key (event_id) references event(id)
+);
+
+create table event_item 
+(
+  event_id char(5) not null , 
+item_id integer not null , 
+kind varchar(20) not null , 
+constraint event_item_pk primary key (event_id , item_id，kind),
+foreign key(event_id) references event(id),
+foreign key(item_id) references item(id)
+); 
+
+create table schedule 
+(
+  event_id char(5) not null , 
+volunteer_id integer not null , 
+job_category varchar(20) not null , 
+constraint schedule_pk primary key (event_id , volunteer_id ),
+foreign key(event_id) references event(id),
+foreign key(volunteer_id) references volunteer(id)
+);
+
+create table drive 
+(
+  volunteer_id integer not null , 
+  shuttlecar_id integer not null , 
+  constraint drive_pk primary key (volunteer_id , shuttlecar_id),
+  foreign key(volunteer_id) references volunteer(id),
+  foreign key(shuttlecar_id) references shuttlecar(id)
+);
+
+
+create table reward 
+(
+  photo_id number not null 
+, player_id number not null 
+, constraint aareward_pk primary key 
+  (photo_id , player_id ) 
+);
+
+alter table reward
+add constraint reward_fk1 foreign key
+(
+  photo_id 
+)
+references photo
+(
+  id 
+)
+enable;
+
+alter table reward
+add constraint reward_player_fk1 foreign key
+(
+  player_id 
+)
+references player
+(
+  id 
+)
+enable;
+
+comment on column reward.photo_id is 'photo的主码';
+
+comment on column reward.player_id is '打赏照片的选手id';
+
+create table supply
+(
+    item_id integer, 
+    supplypoint_id char(8),
+    amount integer,
+    primary key (item_id,supplypoint_id),
+    foreign key (item_id) references item(id),
+    foreign key (supplypoint_id) references supplypoint(id)
+);
+
+create table medical_service(
+    medicalpoint_id char(8),
+    player_id integer,
+    primary key (medicalpoint_id,player_id),
+    foreign key (medicalpoint_id) references medicalpoint(id),
+    foreign key (player_id) references player(id)
+);
+
+create table volunteer_supplypoint
+(
+  volunteer_id integer,
+  supplypoint_id char(8),
+  primary key(volunteer_id,supplypoint_id),
+  foreign key(volunteer_id) references volunteer(id),
+  foreign key(supplypoint_id) references supplypoint(id)
+);
+
+create table volunteer_medicalpoint
+(
+  volunteer_id integer,
+  medicalpoint_id char(8),
+  primary key(volunteer_id,medicalpoint_id),
+  foreign key(volunteer_id) references volunteer(id),
+  foreign key(medicalpoint_id) references medicalpoint(id)
+)
