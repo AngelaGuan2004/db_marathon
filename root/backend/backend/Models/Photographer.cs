@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 using SqlSugar;
 
-namespace db_marathon.Models
+namespace MarathonMaster.Models
 {
     [SugarTable("PHOTOGRAPHER")]
     public class Photographer
@@ -14,5 +14,6 @@ namespace db_marathon.Models
         [SugarColumn(IsPrimaryKey = true)]
         public int Id { get; set; }             //摄影师id
         public string Name { get; set; }        //摄影师名字
+        public string Password { get; set; }        //摄影师登录密码
     }
 }

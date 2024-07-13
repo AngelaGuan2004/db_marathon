@@ -3,28 +3,8 @@
   "WorkspaceRootPath": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|d:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\git\\db_marothon\\root\\backend\\backend\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|solutionrelative:backend\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|d:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\git\\db_marothon\\root\\backend\\backend\\controllers\\studentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|solutionrelative:backend\\controllers\\studentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|d:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\git\\db_marothon\\root\\backend\\backend\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|solutionrelative:backend\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|d:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\git\\db_marothon\\root\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|d:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\git\\db_marothon\\root\\backend\\backend\\context\\dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|solutionrelative:backend\\context\\dbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|d:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\git\\db_marothon\\root\\backend\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{BDA4D910-D569-4637-AB08-6E37924F9421}|Backend\\Backend.csproj|solutionrelative:backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,84 +14,19 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\appsettings.json",
-              "RelativeDocumentMoniker": "backend\\appsettings.json",
-              "ToolTip": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\appsettings.json",
-              "RelativeToolTip": "backend\\appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-07-10T09:38:27.422Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "DBContext.cs",
-              "DocumentMoniker": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Context\\DBContext.cs",
-              "RelativeDocumentMoniker": "backend\\Context\\DBContext.cs",
-              "ToolTip": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Context\\DBContext.cs",
-              "RelativeToolTip": "backend\\Context\\DBContext.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-10T07:05:38.415Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "backend\\Properties\\launchSettings.json",
-              "ToolTip": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Properties\\launchSettings.json",
-              "RelativeToolTip": "backend\\Properties\\launchSettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAANAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-07-09T10:36:27.965Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Program.cs",
               "RelativeDocumentMoniker": "backend\\Program.cs",
               "ToolTip": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Program.cs",
               "RelativeToolTip": "backend\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAA3AAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-09T08:31:51.218Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Startup.cs",
-              "DocumentMoniker": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Startup.cs",
-              "RelativeDocumentMoniker": "backend\\Startup.cs",
-              "ToolTip": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Startup.cs",
-              "RelativeToolTip": "backend\\Startup.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-09T08:30:55.731Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "StudentsController.cs",
-              "DocumentMoniker": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Controllers\\StudentsController.cs",
-              "RelativeDocumentMoniker": "backend\\Controllers\\StudentsController.cs",
-              "ToolTip": "D:\\\u5C0Fyy\\\u4E13\u4E1A\u8BFE\\\u6570\u636E\u5E93\\\u6570\u636E\u5E93\u8BFE\u7A0B\u8BBE\u8BA1\\Git\\db_marothon\\root\\backend\\backend\\Controllers\\StudentsController.cs",
-              "RelativeToolTip": "backend\\Controllers\\StudentsController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-09T08:29:35.959Z",
               "EditorCaption": ""
             }
           ]

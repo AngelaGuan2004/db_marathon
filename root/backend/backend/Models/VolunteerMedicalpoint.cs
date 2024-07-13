@@ -7,13 +7,14 @@ using SqlSugar;
 
 namespace MarathonMaster.Models
 {
-    [SugarTable("DRIVE")]
-    public class Drive
+    [SugarTable("VolunteerMedicalpoint")]
+    public class VolunteerMedicalpoint
     {
-        //主码需要特殊说明
         [SugarColumn(IsPrimaryKey = true)]
-        public int Volunteer_Id { get; set; }   //志愿者id
+        public int volunteer_id { get; set; }             //志愿者id
+
         [SugarColumn(IsPrimaryKey = true)]
-        public int Shuttlecar_Id { get; set; }//班车id
+        public string medicalpoint_id { get; set; }             //志愿者id
+
     }
 }
