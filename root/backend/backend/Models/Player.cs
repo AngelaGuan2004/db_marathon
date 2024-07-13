@@ -19,6 +19,7 @@ namespace MarathonMaster.Models
         public string Id_Number { get; set; }   //选手身份证号
         public string? Region { get; set; }      //选手国籍
         public string? Telephone_Number { get; set; }//选手电话
+        public string Password { get; set; }        //登录密码
 
     }
 }

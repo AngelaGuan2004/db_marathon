@@ -14,7 +14,7 @@ namespace MarathonMaster.Models
         [SugarColumn(IsPrimaryKey = true)]
         public int Id { get; set; }             //照片id
 
-        public int Event_id { get; set; }      //赛事id
+        public string Event_id { get; set; }      //赛事id
         public string Time { get; set; }        //拍摄时间
         public string Location { get; set; }    //拍摄地点
         public int Photographer_id { get; set; }//摄影师id

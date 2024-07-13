@@ -12,7 +12,7 @@ namespace MarathonMaster.Models
     {
         //主码需要特殊说明
         [SugarColumn(IsPrimaryKey = true)]
-        public int Event_Id { get; set; }          //赛事id
+        public string Event_Id { get; set; }          //赛事id
         [SugarColumn(IsPrimaryKey = true)]
         public int Item_Id { get; set; }           //物品id
         public string? Kind { get; set; }           //物资类型
@@ -20,8 +20,8 @@ namespace MarathonMaster.Models
 
     public class Event_Item_With_Name
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Kind { get; set; } // 请根据实际情况调整类型
+        public int Id { get; set; }// 物品的id
+        public string Name { get; set; }// 物品名称
+        public string Kind { get; set; } // 参赛包种类
     }
 }

@@ -12,7 +12,7 @@ namespace MarathonMaster.Models
     {
         //主码需要特殊说明
         [SugarColumn(IsPrimaryKey = true)]
-        public int Id { get; set; }            //物资点id
+        public string Id { get; set; }            //物资点id
         public string Place { get; set; }     //物资点位置
         public string Kind { get; set; }      //物资点类型
     }

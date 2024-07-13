@@ -47,16 +47,16 @@ namespace MarathonMaster.Controllers
 
         /*查询某场赛事的所有医疗点*/
         [HttpGet]
-        public async Task<IActionResult> get_all_medicalpoint([FromQuery] int Event_Id)
+        public async Task<IActionResult> get_all_medicalpoint([FromQuery] string Event_Id)
         {//收到赛事id，返回对应的医疗点信息
             _logger.LogInformation("收到医疗点查询请求：Event_Id = {Event_Id}", Event_Id); // 记录收到的数据
 
             try
             {
 
-                // 将整型数据转换为字符串后进行前缀匹配
+                // 直接进行前缀匹配
                 var query = await _db.Queryable<Medicalpoint>()
-                                           .Where(s => SqlFunc.ToString(s.Id).StartsWith(Event_Id.ToString()))
+                                           .Where(s => s.Id.StartsWith(Event_Id))
                                            .ToListAsync();
 
                 var medical_list = query.ToList();
@@ -99,7 +99,7 @@ namespace MarathonMaster.Controllers
 
         /*删除医疗点*/
         [HttpDelete]
-        public async Task<IActionResult> delete_medicalpoint([FromQuery] int Id)
+        public async Task<IActionResult> delete_medicalpoint([FromQuery] string Id)
         {
             try
             {

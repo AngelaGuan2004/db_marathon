@@ -177,7 +177,7 @@ namespace MarathonMaster.Controllers
 
         /*删除补给点*/
         [HttpDelete]
-        public async Task<IActionResult> delete_supplypoint_by_id([FromQuery] int Id)
+        public async Task<IActionResult> delete_supplypoint_by_id([FromQuery] string Id)
         {
             try
             {
@@ -197,15 +197,15 @@ namespace MarathonMaster.Controllers
 
         /*查询某场赛事的所有补给点*/
         [HttpGet]
-        public async Task<IActionResult> get_all_supplypoint([FromQuery] int Event_Id)
+        public async Task<IActionResult> get_all_supplypoint([FromQuery] string Event_Id)
         {//收到赛事id，返回对应的补给点信息
             _logger.LogInformation("收到补给点查询请求：Event_Id = {Event_Id}", Event_Id); // 记录收到的数据
 
             try
             {
-                // 将整型数据转换为字符串后进行前缀匹配
+                // 进行前缀匹配
                 var query = await _db.Queryable<Supplypoint>()
-                                           .Where(s => SqlFunc.ToString(s.Id).StartsWith(Event_Id.ToString()))
+                                           .Where(s => s.Id.StartsWith(Event_Id))
                                            .ToListAsync();
 
                 var point_list = query.ToList();
@@ -227,7 +227,7 @@ namespace MarathonMaster.Controllers
 
         /*查询某场赛事所有(某种)参赛包的所有物资*/
         [HttpGet]
-        public async Task<IActionResult> get_package_by_eventid([FromQuery] int event_id, string? type = null)
+        public async Task<IActionResult> get_package_by_eventid([FromQuery] string event_id, string? type = null)
         {//传入赛事id 物资包类型(可空）；返回物资id name 参赛包种类
 
             _logger.LogInformation("收到查询物资包请求");
@@ -270,7 +270,7 @@ namespace MarathonMaster.Controllers
 
         /*查询某场赛事所有（某个）补给点所有补给*/
         [HttpGet]
-        public async Task<IActionResult> get_supply_by_eventid([FromQuery] int event_id, int? supplypoint_Id = null)
+        public async Task<IActionResult> get_supply_by_eventid([FromQuery] string event_id, string? supplypoint_Id = null)
         {//传入赛事id 补给点id(可空）；返回补给id name 数量
 
             _logger.LogInformation("收到查询补给请求");

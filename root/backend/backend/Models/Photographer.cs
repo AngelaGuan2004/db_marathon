@@ -14,5 +14,6 @@ namespace MarathonMaster.Models
         [SugarColumn(IsPrimaryKey = true)]
         public int Id { get; set; }             //摄影师id
         public string Name { get; set; }        //摄影师名字
+        public string Password { get; set; }        //摄影师登录密码
     }
 }
