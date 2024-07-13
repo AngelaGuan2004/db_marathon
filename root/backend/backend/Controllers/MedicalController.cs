@@ -15,9 +15,9 @@ namespace MarathonMaster.Controllers
     public class MedicalController : ControllerBase
     {
         private readonly SqlSugarClient _db;
-        private readonly ILogger<PlayerController> _logger; 
+        private readonly ILogger<MedicalController> _logger; 
 
-        public MedicalController(ILogger<PlayerController> logger)
+        public MedicalController(ILogger<MedicalController> logger)
         {
             _logger = logger;
             dbORM dborm = new dbORM();
