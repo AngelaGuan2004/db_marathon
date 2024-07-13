@@ -1,43 +1,56 @@
 <template>
+  <div>
   <nav class="navbar">
     <img src="@/assets/logo.png" alt="Logo" class="logo" style="height: 55px;">
     <button @click="navigateTo('/')">首页</button>
-    <button @click="navigateTo('/profile')">个人空间</button>
-    <button class="current_button" @click="navigateTo('/photowall')">照片墙</button>
+    <button @click="navigateTo('/profile')">个人空间</button>  
+    <select id="Photograph" v-model="subWeb" @change="switchbToSubweb" class="styled-select">
+      <option value="PhotoWall" >照片墙</option>
+      <option value="PhotographerCenter">摄影师中心</option>
+    </select>
   </nav>
 
-  <div class="content">
-    <h1 style="text-align: left; color: #c81623; margin: 20px;">比赛照片，精彩直击</h1>
-    <div class="filter-section">
-      <select id="sort" v-model="sortOrder" @change="sortPhotos">
-        <option value="latest">最新</option>
-        <option value="hottest">最热</option>
-      </select>
-      <input type="text" v-model="searchQuery" placeholder="输入拍摄地点搜索照片..." @keyup.enter="searchPhotos" class="search-input"/>
+  <div class="main-content">
+    <div class="sidebar">
+      <button @click="navigateTo('/subpage1')" class="sidebar-button" style="font-weight:bold;">照片墙</button>
+      <button @click="navigateTo('/subpage2')" class="sidebar-button">摄影师中心</button>
     </div>
-  </div>
- 
-  <div class="photo-gallery">
-    <div class="photo-frame" v-for="(photo, index) in photos" :key="index">
-        <img :src="photo.src" alt="Photo" class="photo" />
-        <div class="info-box">
-          <div style="text-align: left; font-size: 14px; padding-left: 5px; padding-top: 5px;">
-            <p>摄影师: {{ photo.photographer }}</p>
-            <p>日期: {{ photo.date }}</p>
-            <p>地点: {{ photo.location }}</p>
-          </div>
-          <button @click="toggleLike(index)" class="like-button" :class="{ liked: photo.liked }">
-            {{ photo.liked ? '❤️'+'1001' : '🤍'+'1000' }}
-          </button>
-        </div>
-    </div>
-  </div>  
 
+    <div>
+      <div class="content">
+        <h1 style="text-align: left; color: #c81623;">比赛照片，精彩直击</h1>
+        <div class="filter-section">
+          <select id="sort" v-model="sortOrder" @change="sortPhotos">
+            <option value="latest">最新</option>
+            <option value="hottest">最热</option>
+          </select>
+          <input type="text" v-model="searchQuery" placeholder="输入赛事名/拍摄地点搜索照片..." @keyup.enter="searchPhotos" class="search-input"/>
+        </div>
+      </div>
+
+      <div class="photo-gallery">
+        <div class="photo-frame" v-for="(photo, index) in photos" :key="index">
+            <img :src="photo.src" alt="Photo" class="photo" />
+            <div class="info-box">
+              <div style="text-align: left; font-size: 14px; padding-left: 5px; padding-top: 5px;">
+                <p>摄影师: {{ photo.photographer }}</p>
+                <p>日期: {{ photo.date }}</p>
+                <p>地点: {{ photo.location }}</p>
+              </div>
+              <button @click="toggleLike(index)" class="like-button" :class="{ liked: photo.liked }">
+                {{ photo.liked ? '❤️'+'1001' : '🤍'+'1000' }}
+              </button>
+            </div>
+        </div>
+      </div>
+    </div>  
+  </div>
+</div>
 </template>
 
 <script>
 export default {
-  name: 'PhotoWall',
+  name: 'HelloWorld',
   props: {
     msg: String
   },
@@ -84,7 +97,7 @@ html, body {
 }
 
 .navbar {
-  background-color: #c81623; /* 酒红色 */
+  background-color: #c81623; 
   padding: 20px;
   display: flex;
   justify-content: space-around;
@@ -95,24 +108,56 @@ html, body {
   z-index: 1000; /* 确保 navbar 在最上层 */
 }
 
-.content {
-  margin-top: 80px; /* 根据 navbar 的高度和 padding 调整 */
+.main-content {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-top: 80px;
+}
+
+.sidebar {
+  width: 200px;
+  height:100vh;
+  position:fixed;
+  background-color: #ffebeb;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgb(209, 209, 209);
+}
+
+.sidebar-button {
+  width: 100%;  background-color: #ffebeb; 
+  color: #565656; 
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  border-radius: 5px; 
+}
+
+.sidebar-button:hover {
+  background-color: #ffd7d7;
+  font-weight: bold;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 200px;
 }
 
 .filter-section {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
   margin-left: auto; 
 }
 
 .filter-section select {
-  padding: 5px;
+  padding: 8px;
   font-size: 16px;
+  border: #dcdcdc;
   border-radius: 10px;
-  background-color: #c3c3c3; 
+  background-color: #dcdcdc; 
   color: white; 
 }
 
@@ -120,11 +165,11 @@ html, body {
   padding: 8px;
   font-size: 16px;
   margin-left: 20px;
-  background-color: #c3c3c3; 
+  background-color: #dcdcdc; 
   color:white;
-  border: 1px solid #c3c3c3; 
+  border:#dcdcdc; 
   border-radius: 10px;
-  width: 300px; /* 设置搜索框的宽度 */
+  width: 300px; 
 }
 
 .filter-section input::placeholder {
@@ -132,7 +177,8 @@ html, body {
 }
 
 button {
-  background-color: #c81623; /* 酒红色 */
+  background-color: #c81623;
+  color:white;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -140,7 +186,7 @@ button {
 }
 
 button:hover {
-  background-color: white;
+ font-weight:bold;
 }
 
 .current_button{
@@ -153,9 +199,11 @@ button:hover {
   display: flex;
   flex-wrap: wrap;
   overflow-y: auto;
-  gap: 30px; 
-  background-color: #e8e8e8;
+  column-gap: 16px; 
+  row-gap: 30px;
+  background-color: white;
   padding: 10px;
+  margin-left: 200px;
 }
 
 .photo-frame {
@@ -164,12 +212,13 @@ button:hover {
   position: relative;
   overflow: hidden;
   border: 2px;
-  background-color: #e8e8e8;
+  background-color: white;
+  margin-left: 20px;
 }
 
 .photo {
   width: 100%;
-  height: 75%;
+  height: 73%;
   object-fit: cover;
   border-radius: 8px; 
 }
@@ -177,16 +226,16 @@ button:hover {
 .info-box{
   margin-top: 6px; 
   width: 100%;
-  height: 25%;
-  background-color: white;
+  height: 23%;
+  background-color: #f2f2f2;
   border-radius: 8px; 
 }
 
 .like-button {
   position: absolute;
-  bottom: 5px; 
+  bottom: 10px; 
   right: 5px; 
-  background-color: #c3c3c3;
+  background-color: #dcdcdc;
   border: none;
   cursor: pointer;
   font-size: 13wpx;
@@ -198,5 +247,17 @@ button:hover {
   background-color: #ff6666;
 }
 
+.styled-select {
+  background-color: #c81623; 
+  color: #f0f0f0; 
+  padding: 5px;
+  border-radius: 10px;
+  border: none; 
+}
+
+.styled-select option {
+  background-color: #e8e8e8; 
+  color: #000;
+}
 </style>
 
