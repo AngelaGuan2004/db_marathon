@@ -1,0 +1,23 @@
+用户分为volunteer和player  
+volunteer和player的id是统一编码的
+
+志愿者报名：将player和event的id 放入schedule表中，同时设job category为null
+
+志愿者排班：
+1.为指定player id 和event id 的 schedule表更新job category
+2.根据前端录入的信息插入volunteer supplypoint表、volunteer medicalpoint表和drive表
+
+
+
+
+发布接驳车信息：相当于吧接驳车信息录入数据库   insert
+
+查询接驳车信息：给出赛事id，查出所有接驳车信息
+
+Photoviewcontroller: 
+查找照片
+1.前端先传过来一个地址的关键字，我返回所有匹配的地址的一个list。
+2.前端在我传回地址list中选择一个确切的地址，我返回该地址的所有照片的list，返回的照片信息包括id和地址
+3.前端传赛事的名称，我先从Event表中找出所有名称匹配的赛事id，再筛选出赛事id匹配的照片信息，返回这些照片的list
+
+
