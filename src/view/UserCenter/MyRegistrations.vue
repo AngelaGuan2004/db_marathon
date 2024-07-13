@@ -59,35 +59,48 @@
     </div>
   </template>
   <script>
+   /*import {getMyRegistrations} from '@/api/UserCenter.js' */
   export default{
     name:'MyRegistrations',
+    mounted(){
+      /* 
+      getMyRegistrations(this.ID)
+        .then((res) => {
+          
+        })
+        .catch(error => {
+          console.error('查询失败:', error);
+          alert('查询失败');
+        });
+      */
+    },
     data() {
         return {
          
           ischecked: [true, false, false, false],
-
+          ID:'1212131',
           /* 尝试开始 */
           activeMenu: '2',
-        searchName: '',
+          searchName: '',
 
 
         events: [
-          { id:'1', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
-          { id:'2', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
-          { id:'3', name: '2024上海马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
-          { id:'4', name: '2024上海马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
-          { id:'1', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
-          { id:'2', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
-          { id:'3', name: '2024上海马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
-          { id:'4', name: '2024上海马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
-          { id:'1', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
-          { id:'2', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
-          { id:'3', name: '2024上海马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
-          { id:'4', name: '2024上海马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
-          { id:'1', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
-          { id:'2', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
-          { id:'3', name: '2024上海马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
-          { id:'4', name: '2024上海马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
+          { event_id:'1', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
+          { event_id:'2', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
+          { event_id:'3', name: '2024上海马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
+          { event_id:'4', name: '2024上海马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
+          { event_id:'1', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
+          { event_id:'2', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
+          { event_id:'3', name: '2024上海马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
+          { event_id:'4', name: '2024上海马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
+          { event_id:'1', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
+          { event_id:'2', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
+          { event_id:'3', name: '2024上海马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
+          { event_id:'4', name: '2024上海马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
+          { event_id:'1', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
+          { event_id:'2', name: '2024天津团泊湖半程马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
+          { event_id:'3', name: '2024上海马拉松',  event_date:'2024 7 12',type: '半马', result: '已中签', number:'22222'},
+          { event_id:'4', name: '2024上海马拉松',  event_date:'2024 7 12',type: '全马', result: '已中签', number:'22222'},
          
         ],
         currentPage: 1,
@@ -114,8 +127,7 @@
         },
   
       handleRowClick(row) {
-        window.alert(row.id);
-        console.log(row.id);
+        window.alert(row.event_id);
       },
     },
     computed:{
