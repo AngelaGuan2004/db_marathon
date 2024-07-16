@@ -29,7 +29,12 @@
     
         <div class="uploadNewPhotography">
           <h2 style="text-align:left; font-size: 24px; color: #565656;">上传新摄影</h2>
+          <div class="upload-button-container">
+            <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;">
+            <button @click="triggerFileInput" class="upload-button">+</button>
+          </div>
         </div>
+
       </div>
 
     </div>
@@ -61,6 +66,14 @@ export default {
     },
     switchbToSubweb() {
       this.$router.push({ path: `/${this.subWeb.toLowerCase()}` })
+    },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+    handleFileUpload(event) {
+      const file = event.target.files[0];
+      // 处理文件上传逻辑
+      console.log('Selected file:', file);
     }
   }
 }
@@ -161,6 +174,25 @@ button {
   padding: 10px 20px;
   cursor: pointer;
   font-size: 16px;
+}
+
+.upload-button-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 20px;
+  margin-top: 15px;
+}
+
+.upload-button {
+  background-color: #c5c5c5;
+  color:white;
+  border: none;
+  border-radius: 8px;
+  padding: 30px 45px;
+  cursor: pointer;
+  font-size: 50px;
+  font-weight: bold;
+  margin-top: 20px;
 }
 
 button:hover {
