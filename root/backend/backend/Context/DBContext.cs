@@ -4,7 +4,7 @@ using Oracle.ManagedDataAccess.Client;
 using System.Data.SqlClient;
 using SqlSugar;
 
-namespace backend
+namespace MarathonMaster
 {
     public class dbORM
     {
