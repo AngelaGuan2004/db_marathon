@@ -7,11 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-<<<<<<< HEAD
 using db_marathon.Models;
-=======
-using MarathonMaster.Models;
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -21,11 +17,7 @@ using System.Numerics;
 using Microsoft.Extensions.Logging;
 
 
-<<<<<<< HEAD
 namespace db_marathon.Controllers
-=======
-namespace MarathonMaster.Controllers
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 {
     [Route("/[controller]/[action]")]
     [ApiController]

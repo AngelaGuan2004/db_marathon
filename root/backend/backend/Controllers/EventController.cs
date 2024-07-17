@@ -7,11 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-<<<<<<< HEAD
 using db_marathon.Models;
-=======
-using MarathonMaster.Models;
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -19,11 +15,7 @@ using System.Text.Unicode;
 using System.Security.Cryptography;
 using System.Numerics;
 
-<<<<<<< HEAD
 namespace db_marathon.Controllers
-=======
-namespace MarathonMaster.Controllers
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 {
     [Route("/[Controller]/[action]")]
     [ApiController]
@@ -55,11 +47,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-<<<<<<< HEAD
                 _logger.LogError(ex, "插入赛事失败: {@Event}", event_); // 记录错误信息
-=======
-                _logger.LogError(ex, "插入选手赛事失败: {@Event}", event_); // 记录错误信息
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 
                 return BadRequest(false);
             }
@@ -68,34 +56,20 @@ namespace MarathonMaster.Controllers
 
         //event修改信息
         [HttpPatch]
-<<<<<<< HEAD
         public async Task<IActionResult> update_event([FromBody] Event event_,Weather weather)
         {
             _logger.LogInformation("收到赛事数据: {@Event}{@Weather}", event_, weather); // 记录收到的数据
-=======
-        public async Task<IActionResult> update_event([FromBody] Event event_)
-        {
-            _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 
             try
             {
                 await _db.Updateable(event_).ExecuteCommandAsync();
-<<<<<<< HEAD
                 await _db.Updateable(weather).ExecuteCommandAsync();
                 _logger.LogInformation("成功更改赛事数据: {@Event}{@Weather}", event_, weather); // 记录更改成功
-=======
-                _logger.LogInformation("成功更改赛事数据: {@Event}", event_); // 记录更改成功
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
                 return Ok(true);
             }
             catch (System.Exception ex)
             {
-<<<<<<< HEAD
                 _logger.LogError(ex, "更改选赛事据失败: {@Event}{@Weather}", event_, weather); // 记录错误信息
-=======
-                _logger.LogError(ex, "更改选赛事据失败: {@Event}", event_); // 记录错误信息
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 
                 return BadRequest(false);
             }

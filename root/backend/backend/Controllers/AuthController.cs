@@ -7,11 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-<<<<<<< HEAD
 using db_marathon.Models;
-=======
-using MarathonMaster.Models;
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -21,11 +17,7 @@ using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
 
 
-<<<<<<< HEAD
 namespace db_marathon.Controllers
-=======
-namespace MarathonMaster.Controllers
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 {
     [Route("/[controller]/[action]")]
     [ApiController]
@@ -239,24 +231,52 @@ namespace MarathonMaster.Controllers
             }
         }
 
-        ////查询id的选手
-        //[HttpGet]
-        //public string get_by_id(int Id)
-        //{
-        //    Player player = new Player();
-        //    dbORM dborm = new dbORM();
-        //    SqlSugarClient db = dborm.getInstance();//获取数据库连接
-
-        //    player = db.Queryable<Player>().Where(it => it.Id == Id).First();
-        //    if (player != null)
-        //    {
-        //        return JsonSerializer.Serialize(player);
-        //    }
-        //    else
-        //    {
-        //        return "无"; // 或者返回一个适当的错误信息
-        //    }
-        //}
+        //查询id的选手
+        [HttpGet]
+        public string get_by_playerid(int Id)
+        {
+            Player player = new Player();
+            player = _db.Queryable<Player>().Where(it => it.Id == Id).First();
+            if (player != null)
+            {
+                return JsonSerializer.Serialize(player);
+            }
+            else
+            {
+                return "无"; // 或者返回一个适当的错误信息
+            }
+        }
+        //查询id的志愿者
+        [HttpGet]
+        public string get_by_volunteerid(int Id)
+        {
+            Volunteer volunteer = new Volunteer();
+            volunteer = _db.Queryable<Volunteer>().Where(it => it.Id == Id).First();
+            if (volunteer != null)
+            {
+                return JsonSerializer.Serialize(volunteer);
+            }
+            else
+            {
+                return "无"; // 或者返回一个适当的错误信息
+            }
+        }
+        //查询id的摄影师
+        [HttpGet]
+        public string get_by_photographerid(int Id)
+        {
+            Photographer photographer = new Photographer();
+            photographer = _db.Queryable<Photographer>().Where(it => it.Id == Id).First();
+            if (photographer != null)
+            {
+                return JsonSerializer.Serialize(photographer);
+            }
+            else
+            {
+                return "无"; // 或者返回一个适当的错误信息
+            }
+        }
+        
     }
 
 }

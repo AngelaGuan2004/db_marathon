@@ -7,11 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-<<<<<<< HEAD
 using db_marathon.Models;
-=======
-using MarathonMaster.Models;
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -21,11 +17,7 @@ using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
 
 
-<<<<<<< HEAD
 namespace db_marathon.Controllers
-=======
-namespace MarathonMaster.Controllers
->>>>>>> b8150caa4459344159602aeb46e26741665373c1
 {
     [Route("/[controller]/[action]")]
     [ApiController]
@@ -134,7 +126,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "志愿者登录失败: {@Player_Id}", Player_Id); // 记录错误信息
+                _logger.LogError(ex, "失败: {@Player_Id}", Player_Id); // 记录错误信息
 
                 return BadRequest(false);
             }
