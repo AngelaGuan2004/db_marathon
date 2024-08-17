@@ -5,10 +5,7 @@
       <button @click="navigateTo('/')">首页</button>
       <button @click="navigateTo('/profile')">个人空间</button>
       <button @click="navigateTo('/profile')">赛事摄影</button>
-      <!--select id="Photograph" v-model="subWeb" class="styled-select">
-        <option value="PhotoWall" >照片墙</option>
-        <option value="PhotographerCenter">摄影师中心</option>
-      </select-->
+      <button @click="navigateTo('/injuryEntry')">伤员</button>
     </nav>
   
     <div class="main-content">
@@ -21,7 +18,7 @@
         <div class="content">
           <h1 style="text-align: left; color: #c81623;margin-top: 20px">比赛照片，精彩直击
             <el-input placeholder="请输入关键词检索照片" v-model="input3" class="input-with-select" style="margin-left:300px;width:400px;">
-              <el-select v-model="select" slot="prepend" placeholder="最热" style="width:80px;">
+              <el-select v-model="select" slot="prepend" style="width:80px;"  @change="sortPhotos">
                   <el-option label="最新" value="1"></el-option>
                   <el-option label="最热" value="2"></el-option>
               </el-select>
@@ -45,8 +42,14 @@
             </div>
           </div>
         </div>
+
       </div>  
     </div>
+
+    <el-footer style="margin-left:220px; background-color: #c81623;display: flex; justify-content: center;">
+      <el-pagination background layout="prev, pager, next" :total="10" style="margin-top: 10px;"></el-pagination>
+    </el-footer>
+
   </div>
 </template>
   
@@ -67,8 +70,12 @@
           { src: require('@/assets/4.jpg'), liked: false, photographer: '摄影师4', date: '2023-07-13', location: '地点4', likes: 700},
           { src: require('@/assets/5.jpg'), liked: false, photographer: '摄影师5', date: '2023-07-14', location: '地点5', likes: 600},
           { src: require('@/assets/6.jpg'), liked: false, photographer: '摄影师6', date: '2023-07-15', location: '地点6', likes: 500},
+          { src: require('@/assets/7.jpg'), liked: false, photographer: '摄影师7', date: '2023-07-15', location: '地点7', likes: 499},
+          { src: require('@/assets/8.jpg'), liked: false, photographer: '摄影师8', date: '2023-07-20', location: '地点8', likes: 620},
+          { src: require('@/assets/9.jpg'), liked: false, photographer: '摄影师9', date: '2023-07-17', location: '地点9', likes: 50},
           // 其他照片数据
-        ]
+        ],
+        select: '2' // 默认排序为最热
       }
     },
     methods: {
@@ -82,6 +89,15 @@
       },
       getPhotoTooltip(photo) {
         return `摄影师: ${photo.photographer}<br>日期: ${photo.date}<br>地点: ${photo.location}`;
+      },
+      sortPhotos() {
+        if (this.select === '1') {
+          // 按日期排序，最新的在前
+          this.photos.sort((a, b) => new Date(b.date) - new Date(a.date));
+        } else if (this.select === '2') {
+          // 按点赞数排序，最多的在前
+          this.photos.sort((a, b) => b.likes - a.likes);
+        }
       }
     }
   }
