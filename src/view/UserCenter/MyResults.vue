@@ -106,7 +106,7 @@
   </div>
     <!--插入cyy页面结束-->
   </div>
-    </div>
+    </div> 
 
   </div>
 </template>
@@ -114,10 +114,9 @@
 export default{
   name:'MyRegistrations',
   data() {
-      return {
-       
-        ischecked: [false, true, false, false],
-        searchQuery: '',
+      return { 
+      ischecked: [false, true, false, false],
+      searchQuery: '',
       bestResultSelected: false,
       bestResultType: '',
       bestResult: {},
@@ -146,9 +145,9 @@ export default{
   methods:{
     goToShouye(){
         
-      },
+    },
     goToXinxi() {
-      this.$router.push({ name: 'UserInfo' });
+      this.$router.push({ name: 'PlayerUserInfo' });
     },
     goToBaoming() {
       this.$router.push({ name: 'MyRegistrations' });
@@ -158,8 +157,8 @@ export default{
     },
     checkClass(index) {
         return this.ischecked[index] ? 'active' : 'inactive'
-      },
-      search() {
+    },
+    search() {
       console.log('Searching for:', this.searchQuery);
     },
     showBest(type) {

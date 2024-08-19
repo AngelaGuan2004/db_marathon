@@ -1,110 +1,115 @@
 <template>
   <div>
-      <div id="upper">
-          <div id="upper-left" @click="goToShouye">
-              <img src="@/assets/返回.png" alt="" class="img-left">
-              <p class="p-upper">首页</p>
-          </div>
-          <img src="@/assets/上马.png" alt="" class="img-right">
+    <div id="upper">
+      <div id="upper-left" @click="goToShouye">
+          <img src="@/assets/返回.png" alt="" class="img-left">
+          <p class="p-upper">首页</p>
       </div>
-      <div id="down">
-          <div id="div-left">
-              <div class="break"></div> 
-              <div>
-                  <button :class="checkClass(0)" @click="goToBaoming">我的报名</button>
-              </div>
-              <div>
-                  <button :class="checkClass(1)" @click="goToChengji">我的成绩</button>
-              </div>
-              <div>
-                  <button :class="checkClass(2)" >个人信息</button>
-              </div>
-              <div>
-                  <button :class="checkClass(3)" @click="goToZhiyuan">我的志愿</button>
-              </div>
-          </div>
-          <div id="div-middle">
-              <button class="relative-button" @click="changeButton">{{ buttonText }}</button>
-              <div id="down-upper">
-                 <p class="jbxx">基本信息</p>
-              </div>
-              <hr class="a-line" />
-              <div id="down-down">
-                  <div class="a-button">
-                      <p class="down-notice">姓名</p>
-                      <p class="down-notice2">{{ name }}</p>
-                  </div>
-                  <div class="a-button">
-                      <p class="down-notice">手机号</p>
-                      <p class="down-notice2" v-if="!bianji">{{ telephone }}</p>
-                      <input  v-model="telephone" placeholder="请输入您的电话"  v-if="bianji" class="down-notice2 border"/>
-                      <p class='error-notice' v-if="bianji && !tele_right">输入有误</p>
-                  </div>
-                  <div class="a-button">
-                      <p class="down-notice">证件</p>
-                      <p class="down-notice2">{{ ID_number }}</p>
-                  </div>
-                  <div class="a-button">
-                      <p class="down-notice">ID</p>
-                      <p class="down-notice2">{{ ID }}</p>
-                  </div>
-                  <div class="a-button">
-                      <p class="down-notice">性别</p>
-                      <p class="down-notice2">{{ gender }}</p>
-                  </div>
-                  <div class="a-button">
-                      <p class="down-notice">地区</p>
-                      <p class="down-notice2" v-if="!bianji && region !== ''">{{region}}</p>
-                      <div class="select-reg down-notice2"  v-if="bianji">
-                          <div>
-                              <label for="province" class="label-p">省份：</label>
-                              <select id="province" v-model="selectedProvince" @change="updateCities">
-                                  <option v-for="province in provinces" :key="province" :value="province">{{ province }}</option>
-                              </select>
-                          </div>
-                          <div>
-                              <label for="province" class="label-c">城市：</label>
-                              <select id="city" v-model="selectedCity">
-                                  <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
-                              </select>
-                          </div>
-                      </div>  
-                  </div>
-                  <div class="a-button">
-                      <p class="down-notice">出生日期</p>
-                      <p class="down-notice2" v-if="!bianji &&birthday!== ''">{{birthday}}</p>
-                      <div class="down-notice2"  v-if="bianji">
-                        <input type="date" v-model="birthday" />
-                      </div>
-                     
-                      
-                  </div>
-              </div>
-          </div>
-          <div id="div-right1">
-              <img src="@/assets//veer-141859030.jpg" alt="" class="down-right-img">
-          </div>
+      <img src="@/assets/上马.png" alt="" class="img-right">
+    </div>
+    <div id="down">
+      <div id="div-left">
+        <div class="break"></div> 
+        <div>
+          <button :class="checkClass(0)" @click="goToBaoming">我的报名</button>
+        </div>
+        <div>
+          <button :class="checkClass(1)" @click="goToChengji">我的成绩</button>
+        </div>
+        <div>
+          <button :class="checkClass(2)" >个人信息</button>
+        </div>
+        <div>
+          <button :class="checkClass(3)" @click="goToZhiyuan">我的志愿</button>
+        </div>
       </div>
+      <div id="div-middle">
+        <button class="relative-button" @click="changeButton">{{ buttonText }}</button>
+        <div id="down-upper">
+          <p class="jbxx">基本信息</p>
+        </div>
+        <hr class="a-line" />
+        <div id="down-down">
+          <div class="a-button">
+            <p class="down-notice">姓名</p>
+            <p class="down-notice2">{{ name }}</p>
+          </div>
+          <div class="a-button">
+            <p class="down-notice">手机号</p>
+            <p class="down-notice2" v-if="!bianji">{{ telephone }}</p>
+            <input  v-model="telephone" placeholder="请输入您的电话"  v-if="bianji" class="down-notice2 border"/>
+            <p class='error-notice' v-if="bianji && !tele_right">输入有误</p>
+          </div>
+          <div class="a-button">
+            <p class="down-notice">证件</p>
+            <p class="down-notice2">{{ ID_number }}</p>
+          </div>
+          <div class="a-button">
+            <p class="down-notice">ID</p>
+            <p class="down-notice2">{{ ID }}</p>
+          </div>
+          <div class="a-button">
+            <p class="down-notice">性别</p>
+            <p class="down-notice2">{{ gender }}</p>
+          </div>
+          <div class="a-button">
+            <p class="down-notice">年龄</p>
+            <p class="down-notice2" v-if="!bianji &&age!== ''">{{age}}</p>
+            <input  v-model="age" placeholder="请输入您的年龄"  v-if="bianji" class="down-notice2 border"/>
+            <p class='error-notice' v-if="bianji && !age_right">输入有误</p>
+              
+          </div>
+          <div class="a-button">
+            <p class="down-notice">地区</p>
+            <p class="down-notice2" v-if="!bianji && region !== ''">{{region}}</p>
+            <div class="select-reg down-notice2"  v-if="bianji">
+              <div>
+                <label for="province" class="label-p">省份：</label>
+                <select id="province" v-model="selectedProvince" @change="updateCities">
+                  <option v-for="province in provinces" :key="province" :value="province">{{ province }}</option>
+                </select>
+              </div>
+              <div>
+                <label for="province" class="label-c">城市：</label>
+                <select id="city" v-model="selectedCity">
+                  <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
+                </select>
+              </div>
+            </div>  
+          </div>
+        </div>
+      </div>
+      <div id="div-right1">
+        <img src="@/assets//veer-141859030.jpg" alt="" class="down-right-img">
+      </div>
+    </div>
   </div>
 </template>
   
-  <script>
-  /*import {completeInfor} from '@/api/UserCenter.js'*/
-  /*import {getInfor} from '@/api/UserCenter.js' */
+<script>
+  /*import {completePlayerInfor} from '@/api/UserCenter.js'*/
+  /*import {getPlayerInfor} from '@/api/UserCenter.js' */
+  
+
   export default {
-    name:'UserInfo',
+    name:'PlayerUserInfo',
+
     data() {
       return {
         buttonText: "编辑",
         bianji:false,
         tele_right:true,
+        age_right:true,
         ischecked: [false, false, true, false],
-        name:'李靓',
+        name:'闫雯晴',
+        old_telephone:'12637152637',
         telephone:'12637152637',
         ID_number:'273618633622772662',
         ID:'2272186183',   /* 这个参数怎么来？存疑 */
         gender:'女',
-        birthday:'',
+        old_age:'',
+        age:'',
+        old_region:'',
         region:'',
         provinces: [
           '北京', '天津', '上海', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江', 
@@ -149,17 +154,21 @@
           澳门: ['澳门']
         },
         selectedProvince: '',
-        selectedCity: ''
+        selectedCity: '',
       }
     },
     mounted(){
       /* 
-      getInfor(this.ID)
+      getPlayerInfor(this.ID)
         .then((res) => {
           this.name = res.name;
-          this.telephone = res.telephone;
-          this.ID_number= res.ID_number;
+          this.old_telephone = res.Telephone_number;
+          this.telephone = res.Telephone_number;
+          this.ID_number= res.Id_number;
           this.gender=res.gender;
+          this.old_age=res.age;
+          this.old_region=this.region;
+          this.age=res.age;
           this.region=this.region;
         })
         .catch(error => {
@@ -184,22 +193,96 @@
       checkClass(index) {
         return this.ischecked[index] ? 'active' : 'inactive'
       },
+      validateAge(age) {
+        if(this.age!=''){
+          // 检查每一位是否为数字
+          if (/^\d+$/.test(age)) {
+            const ageNum = parseInt(age, 10);
+            if (ageNum >= 18 && ageNum <= 100) {
+              this.age_right = true;
+            } 
+            else {
+              this.age_right = false;
+            }
+          } 
+          else {
+            this.age_right = false;
+          }
+        }
+        else{
+          this.age_right = true;
+        }
+          
+      },
       changeButton() {
-        if(this.bianji==false){
+        //一层：现在是展示状态
+        if(this.bianji == false){
           this.buttonText='保存'
           this.bianji=true
         }
+        //一层：现在是编辑状态
         else if(this.bianji==true){
-          if(this.tele_right){
-           /* 调用js */
-           /*this.submit();*/
-            
-
-            this.buttonText='编辑'
-            this.bianji=false
+          //二层：编辑的内容合规
+          if(this.tele_right==true && this.age_right==true){
+            //三层：没有改变数据
+            if(this.old_telephone==this.telephone && this.old_region==this.region && this.old_age==this.age){
+              this.buttonText='编辑'
+              this.bianji=false
+            }
+            //三层：改变了数据
+            else{
+              this.$confirm("是否保存数据?", "提示", {
+                confirmButtonText: "确定（A按钮）",
+                cancelButtonText: "取消（B按钮）",
+                type: "warning",
+                distinguishCancelAndClose: true,    // 重要，设置为true才会把右上角X和取消区分开来
+                closeOnClickModal: false
+              }).then(() => {
+                // 确认通过执行逻辑        A按钮逻辑
+                this.old_telephone=this.telephone;
+                this.old_region=this.region;
+                this.old_age=this.age;
+                /* 调用js */
+                /*this.submit();*/
+                this.buttonText='编辑'
+                this.bianji=false
+                
+              }).catch((e) => {
+                if (e == 'cancel') {
+                    // 确认不通过执行逻辑   B按钮逻辑
+                    
+                } else if(e == 'close') {
+                    // 右上角X的执行逻辑 
+                
+                }
+              })
+            }
           }
+          //二层：编辑的内容不合规
           else{
-            console.log("无法保存")
+            this.$confirm("是否...数据?", "提示", {
+              confirmButtonText: "退出（不保存编辑）（A按钮）",
+              cancelButtonText: "好的（B按钮）",
+              type: "warning",
+              distinguishCancelAndClose: true,    // 重要，设置为true才会把右上角X和取消区分开来
+              closeOnClickModal: false
+            }).then(() => {
+              // 确认通过执行逻辑        A按钮逻辑
+              // 保存当前编辑的数据
+              this.telephone=this.old_telephone;
+              this.region=this.old_region;
+              this.age=this.old_age;
+              this.buttonText='编辑'
+              this.bianji=false
+            }).catch((e) => {
+              if (e == 'cancel') {
+                  // 确认不通过执行逻辑   B按钮逻辑
+                  
+              } else if(e == 'close') {
+                  // 右上角X的执行逻辑 
+              
+              }
+            })
    
           }
         }
@@ -207,7 +290,7 @@
       /*
       submit() {
         try{
-          completeInfor({ID: this.ID, region:this.region,telephone:this.telephone}).then((res) => {
+          completePlayerInfor({ID: this.ID,name:this.name,gender:this.gender, Id_number:this.ID_number,region:this.region,Telephone_number:this.telephone,age:this.age}).then((res) => {
             if (res.data === false) {
               alert("总会成功的！");
             } else {
@@ -235,26 +318,32 @@
       },
     },
     watch: {
+      age: function(newVal) {
+          this.validateAge(newVal);
+      },
       telephone(newVal) {
-        var reg = /^1\d{10}$/;
-        this.tele_right= reg.test(newVal);
+        if(this.telephone != ''){
+          var reg = /^1\d{10}$/;
+          this.tele_right = reg.test(newVal);
+        }
+        else{
+          this.tele_right = true;
+        }
       },
       selectedProvince() {
       this.region = this.selectedProvince + ' ' + this.selectedCity;
     },
     selectedCity() {
       this.region = this.selectedProvince + ' ' + this.selectedCity;
-    }
-
+    },
+    
     },
   
   }
   
+</script>
   
-  
-  </script>
-  
-  <style scoped>
+<style scoped>
   /* 把我们所有标签的内外边距清零 */
   * {
       margin: 0;
@@ -369,7 +458,6 @@
     justify-content: space-between;
     background-color:#f4f4f6;
   }
-  
   #div-left{
     width: 150px;
     height: 500px;
@@ -421,7 +509,7 @@
     margin-left:50px;
   }
   .down-notice{
-    width: 100px;
+    width: 80px;
     color:black;
     font-size: 18px;
     text-align:left;
@@ -431,14 +519,14 @@
     color:black;
     font-size: 18px;
     text-align:left;
-    margin-left:10px;
+    margin-left:0px;
   }
-
-  
   .a-button{
     margin-top:18px;
     display: flex; 
     align-items: center;
+    width: 500px;
+
   }
   .label-p{
     font-size: 18px;
@@ -463,19 +551,19 @@
   }
   /* 下部分的左间部分 */
   .inactive{
-      margin-left:20px;
-      font-size:20px;
-      color:black;
-      background-color: white;
-      margin-top: 30px;
-    }
-    .active{
-      margin-left:20px;
-      margin-top: 30px;
-      font-size:20px;
-      color:rgb(168, 27, 31);
-      background-color: white;
-    }
+    margin-left:20px;
+    font-size:20px;
+    color:black;
+    background-color: white;
+    margin-top: 30px;
+  }
+  .active{
+    margin-left:20px;
+    margin-top: 30px;
+    font-size:20px;
+    color:rgb(168, 27, 31);
+    background-color: white;
+  }
   .break{
     margin-top:60px;
   }
@@ -488,6 +576,6 @@
     color:rgb(168, 27, 31);
     background-color: white;
   }
-
-  </style>
+  
+</style>
   

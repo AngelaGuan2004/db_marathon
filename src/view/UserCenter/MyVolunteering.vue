@@ -1,69 +1,59 @@
 <template>
-    <div>
-      <!--上部分红色-->
-      <div id="upper">
-        <div id="upper-left" @click="goToShouye">
-            <img src="@/assets/返回.png" alt="" class="img-left">
-          <p class="p-upper">首页</p>
-        </div>
-        
-        <img src="@/assets/上马.png" alt="" class="img-right">
+  <div>
+    <!--上部分红色-->
+    <div id="upper">
+      <div id="upper-left" @click="goToShouye">
+        <img src="@/assets/返回.png" alt="" class="img-left">
+        <p class="p-upper">首页</p>
       </div>
-  
-      
-      <!--下侧-->
-      <div id="down">
+      <img src="@/assets/上马.png" alt="" class="img-right">
+    </div>
+
+    <!--下侧-->
+    <div id="down">
       <!--左边-->
       <div id="div-left">
-          <div class="break"></div> 
-          <div>
-            <button :class="checkClass(0)" @click="goToBaoming">我的报名</button>
-          </div>
-          <div>
-            <button :class="checkClass(1)" @click="goToChengji">我的成绩</button>
-          </div>
-          <div>
-            <button :class="checkClass(2)" @click="goToXinxi">个人信息</button>
-          </div>
-          <div>
-            <button :class="checkClass(3)" >我的志愿</button>
-          </div>
+        <div class="break"></div> 
+        <div>
+          <button :class="checkClass(0)" @click="goToBaoming">我的报名</button>
         </div>
-                <!--右边-->
-                <div id="div-right">
-
-<!--尝试开始-->
-<el-main>
- <div style="width: 100%; overflow: auto ;height: 420px;margin-top: 20px;">
-<el-table :data="events"   class="table"  row-class-name="clickable-row" stripe>
-<el-table-column prop="name" label="比赛名称" width="300"></el-table-column>
-<el-table-column prop="event_date" label="时间" width="150"></el-table-column>
-<el-table-column prop="type" label="赛事类型" width="150"></el-table-column>
-<el-table-column prop="voltype" label="志愿类型" width="150">
-  <template slot-scope="scope">
-    <div style="color: #c81623;">{{ scope.row.voltype }}</div>
-  </template>
-</el-table-column>
-<el-table-column label="操作" width="150">
-      <template slot-scope="scope">
-        <el-button type="text" @click="details(scope.row)">详情</el-button>
-      </template>
-  </el-table-column>
-
-</el-table>
- </div>
-</el-main>
-<!--尝试结束-->
-
-
+        <div>
+          <button :class="checkClass(1)" @click="goToChengji">我的成绩</button>
         </div>
-
-
+        <div>
+          <button :class="checkClass(2)" @click="goToXinxi">个人信息</button>
+        </div>
+        <div>
+          <button :class="checkClass(3)" >我的志愿</button>
+        </div>
       </div>
-  
+      <!--右边-->
+      <div id="div-right">
+        <el-main>
+          <div style="width: 100%; overflow: auto ;height: 420px;margin-top: 20px;">
+            <el-table :data="events"   class="table"  row-class-name="clickable-row" stripe>
+              <el-table-column prop="name" label="比赛名称" width="300"></el-table-column>
+              <el-table-column prop="event_date" label="时间" width="150"></el-table-column>
+              <el-table-column prop="type" label="赛事类型" width="150"></el-table-column>
+              <el-table-column prop="voltype" label="志愿类型" width="150">
+                <template slot-scope="scope">
+                  <div style="color: #c81623;">{{ scope.row.voltype }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="150">
+                <template slot-scope="scope">
+                  <el-button type="text" @click="details(scope.row)">详情</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-main>
+      </div>
     </div>
-  </template>
-  <script>
+  </div>
+</template>
+
+<script>
   /*import {getMyVolunteering} from '@/api/UserCenter.js' */
   export default{
     name:'MyVolunteering',
@@ -103,7 +93,7 @@
         
       },
       goToXinxi() {
-        this.$router.push({ name: 'UserInfo' });
+        this.$router.push({ name: 'PlayerUserInfo' });
       },
       goToChengji() {
         this.$router.push({ name: 'MyResults' });
@@ -116,13 +106,13 @@
         },
       details(row) {
         window.alert(row.event_id);
-      }
+      },
     }
   
   }
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
   /* 把我们所有标签的内外边距清零 */
   * {
         margin: 0;
@@ -241,11 +231,13 @@
     #div-left{
       width: 150px;
       height: 500px;
-
       background-color:white;
       margin-left: 30px;
       margin-top: 30px;
     }
+    
+    
+
     #div-middle{
       width: 500px;
       height: 420px;
@@ -359,6 +351,6 @@
   text-align: center;
   vertical-align: middle;
   line-height: 40px;  
-}
-  </style>
+  }
+</style>
   
