@@ -2,10 +2,10 @@
   <div>
     <div id="upper">
       <div id="upper-left" @click="goToShouye">
-          <img src="@/assets/返回.png" alt="" class="img-left">
+          <img src="@/assets/LwmReturn.png" alt="" class="img-left">
           <p class="p-upper">首页</p>
       </div>
-      <img src="@/assets/上马.png" alt="" class="img-right">
+      <img src="@/assets/LwmShm.png" alt="" class="img-right">
     </div>
     <div id="down">
       <div id="div-left">
@@ -80,7 +80,7 @@
         </div>
       </div>
       <div id="div-right1">
-        <img src="@/assets//veer-141859030.jpg" alt="" class="down-right-img">
+        <img src="@/assets/KeepRunning.jpg" alt="" class="down-right-img">
       </div>
     </div>
   </div>

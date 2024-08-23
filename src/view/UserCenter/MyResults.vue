@@ -3,10 +3,10 @@
     <!--上部分红色-->
     <div id="upper">
       <div id="upper-left" @click="goToShouye">
-        <img src="@/assets/返回.png" alt="" class="img-left">
+        <img src="@/assets/LwmReturn.png" alt="" class="img-left">
         <p class="p-upper">首页</p>
       </div>
-      <img src="@/assets/上马.png" alt="" class="img-right">
+      <img src="@/assets/LwmShm.png" alt="" class="img-right">
     </div>
     
     <!--下侧-->
