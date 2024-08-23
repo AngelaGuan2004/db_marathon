@@ -4,28 +4,22 @@
         <img src="@/assets/logo.png" alt="Logo" class="logo" style="height: 55px;">
         <button @click="navigateTo('/')">首页</button>
         <button @click="navigateTo('/profile')">个人空间</button>
-        <button @click="navigateTo('/profile')">赛事摄影</button>
+        <button @click="navigateTo('/photoWall')">赛事摄影</button>
         <button @click="navigateTo('/injuryEntry')">伤员</button>
       </nav>       
       
       <div class="injury-list">
-        <div style="margin-left: 45px;margin-top: 0px;height: 40px;">
+        <div style="margin-left: 45px;height: 40px;">
+          <h2 style="font-size: 24px; color: #565656;">这里是赛事名称</h2>
           <h2 style="font-size: 24px; color: #565656;">伤员名单</h2>
         </div>
-      
+
         <div class="table-container">
-          <el-table :data="injuredPlayers" stripe height="400" :default-sort = "{prop: 'date', order: 'descending'}">
-            <el-table-column
-              prop="date"
-              label="日期"
-              sortable
-              width="120">
-            </el-table-column>
+          <el-table :data="injuredPlayers" stripe height="400" >
             <el-table-column
               prop="name"
               label="姓名"
-              sortable
-              width="120">
+              width="150">
               <template slot-scope="scope">
                 <div slot="reference" class="name-wrapper">
                   <el-tag size="medium">{{ scope.row.name }}</el-tag>
@@ -36,7 +30,7 @@
               prop="ID"
               label="编号"
               sortable
-              width="120">
+              width="160">
             </el-table-column>
             <el-table-column
               prop="medicalPoint"
@@ -46,19 +40,19 @@
             <el-table-column label="操作" width="180">
              <template slot-scope="scope">
                 <el-button
+                  type="primary"
                   size="small"
                   @click="handleEdit(scope.$index, scope.row)"
-                  style=" background-color: #f3d5d7; 
-                          color:white;
-                          font-size: 14px;       
-                          border-width: 2px;
-                          border-color: black;">编辑</el-button>
+                  style=" font-size: 14px;"
+                  icon="el-icon-edit"
+                  plain></el-button>
                 <el-button
                   size="small"
-                  type="danger"
-                  @click="handleDelete(scope.$index, scope.row)"
-                  style="background-color: #d2313c;
-                         font-size: 14px;">删除</el-button>
+                  type="primary"
+                  @click.native.prevent="handleDelete(scope.$index, scope.row)"
+                  style="font-size: 14px;"
+                  icon="el-icon-delete"
+                  plain></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -73,12 +67,11 @@
           </div>
 
           <el-dialog :visible.sync="formVisible">
-            <el-form  ref="form" :model="form" :rules="rules" label-width="80px">
-              <el-form-item label="录入日期" prop="date1">
-                <el-col :span="15">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
-                </el-col>              
-              </el-form-item>
+            <el-form  ref="form" 
+                      :model="form" 
+                      :rules="rules" 
+                      label-width="80px" 
+                      :row-key="getRowKey">
               <el-form-item label="伤员姓名" prop="name">
                 <el-input v-model="form.name"></el-input>
               </el-form-item>
@@ -86,11 +79,18 @@
                 <el-input v-model="form.ID"></el-input>
               </el-form-item>
               <el-form-item label="医疗点" prop="medicalPoint">
-                <el-input v-model="form.medicalPoint"></el-input>
+                <el-select v-model="form.medicalPoint" placeholder="请选择医疗点">
+                  <el-option
+                    v-for="point in medicalPoints"
+                    :key="point.value"
+                   :label="point.label"
+                   :value="point.value">
+                 </el-option>             
+                </el-select>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="onSubmit">上传</el-button>
-                <el-button @click="handleCancel">取消</el-button>
+                <el-button type="primary" @click="onSubmit" plain>上传<i class="el-icon-upload el-icon--right"></i></el-button>
+                <el-button type="danger" @click="handleCancel" plain>取消</el-button>
               </el-form-item>
             </el-form>
           </el-dialog>
@@ -102,29 +102,37 @@
   
   
   <script>
+  import { getAllMedicalPoints } from '@/api/Services';
+  import { addInjury } from '@/api/Services';
   
   export default {
       name:'InjuryEntry',
       data() {
         return {
           injuredPlayers: [
-          { date: '2016-05-02', name: '周一', ID: '1234561', medicalPoint: '上海市普陀区金沙江路 1518 弄' }, 
-          { date: '2016-05-02', name: '钱二', ID: '1234562', medicalPoint: '上海市普陀区金沙江路 1500 弄' }, 
-          { date: '2016-05-02', name: '张三', ID: '1234563', medicalPoint: '上海市普陀区金沙江路 1522 弄' }, 
-          { date: '2016-05-04', name: '李四', ID: '1234564', medicalPoint: '上海市普陀区金沙江路 1517 弄' }, 
-          { date: '2016-05-01', name: '王五', ID: '1234565', medicalPoint: '上海市普陀区金沙江路 1519 弄' }, 
-          { date: '2016-05-03', name: '赵六', ID: '1234566', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
-          { date: '2016-05-12', name: '何七', ID: '1234567', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
-          { date: '2016-05-07', name: '郑八', ID: '1234568', medicalPoint: '上海市普陀区金沙江路 1547 弄' }, 
-          { date: '2016-05-03', name: '郭九', ID: '1234569', medicalPoint: '上海市普陀区金沙江路 1538 弄' }
+          { name: '周一', ID: '1234561', medicalPoint: '上海市普陀区金沙江路 1518 弄' }, 
+          { name: '钱二', ID: '1234562', medicalPoint: '上海市普陀区金沙江路 1500 弄' }, 
+          { name: '张三', ID: '1234563', medicalPoint: '上海市普陀区金沙江路 1522 弄' }, 
+          { name: '李四', ID: '1234564', medicalPoint: '上海市普陀区金沙江路 1517 弄' }, 
+          { name: '王五', ID: '1234565', medicalPoint: '上海市普陀区金沙江路 1519 弄' }, 
+          { name: '赵六', ID: '1234566', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
+          { name: '何七', ID: '1234567', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
+          { name: '郑八', ID: '1234568', medicalPoint: '上海市普陀区金沙江路 1547 弄' }, 
+          { name: '郭九', ID: '1234569', medicalPoint: '上海市普陀区金沙江路 1538 弄' }
           ],
+
+          // medicalPoints: [
+          //   { value: '上海市普陀区金沙江路 1518 弄', label: '普陀区金沙江路 1518 弄' },
+          //   { value: '上海市普陀区金沙江路 1500 弄', label: '普陀区金沙江路 1500 弄' },
+          // ],
+          medicalPoint:[],
+          eventID: null,//需要一个函数来get
 
           formVisible: false,
           editingIndex: null,
           editingMode: false,
 
           form: {
-            date1: '',
             name: '',
             ID: '',
             medicalPoint: ''
@@ -138,31 +146,52 @@
               {required: true, message: '请输入伤员编号', trigger: 'blur'}
             ],
             medicalPoint:[
-              {required: true,message: '请输入医疗点', trigger: 'blur'}
+              {required: true,message: '请选择医疗点', trigger: 'blur'}
             ],
-            date1: [
-              { required: true, message: '请选择录入时间', trigger: 'change' }
-            ]
           }
         }
       },
+      async mounted() {
+        try {
+        // 假设的赛事ID
+        const params = { Event_Id: 'your-event-id' };
+        const response = await getAllMedicalPoints(params);
+        this.medicalPoints = response.data.map(point => ({
+          label: point.Name 
+        }));
+        } catch (error) {
+          console.error('获取医疗点失败:', error);
+        }
+      },
       methods:{
+        getRowKey(row) {
+          return row.ID;
+        },
         navigateTo(_path) {
           this.$router.push({path:_path},()=>{})
         },
         handleEdit(index, row) {
+          this.editingId = row.ID;  // 记录当前正在编辑的行的唯一 ID
           this.editingIndex = index;
-          this.form = { ...row };
+          this.form = {
+            date: row.date, 
+            name: row.name,
+            ID: row.ID,
+            medicalPoint: row.medicalPoint
+          };
           this.editingMode = true;
-          this.formVisible = true;     
+          this.formVisible = true;  
         },
-        handleDelete(index, row) {
+        handleDelete(index,row) {
           this.$confirm(`确认删除选手 ${row.name} 吗？`, '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
           }).then(() => {
-            this.injuredPlayers.splice(index, 1);
+            const deleteIndex = this.injuredPlayers.findIndex(item => item.ID === row.ID);
+            if (deleteIndex !== -1) {
+              this.injuredPlayers.splice(deleteIndex, 1);
+            }
             this.$message({
               type: 'success',
               message: '删除成功!',
@@ -178,21 +207,43 @@
           this.formVisible = true;
           this.resetForm();
         },
-        onSubmit() {
-          this.$refs.form.validate((valid) => { 
-            if (valid) {
-              if (this.editingMode) {
-                this.injuredPlayers.splice(this.editingIndex, 1, this.form);
+        async onSubmit() {
+          this.$refs.form.validate(async (valid) => { 
+             if (valid) {
+              if (this.editingMode && this.editingIndex !== null) {
+                // 编辑模式：更新已有数据
+                const index = this.injuredPlayers.findIndex(player => player.ID === this.editingId);
+                if (index !== -1) {
+                  this.$set(this.injuredPlayers, index, {
+                    date: this.form.date,
+                    name: this.form.name,
+                    ID: this.form.ID,
+                    medicalPoint: this.form.medicalPoint
+                  });
                 this.$message.success('编辑成功');
+                }
               } else {
-                this.injuredPlayers.push({
-                  date: this.form.date1,
-                  name: this.form.name,
-                  ID: this.form.ID,
-                  medicalPoint: this.form.medicalPoint
-                });
-                this.$message.success('上传成功');
-              }
+                 // 非编辑模式：通过 API 提交新增数据
+                  const response = await addInjury({
+                    name: this.form.name,
+                    ID: this.form.ID,
+                    medicalPoint: this.form.medicalPoint
+                  });
+          
+                  if (response.data.success) {
+                    // 如果请求成功，添加到前端的表格中
+                    this.injuredPlayers.push({
+                      date: this.form.date,
+                      name: this.form.name,
+                      ID: this.form.ID,
+                      medicalPoint: this.form.medicalPoint
+                    });
+                    this.$message.success('上传成功');
+                  } else {
+                   // 处理请求失败的情况
+                   this.$message.error(`上传失败: ${response.data.message}`);
+                  }
+                }
               this.formVisible = false;
               this.resetForm();
             } else {
@@ -203,6 +254,13 @@
         },
         resetForm() {
           this.$refs.form.resetFields();
+          this.form = {
+            name: '',
+            ID: '',
+            medicalPoint: ''
+          };
+          this.editingMode = false;
+          this.editingIndex = null;
         },
         handleCancel() {
           this.formVisible = false;
@@ -244,7 +302,7 @@
       cursor: pointer;
       font-size: 16px;
     }
-    
+
     .injury-list{
       display: flex;  
       flex-direction: column;
@@ -254,7 +312,7 @@
       margin-top: 120px;
       margin-left: 150px; 
       width: 80%;
-      height: 600px;
+      height: 630px;
       background-color: white;
     }
     
@@ -263,7 +321,7 @@
       justify-content: center; 
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      margin-top: 10px;
+      margin-top: 40px;
       margin-left: 50px;
       width: 90%;
       height: 470px;
