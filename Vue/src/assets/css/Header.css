@@ -33,7 +33,7 @@
   line-height: 100px;
 }
 
-.el-menu--horizontal>.is-active {
+.el-menu--horizontal>.el-menu-item.is-active {
   font-weight: bold;
   background-color: transparent;
 }

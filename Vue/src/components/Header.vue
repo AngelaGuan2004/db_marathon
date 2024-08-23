@@ -5,7 +5,7 @@
         <img src="../assets/images/JiMaIndex.png" alt="">
       </div>
       <div class="HeaderTab">
-        <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect"
+        <el-menu default-active="1" class="el-menu-demo" mode="horizontal" @select="handleSelect"
           background-color="transparent" text-color="white" active-text-color="white">
           <el-menu-item index="1">首页</el-menu-item>
           <el-menu-item index="2">赛历</el-menu-item>
@@ -32,7 +32,6 @@ export default {
   name: 'Header',
   data() {
     return {
-      activeIndex: '1',
       TabHerf: ['Home', '', '', '', 'UserTab']
     };
   },

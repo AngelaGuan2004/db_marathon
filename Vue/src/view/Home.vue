@@ -162,5 +162,6 @@ export default {
 
 <style scoped>
 @import 'element-ui/lib/theme-chalk/index.css';
+@import "../assets/css/Base.css";
 @import "../assets/css/Home.css";
 </style>

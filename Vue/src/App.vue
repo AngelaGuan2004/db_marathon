@@ -2,6 +2,7 @@
   <div id="app">
     <Header></Header>
     <Footer></Footer>
+    <button @click.prevent="GetApi"></button>
   </div>
 </template>
 
@@ -15,7 +16,7 @@ export default {
   },
   methods: {
     GetApi() {
-      this.$axios.get('http://localhost:8080/api').then(
+      this.$axios.get('http://localhost:8080/api/Auth/login_player').then(
         response => {
           console.log('请求成功了', response.data)
         },

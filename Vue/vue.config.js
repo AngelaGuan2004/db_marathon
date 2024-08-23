@@ -11,12 +11,6 @@ module.exports = {
       template: 'public/index.html',
       filename: 'index.html',
     },
-    register: {
-      entry: 'src/pages/Register/register.js',
-      template: 'src/pages/Register/register.html',
-      filename: 'register.html',
-      title: "注册"
-    },
     login: {
       entry: 'src/pages/Login/login.js',
       template: 'src/pages/Login/login.html',
