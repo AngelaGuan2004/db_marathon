@@ -4,11 +4,8 @@
       <img src="@/assets/logo.png" alt="Logo" class="logo" style="height: 55px;">
       <button @click="navigateTo('/')">首页</button>
       <button @click="navigateTo('/profile')">个人空间</button>
-      <button @click="navigateTo('/profile')">赛事摄影</button>
-      <!--select id="Photograph" v-model="subWeb" class="styled-select">
-        <option value="PhotoWall" >照片墙</option>
-        <option value="PhotographerCenter">摄影师中心</option>
-      </select-->
+      <button @click="navigateTo('/photoWall')">赛事摄影</button>
+      <button @click="navigateTo('/injuryEntry')">伤员</button>
     </nav>
     
     <div class="main-content">
@@ -33,7 +30,7 @@
           <div class="upload-button-container">
             <div class="upload-button" @click="handleUpload()">+</div>
 
-            <el-dialog :visible.sync="formVisible">
+            <el-dialog :visible.sync="formVisible" title="（单次上传一张摄影作品）">
               <el-form  ref="form" :model="form" :rules="rules" label-width="80px">
                 <el-form-item label="照片名称">
                   <el-input v-model="form.name"></el-input>
