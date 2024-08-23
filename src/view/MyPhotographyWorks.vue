@@ -4,11 +4,8 @@
       <img src="@/assets/logo.png" alt="Logo" class="logo" style="height: 55px;">
       <button @click="navigateTo('/')">首页</button>
       <button @click="navigateTo('/profile')">个人空间</button>
-      <button @click="navigateTo('/profile')">赛事摄影</button>
-      <!--select id="Photograph" v-model="subWeb" class="styled-select">
-        <option value="PhotoWall" >照片墙</option>
-        <option value="PhotographerCenter">摄影师中心</option>
-      </select-->
+      <button @click="navigateTo('/photoWall')">赛事摄影</button>
+      <button @click="navigateTo('/injuryEntry')">伤员</button>
     </nav>       
     
     <div class="main-content">
@@ -47,15 +44,22 @@
               row-gap: 15px;
               padding: 10px;">
             <div class="photo-frame" v-for="(photo, index) in myphotos" :key="index">
-              <img :src="photo.src" alt="Photo" class="photo" />
+              <img :src="photo.src" alt="Photo" class="photo" @click="openPreview(photo)"/>
               <div class="info-box">
                 <div style="text-align: left; font-size: 14px; padding-left: 5px; padding-top: 5px;">
                   <p>日期: {{ photo.date }}</p>
                   <p>地点: {{ photo.location }}</p>
+                  <p style="color:crimson">❤️: {{ photo.likes}}</p>
                 </div>
+               
               </div>
             </div>
           </div>
+          <!-- 图片预览框 -->
+          <el-dialog :visible.sync="dialogVisible" width="60%" center>
+            <img :src="currentPhoto.src" alt="Preview" style="width: 100%;" />
+          </el-dialog>
+          <!-- 翻页 -->
           <div style="display: flex; justify-content: center; margin-top: 10px;">
             <el-pagination
               background
@@ -87,7 +91,9 @@ export default {
           { src: require('@/assets/10.jpg'), date: '2023-06-10', location: '地点3', likes: 666},
           { src: require('@/assets/11.jpg'), date: '2023-05-22', location: '地点1', likes: 888 },
         ],
-        select: '2' // 默认排序为最热
+        select: '2', // 默认排序为最热
+        dialogVisible: false,
+        currentPhoto: {}
       }
     },
     computed: {
@@ -111,6 +117,10 @@ export default {
           // 按点赞数排序，最多的在前
           this.myphotos.sort((a, b) => b.likes - a.likes);
         }
+      },
+      openPreview(photo) {
+        this.currentPhoto = photo;
+        this.dialogVisible = true;
       }
     }
 }
@@ -264,14 +274,28 @@ export default {
     height: 73%;
     object-fit: cover;
     border-radius: 8px; 
+    transition: transform 0.3s;
+  }
+
+  .photo:hover {
+    transform: scale(1.05);
   }
   
   .info-box{
     margin-top: 6px; 
     width: 100%;
-    height: 15%;
+    height: 18%;
     background-color: #f2f2f2;
     border-radius: 8px; 
   }
   
+  .photo-manage-button{
+    width: 20px; 
+    height: 25px; 
+    margin-top: 6px; 
+    margin-left: 8px; 
+    background-color: #409effc7;
+    font-size: 13px;
+    text-align: center;
+  }
 </style>
