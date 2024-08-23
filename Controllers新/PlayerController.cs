@@ -57,7 +57,7 @@ namespace db_marathon.Controllers
 
         //查询中签信息、参赛号码
         [HttpGet]
-        public async Task<IActionResult> search_participate([FromBody] Participate participate)
+        public async Task<IActionResult> search_participate([FromQuery] Participate participate)
         {
             _logger.LogInformation("收到参赛数据: {@Participate}", participate); // 记录收到的数据
 

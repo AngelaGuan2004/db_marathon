@@ -47,32 +47,33 @@ namespace db_marathon.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入选手赛事失败: {@Event}", event_); // 记录错误信息
+                _logger.LogError(ex, "插入赛事失败: {@Event}", event_); // 记录错误信息
 
                 return BadRequest(false);
             }
 
         }
 
-        //event修改信息
-        [HttpPatch]
-        public async Task<IActionResult> update_event([FromBody] Event event_)
-        {
-            _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
+        ////event修改信息
+        //[HttpPatch]
+        //public async Task<IActionResult> update_event([FromBody] Event event_,Weather weather)
+        //{
+        //    _logger.LogInformation("收到赛事数据: {@Event}{@Weather}", event_, weather); // 记录收到的数据
 
-            try
-            {
-                await _db.Updateable(event_).ExecuteCommandAsync();
-                _logger.LogInformation("成功更改赛事数据: {@Event}", event_); // 记录更改成功
-                return Ok(true);
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, "更改选赛事据失败: {@Event}", event_); // 记录错误信息
+        //    try
+        //    {
+        //        await _db.Updateable(event_).ExecuteCommandAsync();
+        //        await _db.Updateable(weather).ExecuteCommandAsync();
+        //        _logger.LogInformation("成功更改赛事数据: {@Event}{@Weather}", event_, weather); // 记录更改成功
+        //        return Ok(true);
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        _logger.LogError(ex, "更改选赛事据失败: {@Event}{@Weather}", event_, weather); // 记录错误信息
 
-                return BadRequest(false);
-            }
-        }
+        //        return BadRequest(false);
+        //    }
+        //}
 
         //删除赛事
         [HttpDelete]
@@ -95,7 +96,7 @@ namespace db_marathon.Controllers
 
         //获取赛事详情
         [HttpGet]
-        public async Task<IActionResult> get_by_id([FromBody] Event event_)
+        public async Task<IActionResult> get_by_id([FromQuery] Event event_)
         {
             _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
             try
@@ -132,6 +133,36 @@ namespace db_marathon.Controllers
             }
         }
 
+        //获取所有赛事
+        [HttpGet]
+        public async Task<IActionResult> get_all_event()
+        {
+            try
+            {
+                // 从数据库中查询所有赛事
+                var eventList = await _db.Queryable<Event>().ToListAsync();
+
+                // 检查是否有赛事
+                if (eventList != null && eventList.Count > 0)
+                {
+                    // 返回赛事列表
+                    return Ok(eventList);
+                }
+                else
+                {
+                    // 如果没有赛事，返回一个空的列表
+                    return Ok(new List<Event>());
+                }
+            }
+            catch (System.Exception ex)
+            {
+                // 记录错误日志
+                _logger.LogError(ex, "获取赛事列表失败");
+
+                // 返回错误响应
+                return StatusCode(500, "获取赛事列表失败");
+            }
+        }
 
         ////查询对应种类的赛事
         //[HttpGet]
@@ -163,6 +194,6 @@ namespace db_marathon.Controllers
         //    return JsonSerializer.Serialize(event1);
         //}
 
-        
+
     }
 }

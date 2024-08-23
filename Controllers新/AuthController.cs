@@ -43,8 +43,20 @@ namespace db_marathon.Controllers
 
             try
             {
+                // 查询数据库中的最大 Player_Id
+                var maxPlayerId = await _db.Queryable<Player>()
+                                           .MaxAsync(it => it.Id);
+
+                // 如果数据库中还没有记录，设置初始值为1
+                int newPlayerId = (maxPlayerId != 0) ? maxPlayerId + 1 : 1;
+
+                // 为新选手设置唯一的 Player_Id
+                player.Id = newPlayerId;
+
+                // 插入新选手数据
                 await _db.Insertable(player).ExecuteCommandAsync();
                 _logger.LogInformation("成功插入选手数据: {@Player}", player); // 记录插入成功
+
                 return Ok(true);
             }
             catch (System.Exception ex)
@@ -80,7 +92,7 @@ namespace db_marathon.Controllers
 
         //选手登录
         [HttpGet]
-        public async Task<IActionResult> login_player([FromBody] Player player)
+        public async Task<IActionResult> login_player([FromQuery] Player player)
         {
             _logger.LogInformation("收到选手数据: {@Player}", player); // 记录收到的数据
 
@@ -111,7 +123,7 @@ namespace db_marathon.Controllers
 
         //志愿者登录
         [HttpGet]
-        public async Task<IActionResult> login_volunteer([FromBody] Volunteer volunteer)
+        public async Task<IActionResult> login_volunteer([FromQuery] Volunteer volunteer)
         {
             _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
 
@@ -142,7 +154,7 @@ namespace db_marathon.Controllers
 
         //摄影师登录
         [HttpGet]
-        public async Task<IActionResult> login_photographer([FromBody] Photographer photographer)
+        public async Task<IActionResult> login_photographer([FromQuery] Photographer photographer)
         {
             _logger.LogInformation("收到摄影师数据: {@Photographer}", photographer); // 记录收到的数据
 
@@ -231,24 +243,52 @@ namespace db_marathon.Controllers
             }
         }
 
-        ////查询id的选手
-        //[HttpGet]
-        //public string get_by_id(int Id)
-        //{
-        //    Player player = new Player();
-        //    dbORM dborm = new dbORM();
-        //    SqlSugarClient db = dborm.getInstance();//获取数据库连接
-
-        //    player = db.Queryable<Player>().Where(it => it.Id == Id).First();
-        //    if (player != null)
-        //    {
-        //        return JsonSerializer.Serialize(player);
-        //    }
-        //    else
-        //    {
-        //        return "无"; // 或者返回一个适当的错误信息
-        //    }
-        //}
+        //查询id的选手
+        [HttpGet]
+        public string get_by_playerid(int Id)
+        {
+            Player player = new Player();
+            player = _db.Queryable<Player>().Where(it => it.Id == Id).First();
+            if (player != null)
+            {
+                return JsonSerializer.Serialize(player);
+            }
+            else
+            {
+                return "无"; // 或者返回一个适当的错误信息
+            }
+        }
+        //查询id的志愿者
+        [HttpGet]
+        public string get_by_volunteerid(int Id)
+        {
+            Volunteer volunteer = new Volunteer();
+            volunteer = _db.Queryable<Volunteer>().Where(it => it.Id == Id).First();
+            if (volunteer != null)
+            {
+                return JsonSerializer.Serialize(volunteer);
+            }
+            else
+            {
+                return "无"; // 或者返回一个适当的错误信息
+            }
+        }
+        //查询id的摄影师
+        [HttpGet]
+        public string get_by_photographerid(int Id)
+        {
+            Photographer photographer = new Photographer();
+            photographer = _db.Queryable<Photographer>().Where(it => it.Id == Id).First();
+            if (photographer != null)
+            {
+                return JsonSerializer.Serialize(photographer);
+            }
+            else
+            {
+                return "无"; // 或者返回一个适当的错误信息
+            }
+        }
+        
     }
 
 }
