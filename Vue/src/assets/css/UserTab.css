@@ -1,0 +1,67 @@
+.UserTab {
+  width: 225px;
+  margin-top: 20px;
+}
+
+.UserTabFlex {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.el-menu-item {
+  font-size: 20px;
+  font-weight: bold;
+  height: 80px;
+  line-height: 80px;
+  margin: 10px 0;
+}
+
+.el-menu-item span {
+  padding-left: 20%;
+}
+
+.el-menu-vertical-demo>.is-active {
+  background-color: rgb(255, 242, 242);
+  border-radius: 15px;
+}
+
+.el-menu-item>.is-active {
+  background-color: rgb(255, 242, 242);
+  border-radius: 15px;
+}
+
+.el-menu-vertical-demo>.el-menu-item:hover {
+  font-weight: bold;
+  background-color: rgb(255, 242, 242);
+  border-radius: 15px;
+
+}
+
+.el-submenu__title:hover {
+  font-weight: bold;
+  background-color: rgb(255, 242, 242);
+  border-radius: 15px;
+}
+
+.User {
+  width: 100%;
+  height: 600px;
+  background-color: rgb(244, 244, 244);
+  padding: 0 100px;
+  padding-top: 20px;
+}
+
+.UserTabRight {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 200px;
+  height: 60%;
+}
+
+.breadcrumb {
+  margin-bottom: 50px;
+}

@@ -1,0 +1,30 @@
+#upper {
+  margin-top: 0px;
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(168, 27, 31);
+  height: 120px;
+}
+
+#upper-left {
+  display: flex;
+  justify-content: space-between;
+}
+
+.img-left {
+  margin-top: 30px;
+  margin-left: 50px;
+  height: 50px;
+  width: 50px;
+}
+
+.img-right {
+  margin-right: 20px;
+}
+
+.p-upper {
+  margin-top: 30px;
+  margin-left: 20px;
+  color: white;
+  font-size: 30px;
+}
