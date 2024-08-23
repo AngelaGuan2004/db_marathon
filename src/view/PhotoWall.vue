@@ -4,7 +4,13 @@
       <img src="@/assets/logo.png" alt="Logo" class="logo" style="height: 55px;">
       <button @click="navigateTo('/')">首页</button>
       <button @click="navigateTo('/profile')">个人空间</button>
-      <button @click="navigateTo('/profile')">赛事摄影</button>
+      <el-dropdown>
+        <button type="primary" style="margin-top: 6px;">赛事摄影<i class="el-icon-arrow-down el-icon--right"></i></button>
+        <el-dropdown-menu slot="dropdown" class="custom-dropdown-menu">
+          <el-dropdown-item @click="navigateTo('/photoWall')">照片墙</el-dropdown-item>
+          <el-dropdown-item @click="navigateTo('/photographerCenter')">摄影师中心</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
       <button @click="navigateTo('/injuryEntry')">伤员</button>
     </nav>
   
@@ -28,8 +34,8 @@
         </div>
   
         <div class="photo-gallery">
-          <div class="photo-frame" v-for="(photo, index) in photos" :key="index">
-            <img :src="photo.src" alt="Photo" class="photo" />
+          <div class="photo-frame" v-for="(photo, index) in paginatedPhotos" :key="index">
+            <img :src="photo.src" alt="Photo" class="photo"  @click="openPreview(photo)"/>
             <div class="info-box">
               <div style="text-align: left; font-size: 14px; padding-left: 5px; padding-top: 5px;">
                 <p>摄影师: {{ photo.photographer }}</p>
@@ -46,8 +52,25 @@
       </div>  
     </div>
 
-    <el-footer style="margin-left:220px; background-color: #c81623;display: flex; justify-content: center;">
-      <el-pagination background layout="prev, pager, next" :total="10" style="margin-top: 10px;"></el-pagination>
+    <!-- 图片预览框 -->
+    <el-dialog :visible.sync="dialogVisible" width="60%" center>
+      <img :src="currentPhoto.src" alt="Preview" style="width: 100%;" />
+    </el-dialog>
+
+    <el-footer style="margin-left:200px; 
+                      margin-top: 50px; 
+                      width:1050px;
+                      background-color: #c81623;
+                      display: flex; 
+                      justify-content: center;">
+      <el-pagination background 
+                     layout="prev, pager, next" 
+                     :total="10" 
+                     style="margin-top: 10px;"
+                     :page-size="pageSize"
+                     :current-page="currentPage"
+                     @current-change="handlePageChange">
+      </el-pagination>
     </el-footer>
 
   </div>
@@ -63,19 +86,33 @@
     data() {
       return {
         photos: [
-          // 示例照片数据
-          { src: require('@/assets/1.jpg'), liked: false, photographer: '摄影师1', date: '2023-07-10', location: '地点1', likes: 1000},
-          { src: require('@/assets/2.jpg'), liked: false, photographer: '摄影师2', date: '2023-07-11', location: '地点2', likes: 900},
-          { src: require('@/assets/3.jpg'), liked: false, photographer: '摄影师3', date: '2023-07-12', location: '地点3', likes: 800},
-          { src: require('@/assets/4.jpg'), liked: false, photographer: '摄影师4', date: '2023-07-13', location: '地点4', likes: 700},
-          { src: require('@/assets/5.jpg'), liked: false, photographer: '摄影师5', date: '2023-07-14', location: '地点5', likes: 600},
-          { src: require('@/assets/6.jpg'), liked: false, photographer: '摄影师6', date: '2023-07-15', location: '地点6', likes: 500},
-          { src: require('@/assets/7.jpg'), liked: false, photographer: '摄影师7', date: '2023-07-15', location: '地点7', likes: 499},
-          { src: require('@/assets/8.jpg'), liked: false, photographer: '摄影师8', date: '2023-07-20', location: '地点8', likes: 620},
-          { src: require('@/assets/9.jpg'), liked: false, photographer: '摄影师9', date: '2023-07-17', location: '地点9', likes: 50},
-          // 其他照片数据
+          { src: require('@/assets/1.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师1', date: '2023-07-10', location: '地点1', likes: 1000},
+          { src: require('@/assets/2.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师2', date: '2023-07-11', location: '地点2', likes: 900},
+          { src: require('@/assets/3.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师3', date: '2023-07-12', location: '地点3', likes: 800},
+          { src: require('@/assets/4.jpg'), liked: false, event: '上海国际马拉松', photographer: '摄影师4', date: '2023-07-13', location: '地点4', likes: 700},
+          { src: require('@/assets/5.jpg'), liked: false, event: '上海国际马拉松', photographer: '摄影师5', date: '2023-07-14', location: '地点5', likes: 600},
+          { src: require('@/assets/6.jpg'), liked: false, event: '广州马拉松', photographer: '摄影师6', date: '2023-07-15', location: '地点6', likes: 500},
+          { src: require('@/assets/7.jpg'), liked: false, event: '广州马拉松', photographer: '摄影师7', date: '2023-07-15', location: '地点7', likes: 499},
+          { src: require('@/assets/8.jpg'), liked: false, event: '厦门马拉松', photographer: '摄影师8', date: '2023-07-20', location: '地点8', likes: 620},
+          { src: require('@/assets/9.jpg'), liked: false, event: '厦门马拉松',   photographer: '摄影师9', date: '2023-07-17', location: '地点9', likes: 50},
         ],
-        select: '2' // 默认排序为最热
+        //photos:[],
+        input3: '',  // 这是用于暂存输入内容的变量
+        select: '2', // 默认排序为最热
+        dialogVisible: false,
+        currentPhoto: {},
+        currentPage: 1, // 当前页码
+        pageSize: 8,    // 每页显示的照片数量
+      }
+    },
+    computed: {
+      totalPhotos() {
+        return this.photos.length;
+      },
+      paginatedPhotos() {
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = this.currentPage * this.pageSize;
+        return this.photos.slice(start, end);
       }
     },
     methods: {
@@ -98,6 +135,13 @@
           // 按点赞数排序，最多的在前
           this.photos.sort((a, b) => b.likes - a.likes);
         }
+      },
+      openPreview(photo) {
+        this.currentPhoto = photo;
+        this.dialogVisible = true;
+      },
+      handlePageChange(page) {
+      this.currentPage = page;
       }
     }
   }
@@ -127,6 +171,21 @@
     z-index: 1000; /* 确保 navbar 在最上层 */
   }
   
+  .el-dropdown-menu {
+    background-color: #c81623;
+    margin-top: 40px;
+    border-radius: 5px;
+    border-color: #c81623;
+  }
+
+  .el-dropdown-menu__item {
+    color: white;
+  }
+
+  .el-dropdown-menu__item:hover {
+    background-color: white;
+  }
+
   .main-content {
     display: flex;
     margin-top: 80px;
@@ -217,6 +276,11 @@
     height: 73%;
     object-fit: cover;
     border-radius: 8px; 
+    transition: transform 0.3s;
+  }
+
+  .photo:hover {
+    transform: scale(1.05);
   }
   
   .info-box{
@@ -229,7 +293,7 @@
   
   .like-button {
     position: absolute;
-    bottom: 10px; 
+    bottom: 12px; 
     right: 5px; 
     background-color: #dcdcdc;
     border: none;
