@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-using db_marathon.Models;
+using MarathonMaster.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
 
 
-namespace db_marathon.Controllers
+namespace MarathonMaster.Controllers
 {
     [Route("/[controller]/[action]")]
     [ApiController]
@@ -104,33 +104,40 @@ namespace db_marathon.Controllers
 
         }
 
-        //查询选手历史成绩
+        //
+        // 
         [HttpGet]
-        public async Task<IActionResult> search_result([FromBody] int Player_Id)
+        public async Task<IActionResult> get_players_by_event(string eventId)
         {
-            _logger.LogInformation("收到的数据: {@Player_Id}", Player_Id); // 记录收到的数据
-
             try
             {
-                List<Result_> results = await _db.Queryable<Result_>().Where(it => it.Player_Id == Player_Id).ToListAsync();
-                if (results.Count > 0)
+                // 从数据库中查询某个赛事的所有参与者
+                var participants = await _db.Queryable<Participate>()
+                                            .Where(p => p.Event_Id == eventId)
+                                            .ToListAsync();
+
+                // 检查是否有参与者
+                if (participants != null && participants.Count > 0)
                 {
-                    _logger.LogInformation("査找Player_Id对应的成绩信息成功:{ @results}", results);
-                    return Ok(results);
+                    // 返回参与者列表
+                    return Ok(participants);
                 }
                 else
                 {
-                    _logger.LogInformation("无信息");
-                    return Unauthorized(null);
+                    // 如果没有参与者，返回一个空的列表
+                    return Ok(new List<Participate>());
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "失败: {@Player_Id}", Player_Id); // 记录错误信息
+                // 记录错误日志
+                _logger.LogError(ex, "获取选手列表失败");
 
-                return BadRequest(false);
+                // 返回错误响应
+                return StatusCode(500, "获取选手列表失败");
             }
         }
 
     }
+
 }

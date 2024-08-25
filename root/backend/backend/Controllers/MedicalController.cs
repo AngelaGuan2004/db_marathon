@@ -34,14 +34,14 @@ namespace MarathonMaster.Controllers
             try
             {
                 await _db.Insertable(service).ExecuteCommandAsync();
-                _logger.LogInformation("成功插入伤员数据"); 
-                return Ok(true);
+                _logger.LogInformation("成功插入伤员数据");
+                return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "插入数据失败: {@Medical_Service}", service); // 记录错误信息
 
-                return BadRequest(false);
+                return Ok(new { status = false, message = $"插入数据失败: {ex.Message}" });
             }
         }
 
@@ -61,18 +61,15 @@ namespace MarathonMaster.Controllers
 
                 var medical_list = query.ToList();
 
-                if (medical_list == null || medical_list.Count == 0)
-                {
-                    return Ok("无此医疗点");
-                }
 
-                _logger.LogInformation("成功找到");
-                return Ok(medical_list);
+                _logger.LogInformation("成功找到");//包含空的情况
+                return Ok(new { data = medical_list, status = true});
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "查询数据失败");
-                return BadRequest($"查询失败: {ex.Message}");
+                List<Medicalpoint> null_list = [];
+                return BadRequest(new { data = null_list, status = false, message = $"查询失败: {ex.Message}" });
             }
         }
 
@@ -87,13 +84,13 @@ namespace MarathonMaster.Controllers
             {
                 await _db.Insertable(medicalpoint).ExecuteCommandAsync();
                 _logger.LogInformation("成功插入医疗点数据");
-                return Ok(true);
+                return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "插入数据失败: {@Medicalpoint}", medicalpoint); // 记录错误信息
 
-                return BadRequest(false);
+                return Ok(new { status = false, message = $"插入数据失败: {ex.Message}" });
             }
         }
 
@@ -105,14 +102,14 @@ namespace MarathonMaster.Controllers
             {
                 int count = await _db.Deleteable<Medicalpoint>().Where(it => it.Id == Id).ExecuteCommandAsync();
                 if (count == 1)
-                    return Ok(true);
+                    return Ok(new { status = true });
                 else
-                    return Ok(false);
+                    return Ok(new { status = false, message = "后端不报错，但没有删除任何行" });
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "删除数据失败");
-                return BadRequest($"删除数据失败: {ex.Message}");
+                return Ok(new {status = false,message= $"删除数据失败: {ex.Message}" });
             }
         }
 

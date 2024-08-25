@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-using db_marathon.Models;
+using MarathonMaster.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,7 +17,7 @@ using System.Numerics;
 using Microsoft.Extensions.Logging;
 
 
-namespace db_marathon.Controllers
+namespace MarathonMaster.Controllers
 {
     [Route("/[controller]/[action]")]
     [ApiController]
@@ -57,7 +57,7 @@ namespace db_marathon.Controllers
 
         //查询中签信息、参赛号码
         [HttpGet]
-        public async Task<IActionResult> search_participate([FromBody] Participate participate)
+        public async Task<IActionResult> search_participate([FromQuery] Participate participate)
         {
             _logger.LogInformation("收到参赛数据: {@Participate}", participate); // 记录收到的数据
 
@@ -94,7 +94,7 @@ namespace db_marathon.Controllers
 
             try
             {
-                await _db.Deleteable<Participate>(new Participate() { Event_Id = participate.Event_Id,Player_Id= participate .Player_Id}).ExecuteCommandAsync();
+                await _db.Deleteable<Participate>(new Participate() { Event_Id = participate.Event_Id, Player_Id = participate.Player_Id }).ExecuteCommandAsync();
                 _logger.LogInformation("成功删除参赛数据: {@Event}", participate); // 记录删除成功
                 return Ok(true);
             }

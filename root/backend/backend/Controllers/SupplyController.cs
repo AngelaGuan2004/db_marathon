@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Cors;
 using MarathonMaster.Models;
 using System.Numerics;
 using MarathonMaster.Controllers;
+using System.Collections.Generic;
+using System;
 
 namespace MarathonMaster.Controllers
 {
@@ -40,24 +42,24 @@ namespace MarathonMaster.Controllers
                 if (insertCount > 0)
                 {
                     _logger.LogInformation("成功插入: {@Item}", item);
-                    return Ok(new { Status = "Inserted" });
+                    return Ok(new { status = true, type = "Inserted" });
                 }
                 else if (updateCount > 0)
                 {
                     _logger.LogInformation("成功更新: {@Item}", item);
-                    return Ok(new { Status = "Updated" });
+                    return Ok(new { status = true, type = "Updated" });
                 }
                 else
                 {
                     _logger.LogInformation("无变更操作: {@Item}", item);
-                    return Ok(new { Status = "NoChange" });
+                    return Ok(new { status = false, type = "NoChange", message = "后端不报错但无插入" });
                 }
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "插入数据失败: {@Item}", item); // 记录错误信息
 
-                return BadRequest(new { Status = "NoChange" });
+                return Ok(new { status = false, type = "NoChange", message = $"插入数据失败: {ex.Message}" });
             }
         }
 
@@ -70,14 +72,14 @@ namespace MarathonMaster.Controllers
             {
                 int count = await _db.Deleteable<Item>().Where(it => it.Id == Id).ExecuteCommandAsync();
                 if (count == 1)
-                    return Ok(true);
+                    return Ok(new { status = true });
                 else
-                    return Ok(false);
+                    return Ok(new { status = false, message = "不报错但无更改" });
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "删除数据失败");
-                return BadRequest($"删除数据失败: {ex.Message}");
+                return Ok(new { status = false, message = $"删除数据失败: {ex.Message}" });
             }
         }
 
@@ -96,24 +98,24 @@ namespace MarathonMaster.Controllers
                 if (insertCount > 0)
                 {
                     _logger.LogInformation("成功插入: {@Supply}", record);
-                    return Ok(new { Status = "Inserted" });
+                    return Ok(new { status = true, type = "Inserted" });
                 }
                 else if (updateCount > 0)
                 {
                     _logger.LogInformation("成功更新: {@Supply}", record);
-                    return Ok(new { Status = "Updated" });
+                    return Ok(new { status = true, type = "Updated" });
                 }
                 else
                 {
                     _logger.LogInformation("无变更操作: {@Supply}", record);
-                    return Ok(new { Status = "NoChange" });
+                    return Ok(new { status = false, type = "NoChange", message = "后端不报错但无插入" });
                 }
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "插入数据失败: {@Supply}", record); // 记录错误信息
 
-                return BadRequest(new { Status = "NoChange" });
+                return Ok(new { status = false, type = "NoChange", message = $"插入数据失败: {ex.Message}" });
             }
         }
 
@@ -132,24 +134,24 @@ namespace MarathonMaster.Controllers
                 if (insertCount > 0)
                 {
                     _logger.LogInformation("成功插入: {@Event_Item}", record);
-                    return Ok(new { Status = "Inserted" });
+                    return Ok(new { status = true, type = "Inserted" });
                 }
                 else if (updateCount > 0)
                 {
                     _logger.LogInformation("成功更新: {@Event_Item}", record);
-                    return Ok(new { Status = "Updated" });
+                    return Ok(new { status = true, type = "Updated" });
                 }
                 else
                 {
                     _logger.LogInformation("无变更操作: {@Event_Item}", record);
-                    return Ok(new { Status = "NoChange" });
+                    return Ok(new { status = false, type = "NoChange", message = "后端不报错但无插入" });
                 }
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "插入数据失败: {@Event_Item}", record); // 记录错误信息
 
-                return BadRequest(new { Status = "NoChange" });
+                return Ok(new { status = false, type = "NoChange", message = $"插入数据失败: {ex.Message}" });
             }
         }
 
@@ -165,13 +167,13 @@ namespace MarathonMaster.Controllers
             {
                 await _db.Insertable(supplypoint).ExecuteCommandAsync();
                 _logger.LogInformation("成功插入补给点数据");
-                return Ok(true);
+                return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "插入数据失败: {@Supplypoint}", supplypoint); // 记录错误信息
 
-                return BadRequest(false);
+                return Ok(new { status = false, message = $"插入数据失败: {ex.Message}" });
             }
         }
 
@@ -183,9 +185,9 @@ namespace MarathonMaster.Controllers
             {
                 int count = await _db.Deleteable<Medicalpoint>().Where(it => it.Id == Id).ExecuteCommandAsync();
                 if (count == 1)
-                    return Ok(true);
+                    return Ok(new { status = true });
                 else
-                    return Ok(false);
+                    return Ok(new { status = false });
             }
             catch (System.Exception ex)
             {
@@ -210,12 +212,8 @@ namespace MarathonMaster.Controllers
 
                 var point_list = query.ToList();
 
-                if (point_list == null || point_list.Count == 0)
-                {
-                    return Ok("无此补给点");
-                }
 
-                _logger.LogInformation("成功找到");
+                _logger.LogInformation("成功找到或返回空列表");
                 return Ok(point_list);
             }
             catch (System.Exception ex)
@@ -252,12 +250,12 @@ namespace MarathonMaster.Controllers
                      .ToListAsync();
                 }
 
-
+                /*
                 if (package_list == null || package_list.Count == 0)
                 {
                     return Ok(false);
                 }
-
+                */
                 _logger.LogInformation("成功找到");
                 return Ok(package_list);
             }
@@ -293,12 +291,12 @@ namespace MarathonMaster.Controllers
                      .Select((su, i) => new Supply_With_Name { Id = i.Id, Name = i.Name, Amount = su.Amount, Supplypoint_Id = su.Supplypoint_Id })
                      .ToListAsync();
                 }
-
+                /*
                 if (package_list == null || package_list.Count == 0)
                 {
                     return Ok(false);
                 }
-
+                */
                 _logger.LogInformation("成功找到");
                 return Ok(package_list);
             }
@@ -328,7 +326,7 @@ namespace MarathonMaster.Controllers
                 _db.Ado.CommitTran();
 
                 _logger.LogInformation("成功批量插入数据: {@Records}", records);
-                return Ok(true);
+                return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
@@ -336,7 +334,7 @@ namespace MarathonMaster.Controllers
                 _db.Ado.RollbackTran();
 
                 _logger.LogError(ex, "批量插入数据失败，全部回滚: {@Records}", records);
-                return BadRequest($"插入失败: {ex.Message}");
+                return Ok(new { status = false, message = $"插入失败: {ex.Message}" });
             }
         }
 
@@ -359,7 +357,7 @@ namespace MarathonMaster.Controllers
                 _db.Ado.CommitTran();
 
                 _logger.LogInformation("成功批量插入数据: {@Records}", records);
-                return Ok(true);
+                return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
@@ -367,7 +365,7 @@ namespace MarathonMaster.Controllers
                 _db.Ado.RollbackTran();
 
                 _logger.LogError(ex, "批量插入数据失败，全部回滚: {@Records}", records);
-                return BadRequest($"插入失败: {ex.Message}");
+                return Ok(new { status = false, message = $"插入失败: {ex.Message}" });
             }
         }
 
@@ -390,7 +388,7 @@ namespace MarathonMaster.Controllers
                 _db.Ado.CommitTran();
 
                 _logger.LogInformation("成功批量删除数据");
-                return Ok(true);
+                return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
@@ -398,7 +396,7 @@ namespace MarathonMaster.Controllers
                 _db.Ado.RollbackTran();
 
                 _logger.LogError(ex, "批量删除数据失败，全部回滚");
-                return BadRequest($"删除失败: {ex.Message}");
+                return Ok(new { status = false, message = $"删除失败: {ex.Message}" });
             }
         }
 
@@ -421,7 +419,7 @@ namespace MarathonMaster.Controllers
                 _db.Ado.CommitTran();
 
                 _logger.LogInformation("成功批量删除数据: {@List<Event_Item>}", records);
-                return Ok(true);
+                return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
@@ -429,7 +427,7 @@ namespace MarathonMaster.Controllers
                 _db.Ado.RollbackTran();
 
                 _logger.LogError(ex, "批量删除数据失败，全部回滚: {@List<Event_Item>}", records);
-                return BadRequest($"删除失败: {ex.Message}");
+                return Ok(new { status = false, message = $"删除失败: {ex.Message}" });
             }
         }
 
@@ -454,16 +452,17 @@ namespace MarathonMaster.Controllers
 
                 if (item_list == null || item_list.Count == 0)
                 {
-                    return Ok(new { Status = false });//平台无物品
+                    return Ok(new { data = item_list, status = false, total = 0 });//平台无物品
                 }
 
                 _logger.LogInformation("成功找到");
-                return Ok(new { Data = item_list, Status = true, Total = all_count });//total是平台已有的所有物品
+                return Ok(new { data = item_list, status = true, total = all_count });//total是平台已有的所有物品
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "查询数据失败");
-                return BadRequest($"查询失败: {ex.Message}");
+                List<Item> null_list = [];
+                return Ok(new { data = null_list, status = false, total = 0, message = $"查询失败: {ex.Message}" });
             }
         }
 
