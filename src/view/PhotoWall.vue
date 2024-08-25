@@ -41,6 +41,7 @@
                 <p>摄影师: {{ photo.photographer }}</p>
                 <p>日期: {{ photo.date }}</p>
                 <p>地点: {{ photo.location }}</p>
+                <p>赛事: {{ photo.event }}</p>
               </div>
               <button @click="toggleLike(index)" class="like-button" :class="{ liked: photo.liked }">
                 {{ photo.liked ? '❤️'+photo.likes : '🤍'+photo.likes }}
