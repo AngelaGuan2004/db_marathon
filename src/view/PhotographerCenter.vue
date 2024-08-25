@@ -32,9 +32,6 @@
 
             <el-dialog :visible.sync="formVisible" title="（单次上传一张摄影作品）">
               <el-form  ref="form" :model="form" :rules="rules" label-width="80px">
-                <el-form-item label="照片名称">
-                  <el-input v-model="form.name"></el-input>
-                </el-form-item>
                 <el-form-item label="摄影时间" prop="date1">
                   <el-col :span="15">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
@@ -111,14 +108,10 @@ export default {
       fileList: [],
 
       form: {
-        name: '',
         date1: '',
         desc: ''
       },
       rules: {
-        //name: [
-        //  { required: true, message: '请输入照片名称', trigger: 'blur' }
-        //],
         date1: [
           { required: true, message: '请选择摄影时间', trigger: 'change' }
         ]
