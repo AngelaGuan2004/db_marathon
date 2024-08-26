@@ -7,19 +7,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-using MarathonMaster;
+using WebApplication1;
 
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using MarathonMaster.Models;
+using WebApplication1.Models;
 using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
 
 
-namespace MarathonMaster.Controllers
+namespace WebApplication1.Controllers
 {
 
     [Route("/[Controller]/[action]")] // 指定路由模板和控制器的基本配置
@@ -146,12 +145,66 @@ namespace MarathonMaster.Controllers
             }
         }
 
+
+        //志愿者详情-查找某场赛事的某个志愿者的相关信息
+        [HttpPost]
+        public async Task<IActionResult> acquire_volunteer_information([FromBody] int volunteer_id, int event_id)   //收到志愿者id和赛事id
+        {
+            _logger.LogInformation("收到志愿者排班的Drive：数据: {@volunteer_id}", volunteer_id); // 记录收到的数据
+
+            Schedule p =await _db.Queryable<Schedule>().SingleAsync(it => it.Volunteer_Id == volunteer_id && it.Event_Id == event_id); //查询单条记录，没有返回Null，如果结果大于1条会抛出错误
+
+            int status;               //志愿者状态，是否分工，查schedule表job_category的值是否为null
+            string job_category ="未排班";      //该志愿者的工作种类
+            bool is_scheduled =false;         //该志愿者是否排班，去对应工作的表（比如VolunteerSupplypoint）查他是否排班，即查有无该志愿者id
+            List<Partner> partners = new List<Partner>();   //该志愿者工作的同伴
+            //partners.Add()
+            try
+            {
+                if (p.Job_Category == null)
+                    status = 0;   //0表示未分工
+                else
+                {
+                    status = 1;
+                    job_category = p.Job_Category.ToString();   //job_category的值不是null，需要知道工作种类，等会要传回前端
+                  
+                    if (job_category != null)
+                    {
+                        //检查是否排班，即在对应的工作关系中是否存在该志愿者的id
+                        if (job_category == "接驳车")                    
+                            is_scheduled = await _db.Queryable<Drive>().AnyAsync(it => it.Volunteer_Id == volunteer_id);
+                        else if (job_category == "补给点")
+                            is_scheduled = await _db.Queryable<VolunteerSupplypoint>().AnyAsync(it => it.volunteer_id == volunteer_id);  
+                        else if (job_category == "医疗点")           
+                            is_scheduled = await _db.Queryable<VolunteerMedicalpoint>().AnyAsync(it => it.volunteer_id == volunteer_id);
+                        
+                        //如果已经排班，查询其同伴
+                        if (job_category == "接驳车" && is_scheduled)
+                            partners = GetPartners(volunteer_id, 0);
+                        else if (job_category == "补给点" && is_scheduled)
+                            partners = GetPartners(volunteer_id, 1);
+                        else if (job_category == "医疗点" && is_scheduled)
+                            partners = GetPartners(volunteer_id, 2);
+
+                    }
+
+                }
+                _logger.LogInformation("成功查询志愿者相关信息: {@p}", p); // 记录插入成功
+                return Ok(new { Status=status, Job_category = job_category, Is_scheduled= is_scheduled, Partners=partners });  //true表示成功
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查询志愿者相关信息数据失败: {@p}", p); // 记录错误信息
+                return BadRequest(false); //false表示失败
+            }
+        }
+
         // 志愿者详情-寻找搭档
         private List<Partner> GetPartners(int volunteer_id, int type)
         {
             // 工种：0接驳车 1补给点 2医疗点
             List<Partner> partners = new List<Partner>();
-            if(type == 0)
+            if (type == 0)
             {
                 try
                 {

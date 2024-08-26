@@ -13,12 +13,12 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using MarathonMaster.Models;
+using WebApplication1.Models;
 using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
 
-namespace MarathonMaster.Controllers
+namespace WebApplication1.Controllers
 {
     [Route("/[Controller]/[action]")] // 指定路由模板和控制器的基本配置
     [ApiController]
@@ -54,8 +54,7 @@ namespace MarathonMaster.Controllers
             if (file == null || file.Length == 0)  //检查文件是否为空或文件大小是否为零
                 return Unauthorized("No file uploaded.");
 
-         
-            var uploads = Path.Combine("/myapp/photo", "uploads");
+            var uploads = Path.Combine("C:\\Users\\Administrator\\Desktop\\DBexcel\\photo", "uploads");
             //var uploads = Path.Combine(_environment.WebRootPath, "uploads");
             //意味着上传文件将被存储在'_environment.WebRootPath/uploads'目录下
 
