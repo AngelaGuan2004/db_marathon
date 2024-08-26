@@ -105,6 +105,70 @@ namespace db_marathon.Controllers
                 return BadRequest(false);
             }
         }
+
+        // 查询选手报名的所有比赛ID
+        [HttpGet]
+        public async Task<IActionResult> get_events_by_playerid(int Id)
+        {
+            try
+            {
+                // 查询数据库，获取指定选手ID报名的所有比赛ID列表
+                var eventIds = await _db.Queryable<Participate>()
+                                        .Where(p => p.Player_Id == Id)
+                                        .Select(p => p.Event_Id)
+                                        .ToListAsync();
+
+                if (eventIds != null && eventIds.Count > 0)
+                {
+                    _logger.LogInformation("查询成功, 选手ID: {PlayerId}, 比赛ID列表: {@EventIds}", Id, eventIds);
+                    return Ok(eventIds);
+                }
+                else
+                {
+                    _logger.LogWarning("未找到选手ID: {PlayerId} 的报名记录", Id);
+                    return NotFound("未找到该选手的报名记录");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查询选手ID: {PlayerId} 的报名记录时出错", Id);
+                return BadRequest("查询失败");
+            }
+        }
+
+        // 根据比赛id和选手id查询比赛号码
+        [HttpGet]
+        public async Task<IActionResult> get_number_by_eventid_and_playerid(int eventId, int playerId)
+        {
+            try
+            {
+                // 查询数据库，获取匹配的比赛号码
+                var participateRecord = await _db.Queryable<Participate>()
+                                                 .Where(p => p.Event_Id == eventId && p.Player_Id == playerId)
+                                                 .Select(p => p.Number_)
+                                                 .FirstAsync();
+
+                if (participateRecord != null)
+                {
+                    _logger.LogInformation("查询成功, 比赛ID: {EventId}, 选手ID: {PlayerId}, 比赛号码: {Number}", eventId, playerId, participateRecord);
+                    return Ok(participateRecord); // 返回比赛号码
+                }
+                else
+                {
+                    _logger.LogWarning("未找到比赛ID: {EventId} 和选手ID: {PlayerId} 对应的比赛号码", eventId, playerId);
+                    return NotFound("未找到对应的比赛号码");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查询比赛ID: {EventId} 和选手ID: {PlayerId} 的比赛号码时出错", eventId, playerId);
+                return BadRequest("查询失败");
+            }
+        }
+
+
     }
+
+
 
 }

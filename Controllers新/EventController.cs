@@ -94,19 +94,18 @@ namespace db_marathon.Controllers
             }
         }
 
-        //获取赛事详情
+        //获取赛事详情  ******************************有修改
         [HttpGet]
-        public async Task<IActionResult> get_by_id([FromQuery] Event event_)
+        public async Task<IActionResult> get_by_id([FromQuery] int Id)
         {
-            _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
             try
             {
                 var existingEvent_ = await _db.Queryable<Event>()
-                .Where(it => it.Id == event_.Id)
+                .Where(it => it.Id == Id)
                 .FirstAsync();
 
                 var existingWeather = await _db.Queryable<Weather>()
-                .Where(it => it.Id == event_.Id)
+                .Where(it => it.Id == Id)
                 .FirstAsync();
 
                 if (existingEvent_ != null)
@@ -116,7 +115,7 @@ namespace db_marathon.Controllers
                         Event = existingEvent_,
                         Weather = existingWeather
                     };
-                    _logger.LogInformation("赛事查找成功: {@Event}", event_); // 记录成功
+                    _logger.LogInformation("赛事查找成功: {ID}", Id); // 记录成功
                     return Ok(eventAndWeather);
                 }
                 else
@@ -127,7 +126,7 @@ namespace db_marathon.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "赛事查找失败", event_); // 记录错误信息
+                _logger.LogError(ex, "赛事查找失败", Id); // 记录错误信息
 
                 return BadRequest(false);
             }
