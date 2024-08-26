@@ -1,22 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Oracle.ManagedDataAccess.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
-using WebApplication1;
-
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Unicode;
-using WebApplication1.Models;
-using System.Drawing;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using MarathonMaster;
+using Microsoft.AspNetCore.Cors;
+using MarathonMaster.Models;
+using System.Numerics;
 
 namespace WebApplication1.Controllers
 {
