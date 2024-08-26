@@ -163,7 +163,7 @@ namespace MarathonMaster.Controllers
                 return StatusCode(500, "获取赛事列表失败");
             }
         }
-
+        
         ////查询对应种类的赛事
         //[HttpGet]
         //public List<Event> get_by_category(string Category)

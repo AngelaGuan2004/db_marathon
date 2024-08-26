@@ -265,3 +265,6 @@ create table volunteer_medicalpoint
   foreign key(volunteer_id) references volunteer(id),
   foreign key(medicalpoint_id) references medicalpoint(id)
 )
+
+ALTER TABLE event
+ADD is_drawn varchar2(3) DEFAULT '·ñ' NOT NULL;

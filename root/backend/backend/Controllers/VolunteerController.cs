@@ -1,21 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Oracle.ManagedDataAccess.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
-using WebApplication1;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using MarathonMaster;
+using Microsoft.AspNetCore.Cors;
+using MarathonMaster.Models;
+using System.Numerics;
+using MarathonMaster.Controllers;
+using System.Collections.Generic;
+using System;
 
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Unicode;
-using WebApplication1.Models;
-using System.Drawing;
-using Microsoft.AspNetCore.Authorization;
 
 
 namespace WebApplication1.Controllers
@@ -148,7 +142,7 @@ namespace WebApplication1.Controllers
 
         //志愿者详情-查找某场赛事的某个志愿者的相关信息
         [HttpPost]
-        public async Task<IActionResult> acquire_volunteer_information([FromBody] int volunteer_id, int event_id)   //收到志愿者id和赛事id
+        public async Task<IActionResult> acquire_volunteer_information([FromBody] int volunteer_id, string event_id)   //收到志愿者id和赛事id
         {
             _logger.LogInformation("收到志愿者排班的Drive：数据: {@volunteer_id}", volunteer_id); // 记录收到的数据
 
