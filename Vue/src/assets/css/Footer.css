@@ -9,6 +9,7 @@
 }
 
 .FooterText {
+  display: flex;
   margin-left: 150px;
   font-size: 18px;
   color: white;

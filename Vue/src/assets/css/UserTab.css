@@ -1,6 +1,6 @@
 .UserTab {
   width: 225px;
-  margin-top: 20px;
+  margin-top: 45%;
 }
 
 .UserTabFlex {
@@ -10,7 +10,8 @@
   align-items: flex-end;
 }
 
-.el-menu-item {
+.el-menu-item,
+.el-submenu__title {
   font-size: 20px;
   font-weight: bold;
   height: 80px;
@@ -18,31 +19,23 @@
   margin: 10px 0;
 }
 
+.el-submenu__title span,
 .el-menu-item span {
   padding-left: 20%;
 }
 
-.el-menu-vertical-demo>.is-active {
-  background-color: rgb(255, 242, 242);
-  border-radius: 15px;
+.el-submenu>.el-menu>.el-menu-item {
+  font-size: 18px;
+  padding-left: 25% !important;
+  margin: 0;
+  margin-top: 10px;
 }
 
-.el-menu-item>.is-active {
-  background-color: rgb(255, 242, 242);
-  border-radius: 15px;
-}
-
-.el-menu-vertical-demo>.el-menu-item:hover {
-  font-weight: bold;
-  background-color: rgb(255, 242, 242);
-  border-radius: 15px;
-
-}
-
+.el-menu-vertical-demo>.is-active,
+.el-menu>.is-active,
+.el-menu-item:hover,
 .el-submenu__title:hover {
-  font-weight: bold;
   background-color: rgb(255, 242, 242);
-  border-radius: 15px;
 }
 
 .User {

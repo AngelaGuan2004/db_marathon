@@ -3,7 +3,7 @@
     <div class="UserRegistrations">
       <el-main>
         <div style="width: 100%; overflow: auto ;height: 420px;margin-top: 20px;">
-          <el-table :data="events" class="table" @row-click="handleRowClick" row-class-name="clickable-row" stripe>
+          <el-table :data="events" class="table" row-class-name="clickable-row" stripe>
             <el-table-column prop="name" label="比赛名称" width="300"></el-table-column>
             <el-table-column prop="event_date" label="时间" width="150"></el-table-column>
             <el-table-column prop="type" label="赛事类型" width="150"></el-table-column>
@@ -13,6 +13,12 @@
               </template>
             </el-table-column>
             <el-table-column prop="number" label="号码" width="150"></el-table-column>
+            <el-table-column label="操作" width="100">
+              <template slot-scope="scope">
+                <span style="font-size: 14px;color: rgb(64, 158, 255);font-weight: bold;"
+                  @click="handleRowClick(scope.row)">详情</span>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </el-main>
@@ -73,7 +79,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import 'element-ui/lib/theme-chalk/index.css';
 @import "../assets/css/Base.css";
 @import "../assets/css/UserTable.css";
@@ -81,12 +87,11 @@ export default {
 #UserRegistrations {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: flex-end;
-  margin-right: 60px;
   background-color: white;
   margin-top: 80px;
-  width: 66%;
+  width: 75%;
   font-size: 15px;
 }
 </style>

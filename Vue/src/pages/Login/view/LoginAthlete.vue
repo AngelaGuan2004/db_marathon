@@ -12,7 +12,7 @@
           <el-input v-model="password" placeholder="请输入密码" show-password></el-input>
         </div>
         <div>
-          <button class="LoginRightIndexFormButton">
+          <button class="LoginRightIndexFormButton" @click="LoginAthlete">
             <span>登录</span>
           </button>
         </div>
@@ -36,6 +36,10 @@ export default {
   methods: {
     GoToRegister() {
       this.$router.push({ name: 'Register' })
+    },
+    LoginAthlete() {
+      localStorage.setItem('UserRole', 'Athlete')
+      location.href = 'index.html'
     }
   }
 }

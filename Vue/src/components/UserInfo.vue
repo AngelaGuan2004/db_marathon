@@ -6,52 +6,51 @@
         <button class="relative-button" @click="changeButton">{{ buttonText }}</button>
       </div>
       <hr class="line" />
-      <div id="UserInfoText">
-        <div class="a-button">
-          <p class="down-notice">姓名</p>
-          <p class="down-notice2">{{ name }}</p>
+      <div class="UserInfoText">
+        <div class="UserInfoTextRow">
+          <p class="UserInfoTextTitle">姓名</p>
+          <p class="UserInfoTextContent">{{ name }}</p>
         </div>
-        <div class="a-button">
-          <p class="down-notice">手机号</p>
-          <p class="down-notice2" v-if="!bianji">{{ telephone }}</p>
-          <input v-model="telephone" placeholder="请输入您的电话" v-if="bianji" class="down-notice2 border" />
-          <p class='error-notice' v-if="bianji && !tele_right">输入有误</p>
+        <div class="UserInfoTextRow">
+          <p class="UserInfoTextTitle">手机号</p>
+          <p class="UserInfoTextContent" v-if="!isEdit">{{ newTelephone }}</p>
+          <el-input v-model="newTelephone" placeholder="请输入您的电话" v-if="isEdit" class="UserInfoTextContent"></el-input>
+          <p class='UserInfoTextError' v-if="isEdit && !isTelephone">输入有误</p>
         </div>
-        <div class="a-button">
-          <p class="down-notice">证件</p>
-          <p class="down-notice2">{{ ID_number }}</p>
+        <div class="UserInfoTextRow">
+          <p class="UserInfoTextTitle">证件</p>
+          <p class="UserInfoTextContent">{{ ID_number }}</p>
         </div>
-        <div class="a-button">
-          <p class="down-notice">ID</p>
-          <p class="down-notice2">{{ ID }}</p>
+        <div class="UserInfoTextRow">
+          <p class="UserInfoTextTitle">ID</p>
+          <p class="UserInfoTextContent">{{ ID }}</p>
         </div>
-        <div class="a-button">
-          <p class="down-notice">性别</p>
-          <p class="down-notice2">{{ gender }}</p>
+        <div class="UserInfoTextRow">
+          <p class="UserInfoTextTitle">性别</p>
+          <p class="UserInfoTextContent">{{ gender }}</p>
         </div>
-        <div class="a-button">
-          <p class="down-notice">地区</p>
-          <p class="down-notice2" v-if="!bianji && region !== ''">{{ region }}</p>
-          <div class="select-reg down-notice2" v-if="bianji">
-            <div>
-              <label for="province" class="label-p">省份：</label>
-              <select id="province" v-model="selectedProvince" @change="updateCities">
-                <option v-for="province in provinces" :key="province" :value="province">{{ province }}</option>
-              </select>
+        <div class="UserInfoTextRow">
+          <p class="UserInfoTextTitle">年龄</p>
+          <p class="UserInfoTextContent" v-if="!isEdit && newAge !== ''">{{ newAge }}</p>
+          <el-input v-model="newAge" placeholder="请输入您的年龄" v-if="isEdit" class="UserInfoTextContent"></el-input>
+          <p class='UserInfoTextError' v-if="isEdit && !isAge">输入有误</p>
+        </div>
+        <div class="UserInfoTextRow" style="height: 75px;">
+          <p class="UserInfoTextTitle">地区</p>
+          <p class="UserInfoTextContent" v-if="!isEdit && newRegion !== ''">{{ newRegion }}</p>
+          <div class="UserInfoTextContent" v-if="isEdit">
+            <div style="margin: 10px 0;">
+              <label for="province" class="UserInfoTextForProvince">省份：</label>
+              <el-select v-model="selectedProvince" placeholder="请选择" size="mini">
+                <el-option v-for="province in provinces" :key="province" :value="province"></el-option>
+              </el-select>
             </div>
             <div>
-              <label for="province" class="label-c">城市：</label>
-              <select id="city" v-model="selectedCity">
-                <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
-              </select>
+              <label for="province" class="UserInfoTextForCity">城市：</label>
+              <el-select v-model="selectedCity" placeholder="请选择" size="mini">
+                <el-option v-for="city in cities" :key="city" :value="city"></el-option>
+              </el-select>
             </div>
-          </div>
-        </div>
-        <div class="a-button">
-          <p class="down-notice">出生日期</p>
-          <p class="down-notice2" v-if="!bianji && birthday !== ''">{{ birthday }}</p>
-          <div class="down-notice2" v-if="bianji">
-            <input type="date" v-model="birthday" />
           </div>
         </div>
       </div>
@@ -70,15 +69,19 @@ export default {
   data() {
     return {
       buttonText: "编辑",
-      bianji: false,
-      tele_right: true,
+      isEdit: false,
+      isTelephone: true,
+      isAge: true,
       name: '李靓',
-      telephone: '12637152637',
+      oldTelephone: '12637152637',
+      newTelephone: '12637152637',
       ID_number: '273618633622772662',
       ID: '2272186183',   /* 这个参数怎么来？存疑 */
       gender: '女',
-      birthday: '',
-      region: '',
+      oldAge: '',
+      newAge: '',
+      oldRegion: '',
+      newRegion: '',
       provinces: [
         '北京', '天津', '上海', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江',
         '江苏', '浙江', '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南',
@@ -143,19 +146,69 @@ export default {
   },
   methods: {
     changeButton() {
-      if (this.bianji == false) {
+      //一层：现在是展示状态
+      if (!this.isEdit) {
         this.buttonText = '保存'
-        this.bianji = true
+        this.isEdit = true
       }
-      else if (this.bianji == true) {
-        if (this.tele_right) {
-          /* 调用js */
-          /*this.submit();*/
-          this.buttonText = '编辑'
-          this.bianji = false
+      //一层：现在是编辑状态
+      else if (this.isEdit) {
+        //二层：编辑的内容合规
+        if (this.isTelephone && this.isAge) {
+          //三层：没有改变数据
+          if (this.oldTelephone === this.telephone && this.oldRegion === this.region && this.old_age === this.age) {
+            this.buttonText = '编辑'
+            this.isEdit = false
+          }
+          //三层：改变了数据
+          else {
+            this.$confirm("是否保存数据?", "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消 ",
+              type: "warning",
+              distinguishCancelAndClose: true,    // 重要，设置为true才会把右上角X和取消区分开来
+              closeOnClickModal: false
+            }).then(() => {
+              // 确认通过执行逻辑        A按钮逻辑
+              this.oldTelephone = this.newTelephone;
+              this.oldRegion = this.newRegion;
+              this.oldAge = this.newAge;
+              /* 调用js */
+              /*this.submit();*/
+              this.buttonText = '编辑'
+              this.isEdit = false
+            }).catch((e) => {
+              if (e == 'cancel') {
+                // 确认不通过执行逻辑   B按钮逻辑
+              } else if (e == 'close') {
+                // 右上角X的执行逻辑 
+              }
+            })
+          }
         }
+        //二层：编辑的内容不合规
         else {
-          console.log("无法保存")
+          this.$confirm("数据有误", "提示", {
+            confirmButtonText: "返回更改",
+            cancelButtonText: "取消",
+            type: "warning",
+            distinguishCancelAndClose: true,    // 重要，设置为true才会把右上角X和取消区分开来
+            closeOnClickModal: false
+          }).then(() => {
+            // 确认通过执行逻辑        A按钮逻辑
+            // 保存当前编辑的数据
+            this.newTelephone = this.oldTelephone;
+            this.newRegion = this.oldRegion;
+            this.newAge = this.oldAge;
+            this.buttonText = '编辑'
+            this.isEdit = false
+          }).catch((e) => {
+            if (e == 'cancel') {
+              // 确认不通过执行逻辑   B按钮逻辑
+            } else if (e == 'close') {
+              // 右上角X的执行逻辑 
+            }
+          })
         }
       }
     },
@@ -189,153 +242,38 @@ export default {
     },
   },
   watch: {
-    telephone(newVal) {
+    newTelephone(telephone) {
       var reg = /^1\d{10}$/;
-      this.tele_right = reg.test(newVal);
+      this.isTelephone = reg.test(telephone);
+    },
+    newAge(age) {
+      if (this.age != '') {
+        // 检查每一位是否为数字
+        if (/^\d+$/.test(age)) {
+          const ageNum = parseInt(age, 10);
+          if (ageNum >= 18 && ageNum <= 100)
+            this.isAge = true;
+          else
+            this.isAge = false;
+        }
+        else
+          this.isAge = false;
+      }
+      else
+        this.isAge = true;
     },
     selectedProvince() {
-      this.region = this.selectedProvince + ' ' + this.selectedCity;
+      this.newRegion = this.selectedProvince + '    ' + this.selectedCity;
     },
     selectedCity() {
-      this.region = this.selectedProvince + ' ' + this.selectedCity;
+      this.newRegion = this.selectedProvince + '    ' + this.selectedCity;
     }
   },
 }
 </script>
 
 <style scoped>
-#UserInfo {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-end;
-}
-
-.UserInfo {
-  width: 500px;
-  height: 500px;
-  background-color: white;
-  left: -75px;
-  margin-top: 50px;
-  position: relative;
-}
-
-.UserInfoImg {
-  width: 450px;
-  height: 100%;
-  left: -200px;
-  margin-top: 30px;
-}
-
-.UserInfoImg img {
-  width: 100%;
-}
-
-.UserInfoUpper {
-  width: 100%;
-  height: 60px;
-}
-
-.UserInfoTitle {
-  display: inline-block;
-  line-height: 65px;
-  font-size: 24px;
-  font-weight: bold;
-  text-align: left;
-  margin-left: 50px;
-}
-
-.relative-button {
-  display: inline-block;
-  margin-left: 55%;
-  margin-top: 10px;
-  font-size: 18px;
-  color: black;
-  background-color: transparent;
-  border: 0;
-  cursor: pointer;
-  width: 50px;
-  height: 35px;
-  border-radius: 10px;
-}
-
-.UserInfoText {
-  width: 100%;
-  height: 300px;
-}
-
-.line {
-  border: none;
-  height: 2px;
-  background-color: #f4f4f6;
-}
-
-
-.down-notice {
-  width: 100px;
-  color: black;
-  font-size: 18px;
-  text-align: left;
-  margin-left: 50px;
-}
-
-.down-notice2 {
-  color: black;
-  font-size: 18px;
-  text-align: left;
-  margin-left: 10px;
-}
-
-
-.a-button {
-  display: flex;
-  align-items: center;
-}
-
-.label-p {
-  font-size: 18px;
-  text-align: left;
-  color: black;
-}
-
-.label-c {
-  font-size: 18px;
-  text-align: left;
-  margin-left: 33px;
-  color: black;
-}
-
-.select-reg {
-  display: flex;
-}
-
-.border {
-  border: 1px solid #2c3e50;
-}
-
-.error-notice {
-  color: rgb(168, 27, 31);
-  margin-right: 2px;
-}
-
-/* 下部分的左间部分 */
-.inactive {
-  margin-left: 20px;
-  font-size: 20px;
-  color: black;
-  background-color: white;
-  margin-top: 30px;
-}
-
-.active {
-  margin-left: 20px;
-  margin-top: 30px;
-  font-size: 20px;
-  color: rgb(168, 27, 31);
-  background-color: white;
-}
-
-.break {
-  margin-top: 60px;
-}
+@import 'element-ui/lib/theme-chalk/index.css';
+@import "../assets/css/Base.css";
+@import "../assets/css/UserInfo.css";
 </style>

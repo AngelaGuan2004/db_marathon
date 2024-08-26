@@ -10,20 +10,24 @@
       <div class="UserTabRight">
         <div class="UserTabFlex">
           <div class="UserTab">
-            <el-menu default-active="1" class="el-menu-vertical-demo" @select="ActiveTab"
+            <el-menu :default-active="ActiveIndexForUserTab" class="el-menu-vertical-demo" @select="ActiveTab"
               active-text-color="rgb(168, 27, 31)">
               <el-menu-item index="1">
-                <span slot="title">个人信息</span>
+                <span>个人信息</span>
               </el-menu-item>
               <el-menu-item index="2">
-                <span slot="title">我的成绩</span>
+                <span>我的成绩</span>
               </el-menu-item>
               <el-menu-item index="3">
-                <span slot="title">我的报名</span>
+                <span>我的报名</span>
               </el-menu-item>
-              <el-menu-item index="4">
-                <span slot="title">我的志愿</span>
-              </el-menu-item>
+              <el-submenu index="6" menu-trigger="hover">
+                <template slot="title">
+                  <span>我的志愿</span>
+                </template>
+                <el-menu-item index="4">成为志愿者</el-menu-item>
+                <el-menu-item index="5">已报名志愿</el-menu-item>
+              </el-submenu>
             </el-menu>
           </div>
         </div>
@@ -31,25 +35,60 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
+import { Message } from 'element-ui';
 export default {
   name: 'UserTab',
   data() {
     return {
-      UserTabTitle: ['UserInfo', 'UserResults', 'UserRegistrations', 'UserVolunteering']
+      UserTabTitle: ['UserInfo', 'UserResults', 'UserRegistrations', 'UserVolunteerSignup', 'UserVolunteering'],
+      ActiveIndexForUserTab: "1"
     }
   },
   methods: {
     ActiveTab(index) {
       this.$router.push({ name: this.UserTabTitle[index - 1], })
+    },
+    ActiveIndex(index) {
+      this.ActiveIndexForUserTab = index; // 设置当前激活的菜单项
+      if (index.includes('-')) { // 处理submenu的子项
+        const [mainIndex, subIndex] = index.split('-');
+        this.$router.push({ name: this.UserTabTitle[parseInt(mainIndex, 10) - 1 + parseInt(subIndex, 10) - 1] });
+      } else {
+        this.$router.push({ name: this.UserTabTitle[index - 1] });
+      }
     }
   },
   mounted() {
     this.$router.push({ name: 'UserInfo' })
-  }
+    this.$bus.$on('ActiveIndexForUserTab', this.ActiveIndex);
+  },
+  beforeDestroy() {
+    this.$bus.$off('ActiveIndexForUserTab', this.updateActiveIndex);
+  },
+  beforeRouteEnter(to, from, next) {
+    console.log(Message)
+    let role = localStorage.getItem('UserRole') || 'Visitor';
+    if (role === 'Visitor') {
+      Message({
+        type: 'warning',
+        message: '请先登录'
+      });
+      setTimeout(() => {
+        location.href = 'login.html';
+      }, 1500)
+    } else if (role === 'Admin') {
+      Message({
+        type: 'warning',
+        message: '您是管理者，没有身份信息'
+      });
+    }
+    else {
+      next(); // 允许进入
+    }
+  },
 }
 </script>
 

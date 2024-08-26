@@ -9,7 +9,7 @@
           <el-input v-model="adminKey" placeholder="请输入管理秘钥"></el-input>
         </div>
         <div>
-          <button class="LoginRightIndexFormButton">
+          <button class="LoginRightIndexFormButton" @click="LoginAdmin">
             <span>登录</span>
           </button>
         </div>
@@ -32,6 +32,10 @@ export default {
   methods: {
     GoToRegister() {
       this.$router.push({ name: 'Register' })
+    },
+    LoginAdmin() {
+      localStorage.setItem('UserRole', 'Admin')
+      location.href = 'index.html'
     }
   }
 }

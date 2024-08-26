@@ -20,6 +20,8 @@ module.exports = {
   },
   lintOnSave: false, //关闭语法检查
   devServer: {
+    host: 'localhost', //target host
+    port: 8080,
     proxy: {
       '/api': {
         target: 'http://113.44.75.241:5158',

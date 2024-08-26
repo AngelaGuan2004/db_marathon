@@ -6,6 +6,8 @@ import UserRegistrations from '@/components/UserRegistrations.vue'
 import UserInfo from '@/components/UserInfo.vue'
 import UserVolunteering from '@/components/UserVolunteering.vue'
 import UserResults from '@/components/UserResults.vue'
+import UserVolunteerSignup from '@/components/UserVolunteerSignup.vue';
+import VolunteerDetailForAddStation from '@/components/VolunteerDetailForAddStation.vue'
 //创建并暴露一个路由器
 export default new VueRouter({
   mode: 'history',
@@ -32,7 +34,17 @@ export default new VueRouter({
         }, {
           path: 'UserVolunteering',
           name: 'UserVolunteering',
-          component: UserVolunteering
+          component: UserVolunteering,
+
+        }, {
+          path: 'VolunteerDetailForAddStation',
+          name: 'VolunteerDetailForAddStation',
+          component: VolunteerDetailForAddStation,
+          path: 'VolunteerDetailForAddStation/:id/:voltype',
+        }, {
+          path: 'UserVolunteerSignup',
+          name: 'UserVolunteerSignup',
+          component: UserVolunteerSignup
         }, {
           path: 'UserResults',
           name: 'UserResults',
@@ -40,7 +52,6 @@ export default new VueRouter({
         }
       ]
     },
-
   ],
 })
 

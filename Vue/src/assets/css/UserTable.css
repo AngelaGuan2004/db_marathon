@@ -63,3 +63,27 @@
   vertical-align: middle;
   line-height: 40px;
 }
+
+.NotTable {
+  display: table;
+  height: 500px;
+  width: 100%;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 60px;
+  text-align: center;
+  color: rgb(171, 172, 174);
+}
+
+.NotTable strong {
+  color: rgb(168, 27, 31);
+  cursor: pointer;
+}
+
+.cell span {
+  cursor: pointer;
+}
+
+.el-table__row {
+  cursor: auto;
+}

@@ -5,20 +5,20 @@
         <img src="../assets/images/JiMaIndex.png" alt="">
       </div>
       <div class="HeaderTab">
-        <el-menu default-active="1" class="el-menu-demo" mode="horizontal" @select="handleSelect"
+        <el-menu :default-active="ActiveIndexForHeader" class="el-menu-demo" mode="horizontal" @select="handleSelect"
           background-color="transparent" text-color="white" active-text-color="white">
           <el-menu-item index="1">首页</el-menu-item>
           <el-menu-item index="2">赛历</el-menu-item>
-          <el-menu-item index="3">赛事管理</el-menu-item>
-          <el-menu-item index="4">志愿服务</el-menu-item>
-          <el-menu-item index="5">我的</el-menu-item>
+          <el-menu-item index="3" :disabled="!(GetRole() === 'Admin')">赛事管理</el-menu-item>
+          <el-menu-item index=" 4" :disabled="!(GetRole() === 'Admin' || GetRole() === 'Volunteer')">志愿服务</el-menu-item>
+          <el-menu-item index=" 5">照片墙</el-menu-item>
+          <el-menu-item index=" 6">我的</el-menu-item>
         </el-menu>
       </div>
-      <div class="HeaderTab HeaderLogin">
+      <div class=" HeaderTab HeaderLogin">
         <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelectLogin" background-color="transparent"
           text-color="white" active-text-color="white">
           <el-menu-item index="1">登录</el-menu-item>
-          <el-menu-item index="2">注册</el-menu-item>
         </el-menu>
       </div>
     </div>
@@ -32,21 +32,20 @@ export default {
   name: 'Header',
   data() {
     return {
-      TabHerf: ['Home', '', '', '', 'UserTab']
+      TabHerf: ['Home', '', '', '', '', 'UserTab'],
+      Role: '',
+      ActiveIndexForHeader: "1"
     };
   },
   methods: {
     handleSelect(key) {
       this.$router.push({ name: this.TabHerf[key - 1], })
     },
-    handleSelectLogin(key) {
-      if (key === "1") {
-        this.$router.push({ name: 'Home' })
-        location.href = "login.html"
-      }
-      else {
-        location.href = "register.html"
-      }
+    handleSelectLogin() {
+      location.href = "login.html"
+    },
+    GetRole() {
+      return localStorage.getItem('UserRole') || 'Visitor'
     },
   },
   mounted() {

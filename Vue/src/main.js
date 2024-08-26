@@ -7,11 +7,6 @@ Vue.use(ElementUI);
 import store from './store'
 //引入路由器
 import router from './router'
-//引入axios
-import axios from 'axios'
-Vue.prototype.$axios = axios
-//引入全局css
-import '@/assets/css/Base.css'
 //引入VueRouter
 import VueRouter from 'vue-router'
 // 防止连续跳转同一路由时的错误
