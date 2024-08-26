@@ -16,6 +16,7 @@ using System.Text.Unicode;
 using MarathonMaster.Models;
 using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 
 namespace MarathonMaster.Controllers
@@ -143,6 +144,86 @@ namespace MarathonMaster.Controllers
                 _logger.LogError(ex, "更新志愿者排班的Drive数据失败: {@p}", p); // 记录错误信息
                 return BadRequest(false); //false表示失败
             }
+        }
+
+        // 志愿者详情-寻找搭档
+        private List<Partner> GetPartners(int volunteer_id, int type)
+        {
+            // 工种：0接驳车 1补给点 2医疗点
+            List<Partner> partners = new List<Partner>();
+            if(type == 0)
+            {
+                try
+                {
+                    // 根据该志愿者id找对应的班次id，再根据对应的班次id找对应的志愿者
+                    var shuttle_ids = _db.Queryable<Drive>()
+                           .Where(it => it.Volunteer_Id == volunteer_id)
+                           .Select(it => it.Shuttlecar_Id)
+                           .ToList();
+                    var volunteerIds = _db.Queryable<Drive>()
+                          .Where(it => shuttle_ids.Contains(it.Shuttlecar_Id))
+                          .Select(it => it.Volunteer_Id)
+                          .ToList();
+                    partners = _db.Queryable<Volunteer>()
+                           .Where(it => volunteerIds.Contains(it.Id))
+                           .Select(it => new Partner { Id = it.Id, Name = it.Name, Telephone_Number = it.Telephone_Number })
+                           .ToList();
+                }
+                catch (System.Exception ex)
+                {
+                    _logger.LogError(ex, "接驳车搭档查找失败"); // 记录错误信息
+                    return partners;
+                }
+            }
+            else if (type == 1)
+            {
+                try
+                {
+                    // 根据该志愿者id找对应的补给点id，再根据对应的补给点id找对应的志愿者
+                    var ids = _db.Queryable<VolunteerSupplypoint>()
+                           .Where(it => it.volunteer_id == volunteer_id)
+                           .Select(it => it.supplypoint_id)
+                           .ToList();
+                    var volunteerIds = _db.Queryable<VolunteerSupplypoint>()
+                          .Where(it => ids.Contains(it.supplypoint_id))
+                          .Select(it => it.volunteer_id)
+                          .ToList();
+                    partners = _db.Queryable<Volunteer>()
+                           .Where(it => volunteerIds.Contains(it.Id))
+                           .Select(it => new Partner { Id = it.Id, Name = it.Name, Telephone_Number = it.Telephone_Number })
+                           .ToList();
+                }
+                catch (System.Exception ex)
+                {
+                    _logger.LogError(ex, "补给点搭档查找失败"); // 记录错误信息
+                    return partners;
+                }
+            }
+            else if (type == 2)
+            {
+                try
+                {
+                    // 根据该志愿者id找对应的医疗点id，再根据对应的医疗点id找对应的志愿者
+                    var ids = _db.Queryable<VolunteerMedicalpoint>()
+                           .Where(it => it.volunteer_id == volunteer_id)
+                           .Select(it => it.medicalpoint_id)
+                           .ToList();
+                    var volunteerIds = _db.Queryable<VolunteerMedicalpoint>()
+                          .Where(it => ids.Contains(it.medicalpoint_id))
+                          .Select(it => it.volunteer_id)
+                          .ToList();
+                    partners = _db.Queryable<Volunteer>()
+                           .Where(it => volunteerIds.Contains(it.Id))
+                           .Select(it => new Partner { Id = it.Id, Name = it.Name, Telephone_Number = it.Telephone_Number })
+                           .ToList();
+                }
+                catch (System.Exception ex)
+                {
+                    _logger.LogError(ex, "医疗点搭档查找失败"); // 记录错误信息
+                    return partners;
+                }
+            }
+            return partners;
         }
     }
 }

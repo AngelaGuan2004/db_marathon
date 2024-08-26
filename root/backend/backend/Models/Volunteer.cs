@@ -19,4 +19,11 @@ namespace MarathonMaster.Models
         public string? Medicalpoint_Id { get; set; }   //医疗点id 可空
         public string Password { get; set; }//志愿者登录密码
     }
+
+    public class Partner
+    {
+        public int Id { get; set; }                 //志愿者id
+        public string Telephone_Number { get; set; }//志愿者电话
+        public string Name { get; set; }            //志愿者名字
+    }
 }
