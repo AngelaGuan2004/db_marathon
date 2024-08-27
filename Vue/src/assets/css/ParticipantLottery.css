@@ -1,0 +1,88 @@
+#ParticipantLottery {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  background-color: white;
+  margin-top: 80px;
+  width: 72%;
+  font-size: 15px;
+}
+
+
+.ParticipantLotteryContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+.ParticipantLotteryInput {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px auto;
+  width: 65%;
+}
+
+.InputTotalParticipants {
+  flex-grow: 1;
+  margin-right: 50px;
+}
+
+.right-menu {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+}
+
+.custom-button {
+  margin-right: auto;
+}
+
+
+.ParticipantLotteryTable {
+  width: 100%;
+  table-layout: fixed;
+  border: none;
+}
+
+.ParticipantLotteryTable th .cell,
+.ParticipantLotteryTable td .cell {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  height: 20px;
+  border: none;
+  vertical-align: middle;
+  line-height: 20px;
+}
+
+.el-table__header-wrapper,
+.el-table__body-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.Pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.ParticipantLotteryTableEmpty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #999;
+  width: 100%;
+  text-align: center;
+}
+
+.el-table__header-wrapper {
+  font-size: 16px;
+}

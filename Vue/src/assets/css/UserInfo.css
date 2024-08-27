@@ -41,7 +41,7 @@
 
 .relative-button {
   display: inline-block;
-  margin-left: 55%;
+  margin-left: 50%;
   margin-top: 10px;
   font-size: 18px;
   color: black;
@@ -51,6 +51,10 @@
   width: 50px;
   height: 35px;
   border-radius: 10px;
+}
+
+.relative-button:hover {
+  background-color: transparent;
 }
 
 .UserInfoText {
@@ -99,20 +103,19 @@
   color: black;
 }
 
-.el-input {
+#UserInfo .el-input {
   margin-left: 35px;
 }
 
-.el-input__inner {
+#UserInfo .el-input__inner {
   width: 80%;
 }
 
-
-.el-select .el-input {
+#UserInfo .el-select .el-input {
   margin-left: 0;
 }
 
-.UserInfoTextError {
+#UserInfo .UserInfoTextError {
   color: rgb(168, 27, 31);
   font-size: 14px;
   width: 20%;

@@ -32,7 +32,7 @@ export default {
   name: 'Header',
   data() {
     return {
-      TabHerf: ['Home', '', '', '', '', 'UserTab'],
+      TabHerf: ['Home', 'EventList', '', '', '', 'UserTab'],
       Role: '',
       ActiveIndexForHeader: "1"
     };
@@ -55,7 +55,7 @@ export default {
 </script>
 
 <style scoped>
-@import "../assets/css/Home.css";
+@import "../assets/css/Base.css";
 @import 'element-ui/lib/theme-chalk/index.css';
 @import "../assets/css/Header.css";
 </style>

@@ -1,4 +1,4 @@
-.el-carousel__item h3 {
+#Home .el-carousel__item h3 {
   color: #475669;
   font-size: 14px;
   opacity: 0.75;
@@ -6,11 +6,11 @@
   margin: 0;
 }
 
-.el-carousel__item:nth-child(2n) {
+#Home.el-carousel__item:nth-child(2n) {
   background-color: #99a9bf;
 }
 
-.el-carousel__item:nth-child(2n+1) {
+#Home.el-carousel__item:nth-child(2n+1) {
   background-color: #d3dce6;
 }
 
@@ -77,14 +77,14 @@
   border-bottom: 5px solid rgb(168, 27, 31);
 }
 
-.el-timeline-item__content {
+#Home .el-timeline-item__content {
   padding-left: 10px;
   margin: 10px 0;
   font-size: 24px;
   font-weight: bold;
 }
 
-.el-timeline-item__node--normal {
+#Home .el-timeline-item__node--normal {
   width: 15px;
   height: 15px;
   left: -4px;
@@ -100,11 +100,11 @@
   font-weight: bold;
 }
 
-.el-timeline-item {
+#Home .el-timeline-item {
   position: relative;
 }
 
-.el-timeline-item:hover {
+#Home .el-timeline-item:hover {
   height: 100px;
   width: 750px;
   line-height: 120px;
@@ -112,7 +112,7 @@
   border-radius: 20px;
 }
 
-.el-timeline-item::before {
+#Home .el-timeline-item::before {
   content: '';
   position: absolute;
   top: 0;
@@ -125,20 +125,20 @@
   border-radius: 20px;
 }
 
-.el-timeline-item:hover::before {
+#Home .el-timeline-item:hover::before {
   background-color: rgb(246, 232, 232) !important;
 }
 
-.el-timeline-item:hover>.el-timeline-item__node--normal {
+#Home .el-timeline-item:hover>.el-timeline-item__node--normal {
   margin: 48px 0;
   background-color: rgb(168, 27, 31) !important;
 }
 
-.el-timeline-item:hover>.el-timeline-item__wrapper>.el-timeline-item__content {
+#Home .el-timeline-item:hover>.el-timeline-item__wrapper>.el-timeline-item__content {
   color: rgb(168, 27, 31);
 }
 
-.el-timeline-item__tail {
+#Home .el-timeline-item__tail {
   border-left: 1px solid rgb(168, 27, 31) !important;
   height: 120%;
 }

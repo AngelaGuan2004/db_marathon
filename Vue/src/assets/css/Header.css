@@ -22,28 +22,28 @@
   height: 100%;
 }
 
-.el-menu-demo {
+#Header .el-menu-demo {
   height: 100%;
 }
 
-.el-menu--horizontal>.el-menu-item {
+#Header .el-menu--horizontal>.el-menu-item {
   font-size: 20px;
   font-weight: normal;
   height: 95%;
   line-height: 100px;
 }
 
-.el-menu--horizontal>.el-menu-item.is-active {
+#Header .el-menu--horizontal>.el-menu-item.is-active {
   font-weight: bold;
   background-color: transparent;
 }
 
-.el-menu--horizontal>.el-menu-item:hover {
+#Header .el-menu--horizontal>.el-menu-item:hover {
   font-weight: bold;
   background-color: transparent !important;
 }
 
-.el-submenu__title:hover {
+#Header .el-submenu__title:hover {
   font-weight: bold;
   background-color: transparent !important;
 }

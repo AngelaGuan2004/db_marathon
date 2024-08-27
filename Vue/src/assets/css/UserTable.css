@@ -1,8 +1,8 @@
-.el-main {
+#UserTable .el-main {
   padding: 10px 20px;
 }
 
-.el-menu-demo {
+#UserTable .el-menu-demo {
   flex: 1;
   margin-left: 20px;
 }
@@ -20,7 +20,7 @@
   width: 300px;
 }
 
-.el-table {
+#UserTable .el-table {
   font-size: 18px;
   width: 100%;
   table-layout: fixed;
@@ -28,8 +28,8 @@
   /* 移除表格的边框 */
 }
 
-.el-table th .cell,
-.el-table td .cell {
+#UserTable .el-table th .cell,
+#UserTable .el-table td .cell {
   display: inline-block;
   width: 100%;
   text-align: center;
@@ -38,8 +38,8 @@
   /* 移除单元格的边框 */
 }
 
-.el-table__header-wrapper,
-.el-table__body-wrapper {
+#UserTable .el-table__header-wrapper,
+#UserTable .el-table__body-wrapper {
   display: flex;
   justify-content: center;
 }
@@ -84,6 +84,10 @@
   cursor: pointer;
 }
 
-.el-table__row {
+#UserTable .el-table__row {
   cursor: auto;
+}
+
+.el-input__inner::placeholder {
+  color: black;
 }

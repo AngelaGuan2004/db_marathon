@@ -1,0 +1,82 @@
+.Content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.Button {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  /* 将内容对齐到左边 */
+  align-items: center;
+  /* 垂直居中对齐 */
+  padding: 10px;
+}
+
+.Table {
+  width: 100%;
+  table-layout: fixed;
+  border: none;
+}
+
+.Table th .cell,
+.Table td .cell {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  height: 40px;
+  border: none;
+  vertical-align: middle;
+  line-height: 40px;
+}
+
+.el-table__header-wrapper,
+.el-table__body-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.Pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.HistoryTable {
+  width: 100%;
+  table-layout: fixed;
+  border: none;
+}
+
+.HistoryTable th .cell,
+.HistoryTable td .cell {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  height: 20px;
+  border: none;
+  vertical-align: middle;
+  line-height: 20px;
+}
+
+.Empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #999;
+  width: 100%;
+  text-align: center;
+}
+
+.cell {
+  font-size: 16px;
+  color: black;
+  text-align: center;
+}
+
+.el-input__inner::placeholder {
+  color: #797979;
+}

@@ -2,6 +2,7 @@
   <div id="app">
     <Header></Header>
     <Footer></Footer>
+    <!-- <button @click.prevent="GetApi"></button> -->
   </div>
 </template>
 
@@ -16,7 +17,7 @@ export default {
   },
   methods: {
     GetApi() {
-      service.get('/api/Auth/login_player').then(
+      service.get('api/Auth/login_player').then(
         response => {
           console.log('请求成功了', response.data)
         },

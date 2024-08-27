@@ -1,17 +1,17 @@
 <template>
   <div id="UserTab">
     <div class="User">
-      <div class="breadcrumb">
+      <div style="margin-bottom: 50px;">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/Home' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item>我的</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <div class="UserTabRight">
-        <div class="UserTabFlex">
-          <div class="UserTab">
-            <el-menu :default-active="ActiveIndexForUserTab" class="el-menu-vertical-demo" @select="ActiveTab"
-              active-text-color="rgb(168, 27, 31)">
+      <div class="TabRight">
+        <div class="TabFlex">
+          <div class="Tab">
+            <el-menu ref="UserMenu" :default-active="ActiveIndexForUserTab" class="el-menu-vertical-demo"
+              @select="ActiveTab" active-text-color="rgb(168, 27, 31)">
               <el-menu-item index="1">
                 <span>个人信息</span>
               </el-menu-item>
@@ -26,7 +26,7 @@
                   <span>我的志愿</span>
                 </template>
                 <el-menu-item index="4">成为志愿者</el-menu-item>
-                <el-menu-item index="5">已报名志愿</el-menu-item>
+                <el-menu-item index="5" style="margin-bottom: 10px;">已报名志愿</el-menu-item>
               </el-submenu>
             </el-menu>
           </div>
@@ -53,6 +53,7 @@ export default {
     },
     ActiveIndex(index) {
       this.ActiveIndexForUserTab = index; // 设置当前激活的菜单项
+      this.$refs.UserMenu.activeIndex = index;
       if (index.includes('-')) { // 处理submenu的子项
         const [mainIndex, subIndex] = index.split('-');
         this.$router.push({ name: this.UserTabTitle[parseInt(mainIndex, 10) - 1 + parseInt(subIndex, 10) - 1] });
@@ -66,7 +67,7 @@ export default {
     this.$bus.$on('ActiveIndexForUserTab', this.ActiveIndex);
   },
   beforeDestroy() {
-    this.$bus.$off('ActiveIndexForUserTab', this.updateActiveIndex);
+    this.$bus.$off('ActiveIndexForUserTab', this.ActiveIndex);
   },
   beforeRouteEnter(to, from, next) {
     console.log(Message)
@@ -95,5 +96,13 @@ export default {
 <style scoped>
 @import "../assets/css/Home.css";
 @import 'element-ui/lib/theme-chalk/index.css';
-@import "../assets/css/UserTab.css";
+@import "../assets/css/LeftTab.css";
+
+.User {
+  width: 100%;
+  height: 600px;
+  background-color: rgb(244, 244, 244);
+  padding: 0 100px;
+  padding-top: 20px;
+}
 </style>

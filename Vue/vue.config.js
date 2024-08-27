@@ -4,6 +4,7 @@ module.exports = defineConfig({
 })
 
 module.exports = {
+  productionSourceMap: true,
   pages: {
     index: {
       //入口
