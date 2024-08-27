@@ -13,8 +13,8 @@ export function registerPlayer(data) {
 export function loginPlayer(query) {
   return request({
     url: '/Auth/login_player',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: data
   });
 }
 
@@ -22,8 +22,8 @@ export function loginPlayer(query) {
 export function loginVolunteer(query) {
   return request({
     url: '/Auth/login_volunteer',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: data
   });
 }
 
@@ -32,7 +32,7 @@ export function loginPhotographer(query) {
   return request({
     url: '/Auth/login_photographer',
     method: 'get',
-    params: query
+    data: data
   });
 }
 
