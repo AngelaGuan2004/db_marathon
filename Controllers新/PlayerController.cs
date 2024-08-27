@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-using db_marathon.Models;
+using MarathonMaster.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,7 +17,7 @@ using System.Numerics;
 using Microsoft.Extensions.Logging;
 
 
-namespace db_marathon.Controllers
+namespace MarathonMaster.Controllers
 {
     [Route("/[controller]/[action]")]
     [ApiController]
@@ -63,11 +63,31 @@ namespace db_marathon.Controllers
 
             try
             {
-                var existingParticipate = await _db.Queryable<Participate>()
-                .Where(it => it.Player_Id == participate.Player_Id && it.Event_Id == participate.Event_Id)
-                .FirstAsync();
+                // 先查询该赛事的抽签状态
+                var eventStatus = await _db.Queryable<Event>()
+                    .Where(it => it.Id == participate.Event_Id)
+                    .Select(it => new { it.Is_Drawn })
+                    .FirstAsync();
 
-                if (existingParticipate.Number_ != null)
+                if (eventStatus == null)
+                {
+                    _logger.LogWarning("赛事不存在");
+                    return NotFound("赛事不存在");
+                }
+
+                // 检查赛事是否已经抽签
+                if (eventStatus.Is_Drawn == false)
+                {
+                    _logger.LogWarning("赛事尚未抽签");
+                    return BadRequest("赛事尚未抽签");
+                }
+
+                // 查询选手的参赛信息
+                var existingParticipate = await _db.Queryable<Participate>()
+                    .Where(it => it.Player_Id == participate.Player_Id && it.Event_Id == participate.Event_Id)
+                    .FirstAsync();
+
+                if (existingParticipate != null && existingParticipate.Number_ != null)
                 {
                     _logger.LogInformation("选手抽签成功: {@Participate}", participate); // 记录抽签成功
                     return Ok(existingParticipate.Number_);
@@ -94,7 +114,7 @@ namespace db_marathon.Controllers
 
             try
             {
-                await _db.Deleteable<Participate>(new Participate() { Event_Id = participate.Event_Id,Player_Id= participate .Player_Id}).ExecuteCommandAsync();
+                await _db.Deleteable<Participate>(new Participate() { Event_Id = participate.Event_Id, Player_Id = participate.Player_Id }).ExecuteCommandAsync();
                 _logger.LogInformation("成功删除参赛数据: {@Event}", participate); // 记录删除成功
                 return Ok(true);
             }
@@ -138,7 +158,7 @@ namespace db_marathon.Controllers
 
         // 根据比赛id和选手id查询比赛号码
         [HttpGet]
-        public async Task<IActionResult> get_number_by_eventid_and_playerid(int eventId, int playerId)
+        public async Task<IActionResult> get_number_by_eventid_and_playerid(string eventId, int playerId)
         {
             try
             {
@@ -166,9 +186,6 @@ namespace db_marathon.Controllers
             }
         }
 
-
     }
-
-
 
 }

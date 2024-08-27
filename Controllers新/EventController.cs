@@ -7,15 +7,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-using db_marathon.Models;
+using MarathonMaster.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using System.Security.Cryptography;
 using System.Numerics;
+using MarathonMaster;
 
-namespace db_marathon.Controllers
+namespace MarathonMaster.Controllers
 {
     [Route("/[Controller]/[action]")]
     [ApiController]
@@ -94,9 +95,9 @@ namespace db_marathon.Controllers
             }
         }
 
-        //获取赛事详情  ******************************有修改
+        //获取赛事详情
         [HttpGet]
-        public async Task<IActionResult> get_by_id([FromQuery] int Id)
+        public async Task<IActionResult> get_by_id([FromQuery] string Id)
         {
             try
             {
@@ -162,7 +163,7 @@ namespace db_marathon.Controllers
                 return StatusCode(500, "获取赛事列表失败");
             }
         }
-
+        
         ////查询对应种类的赛事
         //[HttpGet]
         //public List<Event> get_by_category(string Category)

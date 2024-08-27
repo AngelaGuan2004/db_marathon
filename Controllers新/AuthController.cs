@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-using db_marathon.Models;
+using MarathonMaster.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,9 +15,11 @@ using System.Text.Unicode;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
+using MarathonMaster.Models;
+using MarathonMaster;
 
 
-namespace db_marathon.Controllers
+namespace MarathonMaster.Controllers
 {
     [Route("/[controller]/[action]")]
     [ApiController]
@@ -57,13 +59,13 @@ namespace db_marathon.Controllers
                 await _db.Insertable(player).ExecuteCommandAsync();
                 _logger.LogInformation("成功插入选手数据: {@Player}", player); // 记录插入成功
 
-                return Ok(true);
+                return Ok(newPlayerId);
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "插入选手数据失败: {@Player}", player); // 记录错误信息
 
-                return BadRequest(false);
+                return BadRequest(-1);
             }
 
         }
@@ -91,8 +93,8 @@ namespace db_marathon.Controllers
 
 
         //选手登录
-        [HttpGet]
-        public async Task<IActionResult> login_player([FromQuery] Player player)
+        [HttpPost]
+        public async Task<IActionResult> login_player([FromBody] Player player)
         {
             _logger.LogInformation("收到选手数据: {@Player}", player); // 记录收到的数据
 
@@ -122,8 +124,8 @@ namespace db_marathon.Controllers
         }
 
         //志愿者登录
-        [HttpGet]
-        public async Task<IActionResult> login_volunteer([FromQuery] Volunteer volunteer)
+        [HttpPost]
+        public async Task<IActionResult> login_volunteer([FromBody] Volunteer volunteer)
         {
             _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
 
@@ -153,8 +155,8 @@ namespace db_marathon.Controllers
         }
 
         //摄影师登录
-        [HttpGet]
-        public async Task<IActionResult> login_photographer([FromQuery] Photographer photographer)
+        [HttpPost]
+        public async Task<IActionResult> login_photographer([FromBody] Photographer photographer)
         {
             _logger.LogInformation("收到摄影师数据: {@Photographer}", photographer); // 记录收到的数据
 
@@ -288,7 +290,7 @@ namespace db_marathon.Controllers
                 return "无"; // 或者返回一个适当的错误信息
             }
         }
-        
+
     }
 
 }
