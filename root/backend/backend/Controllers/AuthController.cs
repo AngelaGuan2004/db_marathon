@@ -93,8 +93,8 @@ namespace MarathonMaster.Controllers
 
 
         //选手登录
-        [HttpGet]
-        public async Task<IActionResult> login_player([FromQuery] Player player)
+        [HttpPost]
+        public async Task<IActionResult> login_player([FromBody] Player player)
         {
             _logger.LogInformation("收到选手数据: {@Player}", player); // 记录收到的数据
 
@@ -124,8 +124,8 @@ namespace MarathonMaster.Controllers
         }
 
         //志愿者登录
-        [HttpGet]
-        public async Task<IActionResult> login_volunteer([FromQuery] Volunteer volunteer)
+        [HttpPost]
+        public async Task<IActionResult> login_volunteer([FromBody] Volunteer volunteer)
         {
             _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
 
@@ -155,8 +155,8 @@ namespace MarathonMaster.Controllers
         }
 
         //摄影师登录
-        [HttpGet]
-        public async Task<IActionResult> login_photographer([FromQuery] Photographer photographer)
+        [HttpPost]
+        public async Task<IActionResult> login_photographer([FromBody] Photographer photographer)
         {
             _logger.LogInformation("收到摄影师数据: {@Photographer}", photographer); // 记录收到的数据
 

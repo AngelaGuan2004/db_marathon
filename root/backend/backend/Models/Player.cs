@@ -14,7 +14,7 @@ namespace MarathonMaster.Models
         [SugarColumn(IsPrimaryKey = true)]
         public int Id { get; set; }             //选手id
         public string Name { get; set; }        //选手名字
-        public string Gender { get; set; }      //选手性别
+        public string? Gender { get; set; }      //选手性别
         public int? Age { get; set; }            //选手年龄
         public string Id_Number { get; set; }   //选手身份证号
         public string? Region { get; set; }      //选手国籍
