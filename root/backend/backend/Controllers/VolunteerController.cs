@@ -155,7 +155,7 @@ namespace WebApplication1.Controllers
             //partners.Add()
             try
             {
-                if (p.Job_Category == null)
+                if (p==null || p.Job_Category == null)
                     status = 0;   //0表示未分工
                 else
                 {
@@ -271,6 +271,40 @@ namespace WebApplication1.Controllers
                 }
             }
             return partners;
+        }
+        //查找志愿者报名的赛事
+        [HttpGet]
+        public async Task<IActionResult> acquire_volunteer_event([FromQuery] int volunteer_id)
+        {
+            try
+            {
+
+                List<Event> events = await _db.Queryable<Schedule>()
+               .LeftJoin<Event>((s, e) => s.Event_Id == e.Id)//多个条件用&&
+               .Where(s => s.Volunteer_Id == volunteer_id)
+               .Select((s, e) => new Event
+               {
+                   Id = e.Id,
+                   Category = e.Category,
+                   Name = e.Name,
+                   Start_Date = e.Start_Date,
+                   End_Date = e.End_Date,
+                   Date = e.Date,
+                   Is_Drawn = e.Is_Drawn
+               })
+               .ToListAsync();
+
+
+                _logger.LogInformation("查找志愿者报名的赛事成功：{@information_of_photos}", events);
+
+                return Ok(events); //true表示成功
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查找志愿者报名的赛事失败"); // 记录错误信息
+
+                return BadRequest(ex); //false表示失败
+            }
         }
     }
 }
