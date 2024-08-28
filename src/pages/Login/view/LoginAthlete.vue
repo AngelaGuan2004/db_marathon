@@ -34,7 +34,6 @@ export default {
   name: 'LoginAthlete',
   data() {
     return {
-      Id: 1,
       name: '',
       idNumber: '',
       password: '',
@@ -48,6 +47,7 @@ export default {
     async LoginAthlete() {
       // 组织要发送的数据
       const data = {
+        Id: 1,
         Name: this.name,
         Id_Number: this.idNumber,
         Password: this.password
