@@ -3,7 +3,7 @@ create table player
   id integer not null 
 , name varchar2(10) not null 
 , gender varchar2(2) not null
-,age integer not null
+,age integer
 , id_number char(18) not null 
 , region varchar2(20) 
 , telephone_number varchar2(20)
@@ -95,9 +95,8 @@ comment on column medicalpoint.place is '如：赛道15公里处';
 create table volunteer 
 (
   id number(*, 0) not null , 
-telephone_number varchar2(20) not null , 
+telephone_number varchar2(20) , 
 name varchar2(20 byte)  not null, 
-password varchar2(20)  not null, 
 constraint volunteer_pk primary key (id )
 );
 
@@ -268,3 +267,21 @@ create table volunteer_medicalpoint
 
 ALTER TABLE event
 ADD is_drawn varchar2(3) DEFAULT '否' NOT NULL;
+
+CREATE OR REPLACE TRIGGER INSERT_VOLUNTEER 
+AFTER INSERT ON PLAYER 
+FOR EACH ROW
+BEGIN
+    INSERT INTO volunteer (id, name)
+    VALUES (:NEW.id, :NEW.name);
+END;
+
+CREATE OR REPLACE TRIGGER update_volunteer
+AFTER UPDATE OF name, password, telephone_number ON player
+FOR EACH ROW
+BEGIN
+    UPDATE volunteer
+    SET name = :NEW.name,
+        telephone_number = :NEW.telephone_number
+    WHERE id = :OLD.id;
+END;

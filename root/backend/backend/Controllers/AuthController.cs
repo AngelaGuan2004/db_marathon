@@ -17,7 +17,6 @@ using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
 using MarathonMaster.Models;
 using MarathonMaster;
-using System.Net.Cache;
 
 
 namespace MarathonMaster.Controllers
@@ -76,7 +75,7 @@ namespace MarathonMaster.Controllers
             }
 
         }
-
+        /*
         //注册volunteer
         [HttpPost]
         public async Task<IActionResult> add_volunteer([FromBody] Volunteer volunteer)
@@ -97,7 +96,7 @@ namespace MarathonMaster.Controllers
             }
 
         }
-
+        */
 
         //选手登录
         [HttpPost]
