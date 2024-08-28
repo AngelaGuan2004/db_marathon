@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
 using MarathonMaster.Models;
 using MarathonMaster;
+using System.Net.Cache;
 
 
 namespace MarathonMaster.Controllers
@@ -39,9 +40,9 @@ namespace MarathonMaster.Controllers
 
         //注册Player
         [HttpPost]
-        public async Task<IActionResult> add_player([FromBody] Player player)
+        public async Task<IActionResult> add_player([FromBody] PlayerLogin player0)
         {
-            _logger.LogInformation("收到选手数据: {@Player}", player); // 记录收到的数据
+            _logger.LogInformation("收到选手数据: {@Player}", player0); // 记录收到的数据
 
             try
             {
@@ -51,6 +52,12 @@ namespace MarathonMaster.Controllers
 
                 // 如果数据库中还没有记录，设置初始值为1
                 int newPlayerId = (maxPlayerId != 0) ? maxPlayerId + 1 : 1;
+
+                Player player = new Player();
+                player.Name = player0.Name;
+                player.Id_Number = player0.Id_Number;
+                player.Gender = player0.Gender;
+                player.Password = player0.Password;
 
                 // 为新选手设置唯一的 Player_Id
                 player.Id = newPlayerId;
@@ -63,7 +70,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入选手数据失败: {@Player}", player); // 记录错误信息
+                _logger.LogError(ex, "插入选手数据失败"); // 记录错误信息
 
                 return BadRequest(-1);
             }
