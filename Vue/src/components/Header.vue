@@ -42,13 +42,14 @@ export default {
       this.$router.push({ name: this.TabHerf[key - 1], })
     },
     handleSelectLogin() {
+      this.$router.push({ name: 'Home' })
       location.href = "login.html"
     },
     GetRole() {
       return localStorage.getItem('UserRole') || 'Visitor'
     },
   },
-  mounted() {
+  created() {
     this.$router.push({ name: 'Home' })
   },
 }

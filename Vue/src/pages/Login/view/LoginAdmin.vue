@@ -4,19 +4,23 @@
       欢迎管理员登录
     </div>
     <div class="LoginRightIndexFormInput">
-      <form action="">
-        <div style="margin-top: 100px;margin-bottom: 50px;">
+      <form @submit.prevent="LoginAdmin">
+        <div style="margin-top: 50px;margin-bottom: 25px;text-align: center;">
           <el-input v-model="adminKey" placeholder="请输入管理秘钥"></el-input>
+          <p v-if="errorMessage" style="color: red; font-size: 14px; margin-top: 10px;height: 25px;">
+            {{ errorMessage }}
+          </p>
+          <p v-else style="height: 20px;width: 1px;"></p>
         </div>
         <div>
-          <button class="LoginRightIndexFormButton" @click="LoginAdmin">
-            <span>登录</span>
-          </button>
+          <span style="margin-left: 12%;width: 73%;text-align: center;display: inline-block;">
+            <button class="LoginRightIndexFormButton">
+              <span>登录</span>
+            </button>
+          </span>
+          <span class="LoginRightIndexRegister" @click="GoToRegister">立即注册 </span>
         </div>
       </form>
-    </div>
-    <div class="LoginRightIndexRegister" @click="GoToRegister">
-      立即注册
     </div>
   </div>
 </template>
@@ -27,6 +31,7 @@ export default {
   data() {
     return {
       adminKey: '',
+      errorMessage: '', // 存储错误信息
     }
   },
   methods: {
@@ -34,11 +39,21 @@ export default {
       this.$router.push({ name: 'Register' })
     },
     LoginAdmin() {
-      localStorage.setItem('UserRole', 'Admin')
-      location.href = 'index.html'
+      if (this.adminKey === 'admin') {
+        localStorage.setItem('UserRole', 'Admin')
+        location.href = 'index.html'
+      } else {
+        this.errorMessage = '密钥错误，请重新输入'
+        setTimeout(() => {
+          this.errorMessage = ''
+        }, 1000)
+      }
     }
   }
 }
 </script>
 
-<style></style>
+<style scoped>
+@import "@/assets/css/Base.css";
+@import "@/assets/css/LoginTab.css";
+</style>

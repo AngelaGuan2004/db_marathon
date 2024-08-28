@@ -23,13 +23,6 @@ module.exports = {
   devServer: {
     host: 'localhost', //target host
     port: 8080,
-    proxy: {
-      '/api': {
-        target: 'http://113.44.75.241:5158',
-        pathRewrite: { '^/api': '' },
-        ws: true, //用于支持websocket
-        changeOrigin: true //用于控制请求头中的host值
-      }
-    }
+    proxy: 'http://113.44.75.241:5158',
   }
 }

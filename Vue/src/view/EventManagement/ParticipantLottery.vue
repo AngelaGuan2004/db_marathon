@@ -146,6 +146,7 @@ export default {
       });
 
       this.$message.success('抽签完成');
+      this.$bus.$emit('IsLottery')
     },
     handlePageChange(page) {
       this.currentPage = page;

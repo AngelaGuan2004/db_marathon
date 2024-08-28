@@ -49,6 +49,7 @@ export default {
   },
   methods: {
     ActiveTab(index) {
+
       this.$router.push({ name: this.UserTabTitle[index - 1], })
     },
     ActiveIndex(index) {
@@ -94,7 +95,7 @@ export default {
 </script>
 
 <style scoped>
-@import "../assets/css/Home.css";
+@import "../assets/css/Base.css";
 @import 'element-ui/lib/theme-chalk/index.css';
 @import "../assets/css/LeftTab.css";
 

@@ -18,12 +18,17 @@
         <el-input placeholder="请输入赛事名称" v-model="searchName" class="EventFilterItem"></el-input>
       </div>
       <div v-if="filteredEvents.length > 0">
-        <el-table :data="filteredEvents" class="EventInfoTable" @row-click="handleRowClick"
-          row-class-name="clickable-row">
+        <el-table :data="filteredEvents" class="EventInfoTable" row-class-name="clickable-row">
           <el-table-column prop="date" label="开赛时间" width="150"></el-table-column>
           <el-table-column prop="name" label="比赛名称" width="250"></el-table-column>
           <el-table-column prop="type" label="赛事类型" width="150"></el-table-column>
           <el-table-column prop="scale" label="赛事规模" width="150"></el-table-column>
+          <el-table-column label="赛事管理" width="100">
+            <div class="EventTableDetail" @click.prevent="handleEventManagement">详情</div>
+          </el-table-column>
+          <el-table-column label="志愿详情" width="100">
+            <div class="EventTableDetail" @click.prevent="handleEventVolunteer">详情</div>
+          </el-table-column>
         </el-table>
         <el-pagination class="Pagination" background layout="prev, pager, next" :total="totalEvents"
           :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
@@ -95,8 +100,11 @@ export default {
     handlePageChange(page) {
       this.currentPage = page;
     },
-    handleRowClick(row) {
-      this.$router.push({ name: 'EventTab', params: { id: row.id } });
+    handleEventManagement(event) {
+      this.$router.push({ name: 'EventManagementTab', params: { id: event.id } });
+    },
+    handleEventVolunteer() {
+      this.$router.push({ name: 'EventVolunteerTab', });
     }
   }
 };
