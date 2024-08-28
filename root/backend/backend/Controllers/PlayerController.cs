@@ -76,7 +76,7 @@ namespace MarathonMaster.Controllers
                 }
 
                 // 检查赛事是否已经抽签
-                if (eventStatus.Is_Drawn == false)
+                if (eventStatus.Is_Drawn == "否")
                 {
                     _logger.LogInformation("赛事尚未抽签");
                     return Ok("赛事尚未抽签");
