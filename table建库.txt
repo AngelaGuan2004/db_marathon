@@ -157,10 +157,10 @@ foreign key (id) references event(id)
 create table participate
 (
 role_ varchar(20) not null,
-number_ varchar(10) not null, 
+number_ varchar(10), 
 player_id integer,
 event_id char(5),
-primary key (number_),
+primary key (player_id, event_id),
 foreign key (player_id) references player(id),
 foreign key (event_id) references event(id)
 );

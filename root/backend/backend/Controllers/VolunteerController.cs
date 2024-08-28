@@ -39,8 +39,8 @@ namespace WebApplication1.Controllers
             dbORM dborm = new dbORM();
             _db = dborm.getInstance();
         }
-        /*
-        //志愿者报名
+        
+        //志愿者报名赛事志愿
         [HttpPost]
         public async Task<IActionResult> add_volunteer([FromBody] Schedule Schedulei) //收到一个schedule类的值schedulei，其job_category的值为null
         {
@@ -59,7 +59,7 @@ namespace WebApplication1.Controllers
                 return BadRequest(false); //false表示失败
             }
         }
-        */
+        
         //志愿者排班-更新志愿者的job_category
         [HttpPatch]
         public async Task<IActionResult> schedule_volunteer([FromBody] Schedule Schedulei)// 收到的也是一个schedule类型的值，此时要更新他的job_category
