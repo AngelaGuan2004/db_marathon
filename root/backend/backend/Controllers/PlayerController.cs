@@ -63,24 +63,44 @@ namespace MarathonMaster.Controllers
 
             try
             {
-                var existingParticipate = await _db.Queryable<Participate>()
-                .Where(it => it.Player_Id == participate.Player_Id && it.Event_Id == participate.Event_Id)
-                .FirstAsync();
+                // 先查询该赛事的抽签状态
+                var eventStatus = await _db.Queryable<Event>()
+                    .Where(it => it.Id == participate.Event_Id)
+                    .Select(it => new { it.Is_Drawn })
+                    .FirstAsync();
 
-                if (existingParticipate.Number_ != null)
+                if (eventStatus == null)
+                {
+                    _logger.LogWarning("赛事不存在");
+                    return NotFound("赛事不存在");
+                }
+
+                // 检查赛事是否已经抽签
+                if (eventStatus.Is_Drawn == false)
+                {
+                    _logger.LogInformation("赛事尚未抽签");
+                    return Ok("赛事尚未抽签");
+                }
+
+                // 查询选手的参赛信息
+                var existingParticipate = await _db.Queryable<Participate>()
+                    .Where(it => it.Player_Id == participate.Player_Id && it.Event_Id == participate.Event_Id)
+                    .FirstAsync();
+
+                if (existingParticipate != null && existingParticipate.Number_ != null)
                 {
                     _logger.LogInformation("选手抽签成功: {@Participate}", participate); // 记录抽签成功
                     return Ok(existingParticipate.Number_);
                 }
                 else
                 {
-                    _logger.LogWarning("抽签不中");
-                    return Unauthorized(false);
+                    _logger.LogInformation("抽签不中");
+                    return Ok("抽签不中");
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "选手抽签失败: {@Participate}", participate); // 记录错误信息
+                _logger.LogError(ex, "抽签查询失败: {@Participate}", participate); // 记录错误信息
 
                 return BadRequest(false);
             }
