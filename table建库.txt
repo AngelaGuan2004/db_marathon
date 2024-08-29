@@ -118,7 +118,7 @@ create table photo
   photographer_id integer not null,
   event_id  char(5) not null,
   address varchar(20),
-  good  integer,
+  likes  integer,
 primary key(id),
 foreign key (photographer_id) references photographer(id),
 foreign key (event_id) references event(id)

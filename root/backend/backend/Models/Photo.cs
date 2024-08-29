@@ -21,7 +21,7 @@ namespace MarathonMaster.Models
 
         public string Address { get; set; }  //照片存储的地址
 
-        public int Good { get; set; }   //照片点赞数
+        public int Likes { get; set; }   //照片点赞数
     }
     public class Photo_Information
     {
@@ -37,6 +37,6 @@ namespace MarathonMaster.Models
 
         public string Address { get; set; }  //照片存储的地址
 
-        public int Good { get; set; }   //照片点赞数
+        public int Likes { get; set; }   //照片点赞数
     }
 }

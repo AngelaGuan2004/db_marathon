@@ -15,7 +15,6 @@ namespace MarathonMaster.Models
         public int Id { get; set; }                 //志愿者id
         public string Telephone_Number { get; set; }//志愿者电话
         public string Name { get; set; }            //志愿者名字
-        public string Password { get; set; }//志愿者登录密码
     }
 
     public class Partner

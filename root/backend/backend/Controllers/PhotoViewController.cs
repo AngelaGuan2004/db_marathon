@@ -137,7 +137,7 @@ namespace WebApplication1.Controllers
             {
                 var updateObj = new Photo();  //创建一个Photo对象的实例updateObj。虽然这个对象没有被直接用到，但它的类型被用来指定更新的表。
                 await _db.Updateable(updateObj)
-                          .SetColumns(it => new Photo() { Good = it.Good + 1 })
+                          .SetColumns(it => new Photo() { Likes = it.Likes + 1 })
                           .Where(it => it.Id == id)
                           .ExecuteCommandAsync();
 
@@ -190,7 +190,7 @@ namespace WebApplication1.Controllers
                    Location = p1.Location,
                    Photographer_name = p2.Name,
                    Address = p1.Address,
-                   Good = p1.Good
+                   Likes = p1.Likes
                })
                .ToListAsync();
 

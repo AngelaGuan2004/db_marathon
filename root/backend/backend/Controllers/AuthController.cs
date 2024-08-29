@@ -128,7 +128,7 @@ namespace MarathonMaster.Controllers
                 return BadRequest(false);
             }
         }
-
+        /*
         //志愿者登录
         [HttpPost]
         public async Task<IActionResult> login_volunteer([FromBody] Volunteer volunteer)
@@ -159,7 +159,7 @@ namespace MarathonMaster.Controllers
                 return BadRequest(false);
             }
         }
-
+        */
         //摄影师登录
         [HttpPost]
         public async Task<IActionResult> login_photographer([FromBody] Photographer photographer)
