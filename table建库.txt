@@ -179,7 +179,7 @@ create table schedule
 (
   event_id char(5) not null , 
 volunteer_id integer not null , 
-job_category varchar(20) not null , 
+job_category varchar(20) null , 
 constraint schedule_pk primary key (event_id , volunteer_id ),
 foreign key(event_id) references event(id),
 foreign key(volunteer_id) references volunteer(id)

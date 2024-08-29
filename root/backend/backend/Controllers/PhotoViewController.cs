@@ -172,5 +172,45 @@ namespace WebApplication1.Controllers
                 return BadRequest(ex); //false表示失败
             }
         }
+        //获取所有照片
+        [HttpGet]
+        public async Task<IActionResult> get_all_photos()
+        {
+            try
+            {
+
+                List<Photo_Information> information_of_photos = await _db.Queryable<Photo>()
+               .LeftJoin<Event>((p, e) => p.Event_id == e.Id)//多个条件用&&
+               .LeftJoin<Photographer>((p1, e, p2) => p1.Photographer_id == p2.Id)
+               .Select((p1, e, p2) => new Photo_Information
+               {
+                   Id = p1.Id,
+                   Event_name = e.Name,
+                   Time = p1.Time,
+                   Location = p1.Location,
+                   Photographer_name = p2.Name,
+                   Address = p1.Address,
+                   Good = p1.Good
+               })
+               .ToListAsync();
+
+
+                _logger.LogInformation("查找所有照片成功：{@information_of_photos}", information_of_photos); // 查找赛事名称对应的照片信息成功
+
+                // 使用 Console.WriteLine 在命令行输出照片信息
+                foreach (var photo in information_of_photos)
+                {
+                    Console.WriteLine($"Id: {photo.Id}, Location: {photo.Location}");
+                }
+                return Ok(information_of_photos); //true表示成功
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查找所有照片失败"); // 记录错误信息
+
+                return BadRequest(ex); //false表示失败
+            }
+        }
+
     }
 }

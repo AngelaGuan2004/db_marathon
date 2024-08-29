@@ -17,7 +17,7 @@ namespace MarathonMaster.Models
         public string Name { get; set; }        //赛事名称
         public string Start_Date { get; set; }  //报名开始时间
         public string End_Date { get; set; }    //报名结束时间
-        public string Date { get; set; }        //比赛时间
+        public string Event_Date { get; set; }        //比赛时间
         public string? Is_Drawn { get; set; }    //是否报名
     }
 }
