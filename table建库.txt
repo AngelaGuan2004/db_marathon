@@ -272,8 +272,8 @@ CREATE OR REPLACE TRIGGER INSERT_VOLUNTEER
 AFTER INSERT ON PLAYER 
 FOR EACH ROW
 BEGIN
-    INSERT INTO volunteer (id, name)
-    VALUES (:NEW.id, :NEW.name);
+    INSERT INTO volunteer (id, name, telephone_number)
+    VALUES (:NEW.id, :NEW.name, :NEW.telephone_number);
 END;
 
 CREATE OR REPLACE TRIGGER update_volunteer

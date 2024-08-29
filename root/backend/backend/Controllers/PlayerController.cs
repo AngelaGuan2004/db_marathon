@@ -146,7 +146,8 @@ namespace MarathonMaster.Controllers
                 else
                 {
                     _logger.LogWarning("未找到选手ID: {PlayerId} 的报名记录", Id);
-                    return NotFound("未找到该选手的报名记录");
+                    List<int> nulllist= new List<int>();
+                    return Ok(nulllist);
                 }
             }
             catch (System.Exception ex)
