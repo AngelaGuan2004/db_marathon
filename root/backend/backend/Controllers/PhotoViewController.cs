@@ -56,7 +56,7 @@ namespace WebApplication1.Controllers
 
             try
             {
-                List<string> locations = await _db.Queryable<Photo>().Where(p => p.Location.Contains(location_key)).Select(p => p.Location).ToListAsync();
+                List<string> locations = await _db.Queryable<Photo>().Distinct().Where(p => p.Location.Contains(location_key)).Select(p => p.Location).ToListAsync();
 
                 _logger.LogInformation("查找照片拍摄地址关键字对应的地址信息成功: {@location_key}", location_key); // 查找地址关键字对应的地址信息成功
                 return Ok(locations); //true表示成功
@@ -127,19 +127,23 @@ namespace WebApplication1.Controllers
         }
 
         //点赞照片
-        [HttpPost]
+        [HttpPatch]
 
-        public async Task<IActionResult> like_photo([FromBody] int id) //收到地址
+        public async Task<IActionResult> like_photo([FromQuery] int id) //收到地址
         {
             _logger.LogInformation("收到要点赞的照片id信息: {@id}", id); // 记录收到的数据
 
             try
             {
-                var updateObj = new Photo();  //创建一个Photo对象的实例updateObj。虽然这个对象没有被直接用到，但它的类型被用来指定更新的表。
+                await _db.Updateable<Photo>().SetColumns(it => it.Likes == it.Likes +1).Where(it => it.Id ==id).ExecuteCommandAsync();
+                //_logger.LogInformation("查到的照片: {@p.Id}", p.Id); // 更新点赞数成功
+                /* var updateObj = new Photo();  //创建一个Photo对象的实例updateObj。虽然这个对象没有被直接用到，但它的类型被用来指定更新的表。
                 await _db.Updateable(updateObj)
                           .SetColumns(it => new Photo() { Likes = it.Likes + 1 })
                           .Where(it => it.Id == id)
-                          .ExecuteCommandAsync();
+                          .ExecuteCommandAsync();*/
+                //p.Likes = p.Likes+1 ;
+                //await _db.Updateable(p).ExecuteCommandAsync();//根据主键更新
 
                 _logger.LogInformation("点赞指定id的照片成功: {@id}", id); // 更新点赞数成功
                 return Ok(true); //true表示成功
