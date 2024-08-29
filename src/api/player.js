@@ -2,6 +2,7 @@ import request from '@/utils/request';
 
 // 选手注册
 export function registerPlayer(data) {
+  console.log(111)
   return request({
     url: '/Auth/add_player',
     method: 'post',

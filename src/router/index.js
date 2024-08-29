@@ -11,13 +11,21 @@ import UserResults from '@/view/User/UserResults.vue'
 import UserVolunteerSignup from '@/view/User/UserVolunteerSignup.vue';
 import VolunteerDetailForAddStation from '@/view/User/VolunteerDetailForAddStation.vue'
 
-import EventList from '@/view/Event/EventList.vue'
-import EventTab from '@/components/EventTab.vue'
-import ParticipantLottery from '@/view/Event/ParticipantLottery.vue'
-import PacerSelection from '@/view/Event/PacerSelection.vue'
-import PacerSubmission from '@/view/Event/PacerSubmission.vue'
-import EmergencyRunnerSelection from '@/view/Event/EmergencyRunnerSelection.vue'
-import EmergencyRunnerSubmission from '@/view/Event/EmergencyRunnerSubmission.vue'
+import EventManagementTab from '@/components/EventManagementTab.vue'
+import EventVolunteerTab from '@/components/EventVolunteerTab.vue'
+
+import EventList from '@/view/EventManagement/EventList.vue'
+
+import ParticipantLottery from '@/view/EventManagement/ParticipantLottery.vue'
+import PacerSelection from '@/view/EventManagement/PacerSelection.vue'
+import PacerSubmission from '@/view/EventManagement/PacerSubmission.vue'
+import EmergencyRunnerSelection from '@/view/EventManagement/EmergencyRunnerSelection.vue'
+import EmergencyRunnerSubmission from '@/view/EventManagement/EmergencyRunnerSubmission.vue'
+
+import CarManagement from '@/view/EventVolunteer/CarManagement.vue'
+import MedicalManagement from '@/view/EventVolunteer/MedicalManagement.vue'
+import SupplyManagement from '@/view/EventVolunteer/SupplyManagement.vue'
+import VolunManagement from '@/view/EventVolunteer/VolunManagement.vue'
 //创建并暴露一个路由器
 export default new VueRouter({
   mode: 'history',
@@ -31,9 +39,9 @@ export default new VueRouter({
       name: 'EventList',
       component: EventList
     }, {
-      path: '/EventTab',
-      name: 'EventTab',
-      component: EventTab,
+      path: '/EventManagementTab',
+      name: 'EventManagementTab',
+      component: EventManagementTab,
       children: [
         {
           path: 'ParticipantLottery',
@@ -59,6 +67,29 @@ export default new VueRouter({
           component: EmergencyRunnerSubmission
         },
       ]
+    }, {
+      path: '/EventVolunteerTab',
+      name: 'EventVolunteerTab',
+      component: EventVolunteerTab,
+      children: [
+        {
+          path: '/CarManagement',
+          name: 'CarManagement',
+          component: CarManagement
+        }, {
+          path: '/MedicalManagement',
+          name: 'MedicalManagement',
+          component: MedicalManagement
+        }, {
+          path: '/SupplyManagement',
+          name: 'SupplyManagement',
+          component: SupplyManagement
+        }, {
+          path: '/VolunManagement',
+          name: 'VolunManagement',
+          component: VolunManagement
+        },
+      ]
     },
     {
       path: '/UserTab',
@@ -78,9 +109,7 @@ export default new VueRouter({
           path: 'UserVolunteering',
           name: 'UserVolunteering',
           component: UserVolunteering,
-
         }, {
-          path: 'VolunteerDetailForAddStation',
           name: 'VolunteerDetailForAddStation',
           component: VolunteerDetailForAddStation,
           path: 'VolunteerDetailForAddStation/:id/:voltype',

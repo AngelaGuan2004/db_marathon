@@ -1,10 +1,15 @@
-//获取志愿者详情
 import request from '@/utils/request';
 
-export function getVolunteerInformation(data) {
+// 志愿者信息获取 API 接口
+export function acquireVolunteerInformation(volunteer_id, event_id) {
   return request({
     url: '/Volunteer/acquire_volunteer_information',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: {
+      volunteer_id: volunteer_id,
+      event_id: event_id
+    }
   });
 }
+
+

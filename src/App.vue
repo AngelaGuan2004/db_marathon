@@ -2,8 +2,8 @@
   <div id="app">
     <Header></Header>
     <Footer></Footer>
-    <!--<button @click.prevent="GetApi"></button>
-    <button @click.prevent="PostApi"></button>-->
+    <!-- <button @click.prevent="GetApi"></button>
+    <button @click.prevent="PostApi"></button> -->
   </div>
 </template>
 
@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     GetApi() {
-      service.get('PhotoView/inquiry_photo_by_location?location="梦创街"').then(
+      service.get('PhotoView/inquiry_photo_by_location?location=梦创街').then(
         response => {
           console.log('请求成功了', response)
         },

@@ -19,10 +19,8 @@
   margin-top: 45%;
 }
 
-#UserTab .el-menu-item,
-#UserTab .el-submenu__title,
-#EventTab .el-menu-item,
-#EventTab .el-submenu__title {
+[id$="Tab"] .el-menu-item,
+[id$="Tab"] .el-submenu__title {
   font-size: 20px;
   font-weight: bold;
   height: 80px;
@@ -31,8 +29,7 @@
   text-align: center;
 }
 
-#UserTab .el-submenu>.el-menu>.el-menu-item,
-#EventTab .el-submenu>.el-menu>.el-menu-item {
+[id$="Tab"] .el-submenu>.el-menu>.el-menu-item {
   font-size: 16px;
   margin: 0;
   margin-top: 10px;
@@ -41,19 +38,14 @@
   text-align: center;
 }
 
-#UserTab .el-submenu>.el-submenu__title,
-#EventTab .el-submenu>.el-submenu__title {
+[id$="Tab"] .el-submenu>.el-submenu__title {
   height: 70px;
   line-height: 70px;
 }
 
-#UserTab .el-menu-vertical-demo>.is-active,
-#UserTab .el-menu>.is-active,
-#UserTab .el-menu-item:hover,
-#UserTab .el-submenu__title:hover,
-#EventTab .el-menu-vertical-demo>.is-active,
-#EventTab .el-menu>.is-active,
-#EventTab .el-menu-item:hover,
-#EventTab .el-submenu__title:hover {
+[id$="Tab"] .el-menu-vertical-demo>.is-active,
+[id$="Tab"] .el-menu>.is-active,
+[id$="Tab"] .el-menu-item:hover,
+[id$="Tab"] .el-submenu__title:hover {
   background-color: rgb(255, 242, 242);
 }
