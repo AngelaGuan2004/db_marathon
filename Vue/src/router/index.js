@@ -8,13 +8,21 @@ import UserRegistrations from '@/view/User/UserRegistrations.vue'
 import UserInfo from '@/view/User/UserInfo.vue'
 import UserVolunteering from '@/view/User/UserVolunteering.vue'
 import UserResults from '@/view/User/UserResults.vue'
-import UserVolunteerSignup from '@/view/User/UserVolunteerSignup.vue';
 import VolunteerDetailForAddStation from '@/view/User/VolunteerDetailForAddStation.vue'
 
 import EventManagementTab from '@/components/EventManagementTab.vue'
 import EventVolunteerTab from '@/components/EventVolunteerTab.vue'
 
-import EventList from '@/view/EventManagement/EventList.vue'
+import EventList from '@/components/EventList.vue'
+
+import EventDetail from '@/view/EventDetail/EventDetail.vue'
+import VolunteerSignup from '@/view/EventDetail/VolunteerSignup.vue';
+import EventRegistration from '@/view/EventDetail/EventRegistration.vue'
+import PackageDetail from '@/view/EventDetail/PackageDetail.vue';
+import SupplypointDetail from '@/view/EventDetail/SupplypointDetail.vue';
+import MedicalDetail from '@/view/EventDetail/MedicalDetail.vue';
+import ShuttleDetail from '@/view/EventDetail/ShuttleDetail.vue'
+import WeatherDetail from '@/view/EventDetail/WeatherDetail.vue'
 
 import ParticipantLottery from '@/view/EventManagement/ParticipantLottery.vue'
 import PacerSelection from '@/view/EventManagement/PacerSelection.vue'
@@ -39,6 +47,40 @@ export default new VueRouter({
       name: 'EventList',
       component: EventList
     }, {
+      path: '/EventDetail',
+      name: 'EventDetail',
+      component: EventDetail,
+    },
+    {
+      path: '/EventRegistration',
+      name: 'EventRegistration',
+      component: EventRegistration
+    }, {
+      path: '/VolunteerSignup',
+      name: 'VolunteerSignup',
+      component: VolunteerSignup
+    }, {
+      path: '/PackageDetail',
+      name: 'PackageDetail',
+      component: PackageDetail
+    }, {
+      path: '/SupplypointDetail',
+      name: 'SupplypointDetail',
+      component: SupplypointDetail
+    }, {
+      path: '/MedicalDetail',
+      name: 'MedicalDetail',
+      component: MedicalDetail
+    }, {
+      path: '/ShuttleDetail',
+      name: 'ShuttleDetail',
+      component: ShuttleDetail
+    }, {
+      path: '/WeatherDetail',
+      name: 'WeatherDetail',
+      component: WeatherDetail
+    },
+    {
       path: '/EventManagementTab',
       name: 'EventManagementTab',
       component: EventManagementTab,
@@ -113,10 +155,6 @@ export default new VueRouter({
           name: 'VolunteerDetailForAddStation',
           component: VolunteerDetailForAddStation,
           path: 'VolunteerDetailForAddStation/:id/:voltype',
-        }, {
-          path: 'UserVolunteerSignup',
-          name: 'UserVolunteerSignup',
-          component: UserVolunteerSignup
         }, {
           path: 'UserResults',
           name: 'UserResults',

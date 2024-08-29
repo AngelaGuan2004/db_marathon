@@ -91,12 +91,7 @@
   align-items: center;
 }
 
-.UserInfoTextForProvince {
-  font-size: 18px;
-  text-align: left;
-  color: black;
-}
-
+.UserInfoTextForProvince,
 .UserInfoTextForCity {
   font-size: 18px;
   text-align: left;

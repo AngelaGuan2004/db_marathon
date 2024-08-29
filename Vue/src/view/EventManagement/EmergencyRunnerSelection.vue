@@ -12,15 +12,15 @@
           <el-table :data="paginatedParticipants" class="Table" style="width: 100%">
             <el-table-column prop="id" label="ID" width="100"></el-table-column>
             <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-            <el-table-column prop="sex" label="性别" width="100"></el-table-column>
-            <el-table-column prop="age" label="年龄" width="100"></el-table-column>
-            <el-table-column prop="number" label="参赛号码" width="120"></el-table-column>
-            <el-table-column prop="history" label="历史成绩" width="150">
+            <el-table-column prop="sex" label="性别" width="80"></el-table-column>
+            <el-table-column prop="age" label="年龄" width="80"></el-table-column>
+            <el-table-column prop="number" label="参赛号码" width="110"></el-table-column>
+            <el-table-column prop="history" label="历史成绩" width="120">
               <template slot-scope="scope">
                 <el-button @click="showHistory(scope.row)">查看详情</el-button>
               </template>
             </el-table-column>
-            <el-table-column label="选为急救跑者" width="120">
+            <el-table-column label="选为急救跑者" width="110">
               <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.isEmergencyRunner"></el-checkbox>
               </template>
@@ -87,9 +87,9 @@ export default {
     },
     save() {
       const selectedEmergencyRunners = this.participants.filter(p => p.isEmergencyRunner);
-      this.$store.dispatch('saveSelectedEmergencyRunners', selectedEmergencyRunners)
+      this.$store.dispatch('availableEmergencyRunnersModule/saveSelectedEmergencyRunners', selectedEmergencyRunners)
         .then(() => {
-          this.participants = this.$store.getters.getAvailableEmergencyRunners;
+          this.participants = this.$store.getters['availableEmergencyRunnersModule/getAvailableEmergencyRunners'];
           this.$message.success('保存成功');
         })
     },
@@ -99,7 +99,7 @@ export default {
     }
   },
   created() {
-    this.participants = this.$store.getters.getAvailableEmergencyRunners;
+    this.participants = this.$store.getters['availableEmergencyRunnersModule/getAvailableEmergencyRunners'];
   }
 };
 </script>

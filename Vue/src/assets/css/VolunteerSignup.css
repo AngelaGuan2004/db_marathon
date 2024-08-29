@@ -1,4 +1,4 @@
-#UserVolunteerSignup {
+#VolunteerSignup {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -6,28 +6,33 @@
   margin-right: 13%;
   background-color: white;
   margin-top: 80px;
-  width: 50%;
+  width: 60%;
   font-size: 15px;
+}
+
+#VolunteerSignup .el-dialog__body {
+  padding: 10px 20px;
 }
 
 .RegistrationContainerWrapper {
   width: 100%;
   text-align: center;
   padding: 20px;
+  padding-top: 0;
   padding-bottom: 40px;
 }
 
-.UserVolunteerSignupLogo {
+.VolunteerSignupLogo {
   display: block;
   margin: 0 auto 20px;
   max-width: 225px;
   height: auto;
 }
 
-.RegistrationContainer {
-  max-width: 50%;
-  margin: 0 auto;
-  padding: 30px 75px;
+#VolunteerSignup .RegistrationContainer {
+  max-width: 65%;
+  margin: 35px auto;
+  padding: 30px 70px;
   padding-top: 10px;
   background-color: rgba(255, 255, 255, 0.9);
   border: 1px solid grey;
@@ -35,43 +40,53 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.RegistrationContainer h2 {
-  margin-bottom: 30px;
+.RegistrationInformation {
+  text-align: left;
+  font-size: 20px;
+  color: black;
 }
 
-.button-group {
+.RegistrationInformation b {
+  display: inline-block;
+  width: 26%;
+  margin-top: 20px;
+  margin-left: 20%;
+}
+
+#VolunteerSignup .button-group {
   display: flex;
   justify-content: space-between;
-  margin-top: 35px;
+  margin-top: 12%;
 }
 
-#UserVolunteerSignup .el-button {
+#VolunteerSignup .el-button {
   background-color: #c63939;
   /*important是为了覆盖原有的Element UI 的按钮组件有默认的样式优先级*/
   color: white;
   border: none !important;
+  margin: 0 10px;
   /* 去掉按钮边框 */
 }
 
-#UserVolunteerSignup .el-button--primary {
+#VolunteerSignup .el-button--primary {
   background-color: #c63939 !important;
 }
 
-#UserVolunteerSignup .el-button--success {
+#VolunteerSignup .el-button--success {
   background-color: #c63939 !important;
 }
 
-#UserVolunteerSignup .el-button:hover {
+#VolunteerSignup .el-button:hover {
   background-color: #a62828 !important;
   /* 悬停时的深红色背景 */
 }
 
-#UserVolunteerSignup .el-form-item {
+#VolunteerSignup .el-form-item {
   width: 120%;
   margin-left: 0px;
 }
 
-#UserVolunteerSignup .el-input {
-  margin-left: -50px;
-  width: 80%;
+#VolunteerSignup .el-input {
+  margin-left: -35px;
+  width: 75%;
 }

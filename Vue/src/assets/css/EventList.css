@@ -7,7 +7,7 @@
 .EventFilterItem {
   flex: 1;
   min-width: 200px;
-  margin: 0 25px;
+  margin: 0 15px;
 }
 
 #EventList .el-menu-demo {
@@ -81,7 +81,7 @@
 }
 
 .clickable-row {
-  cursor: auto;
+  cursor: pointer;
 }
 
 .clickable-row:hover {

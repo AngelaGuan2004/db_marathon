@@ -8,6 +8,43 @@
     </div>
     <el-main>
       <div class="EventFilterContainer">
+        <el-select v-model="selectedLocation" placeholder="请选择比赛地点" class="EventFilterItem">
+          <el-option label="全部" value="ALL"></el-option>
+          <el-option label="北京市" value="北京"></el-option>
+          <el-option label="天津市" value="天津"></el-option>
+          <el-option label="河北省" value="河北"></el-option>
+          <el-option label="山西省" value="山西"></el-option>
+          <el-option label="内蒙古自治区" value="内蒙古"></el-option>
+          <el-option label="辽宁省" value="辽宁"></el-option>
+          <el-option label="吉林省" value="吉林"></el-option>
+          <el-option label="黑龙江省" value="黑龙江"></el-option>
+          <el-option label="上海市" value="上海"></el-option>
+          <el-option label="江苏省" value="江苏"></el-option>
+          <el-option label="浙江省" value="浙江"></el-option>
+          <el-option label="安徽省" value="安徽"></el-option>
+          <el-option label="福建省" value="福建"></el-option>
+          <el-option label="江西省" value="江西"></el-option>
+          <el-option label="河南省" value="河南"></el-option>
+          <el-option label="山东省" value="山东"></el-option>
+          <el-option label="湖北省" value="湖北"></el-option>
+          <el-option label="湖南省" value="湖南"></el-option>
+          <el-option label="广东省" value="广东"></el-option>
+          <el-option label="广西壮族自治区" value="广西"></el-option>
+          <el-option label="海南省" value="海南"></el-option>
+          <el-option label="重庆市" value="重庆"></el-option>
+          <el-option label="四川省" value="四川"></el-option>
+          <el-option label="贵州省" value="贵州"></el-option>
+          <el-option label="云南省" value="云南"></el-option>
+          <el-option label="西藏自治区" value="西藏"></el-option>
+          <el-option label="陕西省" value="陕西"></el-option>
+          <el-option label="甘肃省" value="甘肃"></el-option>
+          <el-option label="青海省" value="青海"></el-option>
+          <el-option label="宁夏回族自治区" value="宁夏"></el-option>
+          <el-option label="新疆维吾尔自治区" value="新疆"></el-option>
+          <el-option label="台湾省" value="台湾"></el-option>
+          <el-option label="香港特别行政区" value="香港"></el-option>
+          <el-option label="澳门特别行政区" value="澳门"></el-option>
+        </el-select>
         <el-select v-model="selectedType" placeholder="请选择赛事类型" class="EventFilterItem">
           <el-option label="全部" value="马"></el-option>
           <el-option label="半马" value="半马"></el-option>
@@ -18,7 +55,8 @@
         <el-input placeholder="请输入赛事名称" v-model="searchName" class="EventFilterItem"></el-input>
       </div>
       <div v-if="filteredEvents.length > 0">
-        <el-table :data="filteredEvents" class="EventInfoTable" row-class-name="clickable-row">
+        <el-table :data="filteredEvents" class="EventInfoTable" @row-click="handleRowClick"
+          row-class-name="clickable-row">
           <el-table-column prop="date" label="开赛时间" width="150"></el-table-column>
           <el-table-column prop="name" label="比赛名称" width="250"></el-table-column>
           <el-table-column prop="type" label="赛事类型" width="150"></el-table-column>
@@ -74,6 +112,9 @@ export default {
       if (this.searchName) {
         filtered = filtered.filter(event => event.name.includes(this.searchName));
       }
+      if (this.selectedLocation) {
+        filtered = filtered.filter(event => event.location.includes(this.selectedLocation));
+      }
       if (this.selectedType) {
         filtered = filtered.filter(event => event.type.includes(this.selectedType));
       }
@@ -86,6 +127,9 @@ export default {
       let filtered = this.events;
       if (this.searchName) {
         filtered = filtered.filter(event => event.name.includes(this.searchName));
+      }
+      if (this.selectedLocation) {
+        filtered = filtered.filter(event => event.location.includes(this.selectedLocation));
       }
       if (this.selectedType) {
         filtered = filtered.filter(event => event.type.includes(this.selectedType));
@@ -105,6 +149,9 @@ export default {
     },
     handleEventVolunteer() {
       this.$router.push({ name: 'EventVolunteerTab', });
+    },
+    handleRowClick(event) {
+      this.$router.push({ name: 'EventDetail', params: { id: event.id } });
     }
   }
 };

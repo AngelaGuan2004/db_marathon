@@ -228,13 +228,6 @@ export default {
       }
     },
     */
-    updateCities() {
-      if (this.cities.length > 0) {
-        this.selectedCity = this.cities[0]
-      } else {
-        this.selectedCity = ''
-      }
-    },
   },
   computed: {
     cities() {

@@ -12,15 +12,15 @@
           <el-table :data="paginatedParticipants" class="Table" style="width: 100%">
             <el-table-column prop="id" label="ID" width="100"></el-table-column>
             <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-            <el-table-column prop="sex" label="性别" width="100"></el-table-column>
-            <el-table-column prop="age" label="年龄" width="100"></el-table-column>
-            <el-table-column prop="number" label="参赛号码" width="120"></el-table-column>
-            <el-table-column prop="history" label="历史成绩" width="150">
+            <el-table-column prop="sex" label="性别" width="80"></el-table-column>
+            <el-table-column prop="age" label="年龄" width="80"></el-table-column>
+            <el-table-column prop="number" label="参赛号码" width="110"></el-table-column>
+            <el-table-column prop="history" label="历史成绩" width="120">
               <template slot-scope="scope">
                 <el-button @click="showHistory(scope.row)">查看详情</el-button>
               </template>
             </el-table-column>
-            <el-table-column label="选为配速员" width="120">
+            <el-table-column label="选为配速员" width="110">
               <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.isPacer"></el-checkbox>
               </template>
@@ -62,8 +62,8 @@ export default {
     return {
       totalParticipants: '',
       historyDialogVisible: false,
-      selectedParticipantHistory: '',
-      participants: '',
+      selectedParticipantHistory: [],
+      participants: [],
       currentPage: 1,
       pageSize: 6
     };
@@ -88,9 +88,9 @@ export default {
     },
     save() {
       const selectedPacers = this.participants.filter(p => p.isPacer);
-      this.$store.dispatch('saveSelectedPacers', selectedPacers)
+      this.$store.dispatch('availablePacersModule/saveSelectedPacers', selectedPacers)
         .then(() => {
-          this.participants = this.$store.getters.getAvailablePacers;
+          this.participants = this.$store.getters['availablePacersModule/getAvailablePacers'];
           this.$message.success('保存成功');
         })
     },
@@ -100,7 +100,7 @@ export default {
     }
   },
   created() {
-    this.participants = this.$store.getters.getAvailablePacers;
+    this.participants = this.$store.getters['availablePacersModule/getAvailablePacers'];
   }
 };
 </script>

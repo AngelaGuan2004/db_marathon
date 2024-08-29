@@ -50,9 +50,16 @@
 
 .HeaderLogin {
   float: right;
-  margin-right: 5%;
+  margin-right: 2%;
 }
 
 .HeaderLogin .is-active {
   border-bottom-color: transparent !important;
+}
+
+.el-icon-user-solid {
+  color: white;
+  font-size: 36px;
+  margin-top: -25px;
+  text-align: center;
 }
