@@ -7,7 +7,7 @@ using SqlSugar;
 
 namespace MarathonMaster.Models
 {
-    [SugarTable("VolunteerMedicalpoint")]
+    [SugarTable("Volunteer_Medicalpoint")]
     public class VolunteerMedicalpoint
     {
         [SugarColumn(IsPrimaryKey = true)]
