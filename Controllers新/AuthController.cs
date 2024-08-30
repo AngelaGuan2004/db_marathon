@@ -15,7 +15,6 @@ using System.Text.Unicode;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
-using MarathonMaster.Models;
 using MarathonMaster;
 
 
@@ -123,36 +122,36 @@ namespace MarathonMaster.Controllers
             }
         }
 
-        //志愿者登录
-        [HttpPost]
-        public async Task<IActionResult> login_volunteer([FromBody] Volunteer volunteer)
-        {
-            _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
+        ////志愿者登录
+        //[HttpPost]
+        //public async Task<IActionResult> login_volunteer([FromBody] Volunteer volunteer)
+        //{
+        //    _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
 
-            try
-            {
-                var existingVolunteer = await _db.Queryable<Volunteer>()
-                    .Where(it => it.Name == volunteer.Name && it.Password == volunteer.Password && it.Telephone_Number == volunteer.Telephone_Number)
-                    .FirstAsync();
+        //    try
+        //    {
+        //        var existingVolunteer = await _db.Queryable<Volunteer>()
+        //            .Where(it => it.Name == volunteer.Name && it.Password == volunteer.Password && it.Telephone_Number == volunteer.Telephone_Number)
+        //            .FirstAsync();
 
-                if (existingVolunteer != null)
-                {
-                    _logger.LogInformation("志愿者登录成功: {@Volunteer}", volunteer); // 记录登录成功
-                    return Ok(true);
-                }
-                else
-                {
-                    _logger.LogWarning("登录失败: 无效的用户名或密码或手机号");
-                    return Unauthorized(false);
-                }
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, "志愿者登录失败: {@LoginRequest}", volunteer); // 记录错误信息
+        //        if (existingVolunteer != null)
+        //        {
+        //            _logger.LogInformation("志愿者登录成功: {@Volunteer}", volunteer); // 记录登录成功
+        //            return Ok(true);
+        //        }
+        //        else
+        //        {
+        //            _logger.LogWarning("登录失败: 无效的用户名或密码或手机号");
+        //            return Unauthorized(false);
+        //        }
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        _logger.LogError(ex, "志愿者登录失败: {@LoginRequest}", volunteer); // 记录错误信息
 
-                return BadRequest(false);
-            }
-        }
+        //        return BadRequest(false);
+        //    }
+        //}
 
         //摄影师登录
         [HttpPost]

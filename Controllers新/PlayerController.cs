@@ -57,53 +57,28 @@ namespace MarathonMaster.Controllers
 
         //查询中签信息、参赛号码
         [HttpGet]
-        public async Task<IActionResult> search_participate([FromQuery] Participate participate)
+        public string search_participate(int Player_Id,string Event_Id)
         {
-            _logger.LogInformation("收到参赛数据: {@Participate}", participate); // 记录收到的数据
+            Participate existingParticipate = new Participate();
+            existingParticipate= _db.Queryable<Participate>().Where(it => it.Player_Id == Player_Id && it.Event_Id == Event_Id).First();
 
-            try
+            Player existingPlayer = new Player();
+            existingPlayer = _db.Queryable<Player>().Where(it => it.Id == Player_Id).First();
+
+            if (existingPlayer != null)
             {
-                // 先查询该赛事的抽签状态
-                var eventStatus = await _db.Queryable<Event>()
-                    .Where(it => it.Id == participate.Event_Id)
-                    .Select(it => new { it.Is_Drawn })
-                    .FirstAsync();
-
-                if (eventStatus == null)
+                var participateAndPlayer = new
                 {
-                    _logger.LogWarning("赛事不存在");
-                    return NotFound("赛事不存在");
-                }
-
-                // 检查赛事是否已经抽签
-                if (eventStatus.Is_Drawn == false)
-                {
-                    _logger.LogWarning("赛事尚未抽签");
-                    return BadRequest("赛事尚未抽签");
-                }
-
-                // 查询选手的参赛信息
-                var existingParticipate = await _db.Queryable<Participate>()
-                    .Where(it => it.Player_Id == participate.Player_Id && it.Event_Id == participate.Event_Id)
-                    .FirstAsync();
-
-                if (existingParticipate != null && existingParticipate.Number_ != null)
-                {
-                    _logger.LogInformation("选手抽签成功: {@Participate}", participate); // 记录抽签成功
-                    return Ok(existingParticipate.Number_);
-                }
-                else
-                {
-                    _logger.LogWarning("抽签不中");
-                    return Unauthorized(false);
-                }
+                    Participate = existingParticipate,
+                    Player = existingPlayer
+                };
+                return JsonSerializer.Serialize(participateAndPlayer);
             }
-            catch (System.Exception ex)
+            else
             {
-                _logger.LogError(ex, "选手抽签失败: {@Participate}", participate); // 记录错误信息
-
-                return BadRequest(false);
+                return "player id 不存在";
             }
+ 
         }
 
         //删除报名
@@ -168,15 +143,23 @@ namespace MarathonMaster.Controllers
                                                  .Select(p => p.Number_)
                                                  .FirstAsync();
 
+                var _event = await _db.Queryable<Event>()
+                                                 .Where(p => p.Id == eventId)
+                                                 .FirstAsync();
+
                 if (participateRecord != null)
                 {
                     _logger.LogInformation("查询成功, 比赛ID: {EventId}, 选手ID: {PlayerId}, 比赛号码: {Number}", eventId, playerId, participateRecord);
                     return Ok(participateRecord); // 返回比赛号码
                 }
-                else
+                else if(_event.Is_Drawn=="是")//已经抽签
                 {
                     _logger.LogWarning("未找到比赛ID: {EventId} 和选手ID: {PlayerId} 对应的比赛号码", eventId, playerId);
-                    return NotFound("未找到对应的比赛号码");
+                    return NotFound("未中签");
+                }
+                else
+                {
+                    return NotFound("尚未抽签");
                 }
             }
             catch (System.Exception ex)

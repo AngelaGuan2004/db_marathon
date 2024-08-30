@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-using db_marathon.Models;
+using MarathonMaster.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,9 +15,10 @@ using System.Text.Unicode;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
+using MarathonMaster;
 
 
-namespace db_marathon.Controllers
+namespace MarathonMaster.Controllers
 {
     [Route("/[controller]/[action]")]
     [ApiController]
@@ -65,7 +66,7 @@ namespace db_marathon.Controllers
 
         //查询选手某次成绩
         [HttpGet]
-        public async Task<IActionResult> search_result([FromQuery] int Player_Id, int Event_id)
+        public async Task<IActionResult> search_result([FromQuery] int Player_Id, string Event_id)
         {
             _logger.LogInformation("收到的数据: {@Player_Id}", Player_Id); // 记录收到的数据
 
@@ -73,7 +74,7 @@ namespace db_marathon.Controllers
             {
                 Result_ results = await _db.Queryable<Result_>()
                                   .Where(it => it.Player_Id == Player_Id && it.Event_Id == Event_id)
-                                  .SingleAsync();;
+                                  .SingleAsync(); ;
                 if (results != null)
                 {
                     _logger.LogInformation("査找的成绩信息:{ @results}", results);
@@ -121,7 +122,7 @@ namespace db_marathon.Controllers
 
         // 获取前N名选手列表
         [HttpGet]
-        public async Task<IActionResult> get_top_players([FromQuery] int event_id, [FromQuery] int topN)
+        public async Task<IActionResult> get_top_players([FromQuery] string event_id, [FromQuery] int topN)
         {
             _logger.LogInformation("收到请求: event_id={@event_id}, topN={@topN}", event_id, topN);
 
@@ -152,7 +153,7 @@ namespace db_marathon.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> get_last_players([FromQuery] int event_id, [FromQuery] int lastN)
+        public async Task<IActionResult> get_last_players([FromQuery] string event_id, [FromQuery] int lastN)
         {
             _logger.LogInformation("收到请求: event_id={@event_id}, lastN={@lastN}", event_id, lastN);
 

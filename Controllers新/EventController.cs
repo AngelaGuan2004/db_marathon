@@ -97,40 +97,29 @@ namespace MarathonMaster.Controllers
 
         //获取赛事详情
         [HttpGet]
-        public async Task<IActionResult> get_by_id([FromQuery] string Id)
+        public string get_by_id(string Id)
         {
-            try
+            Event existingEvent_ = new Event();
+            existingEvent_= _db.Queryable<Event>().Where(it => it.Id == Id).First();
+
+            Weather existingWeather = new Weather();
+            existingWeather = _db.Queryable<Weather>().Where(it => it.Id == Id).First();
+               
+            if (existingEvent_ != null)
             {
-                var existingEvent_ = await _db.Queryable<Event>()
-                .Where(it => it.Id == Id)
-                .FirstAsync();
-
-                var existingWeather = await _db.Queryable<Weather>()
-                .Where(it => it.Id == Id)
-                .FirstAsync();
-
-                if (existingEvent_ != null)
+                var eventAndWeather = new
                 {
-                    var eventAndWeather = new
-                    {
-                        Event = existingEvent_,
-                        Weather = existingWeather
-                    };
-                    _logger.LogInformation("赛事查找成功: {ID}", Id); // 记录成功
-                    return Ok(eventAndWeather);
-                }
-                else
-                {
-                    _logger.LogWarning("赛事查找失败");
-                    return Unauthorized(null);
-                }
+                    Event = existingEvent_,
+                    Weather = existingWeather
+                };
+
+                return JsonSerializer.Serialize(eventAndWeather);
             }
-            catch (System.Exception ex)
+            else
             {
-                _logger.LogError(ex, "赛事查找失败", Id); // 记录错误信息
-
-                return BadRequest(false);
+                return "无";
             }
+            
         }
 
         //获取所有赛事
