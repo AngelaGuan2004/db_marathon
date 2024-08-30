@@ -12,7 +12,7 @@ using System;
 
 namespace MarathonMaster.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("/[controller]/[action]")]
     [ApiController]
     [EnableCors("any")]
     public class SupplyController : ControllerBase

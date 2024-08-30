@@ -9,7 +9,7 @@ using System.Numerics;
 
 namespace MarathonMaster.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("/[controller]/[action]")]
     [ApiController]
     [EnableCors("any")]
     public class WeatherController : ControllerBase
