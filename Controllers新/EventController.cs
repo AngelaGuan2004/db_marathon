@@ -97,14 +97,16 @@ namespace MarathonMaster.Controllers
 
         //获取赛事详情
         [HttpGet]
-        public string get_by_id(string Id)
+        public async Task<string> get_by_id([FromQuery] string Id)
         {
-            Event existingEvent_ = new Event();
-            existingEvent_= _db.Queryable<Event>().Where(it => it.Id == Id).First();
+            Event existingEvent_ = await _db.Queryable<Event>()
+                .Where(it => it.Id == Id)
+                .FirstAsync();
 
-            Weather existingWeather = new Weather();
-            existingWeather = _db.Queryable<Weather>().Where(it => it.Id == Id).First();
-               
+            Weather existingWeather = await _db.Queryable<Weather>()
+                .Where(it => it.Id == Id)
+                .FirstAsync();
+
             if (existingEvent_ != null)
             {
                 var eventAndWeather = new
@@ -119,8 +121,8 @@ namespace MarathonMaster.Controllers
             {
                 return "无";
             }
-            
         }
+
 
         //获取所有赛事
         [HttpGet]

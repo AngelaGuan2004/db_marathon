@@ -57,13 +57,15 @@ namespace MarathonMaster.Controllers
 
         //查询中签信息、参赛号码
         [HttpGet]
-        public string search_participate(int Player_Id,string Event_Id)
+        public async Task<string> search_participate([FromQuery] int Player_Id, [FromQuery] string Event_Id)
         {
-            Participate existingParticipate = new Participate();
-            existingParticipate= _db.Queryable<Participate>().Where(it => it.Player_Id == Player_Id && it.Event_Id == Event_Id).First();
+            var existingParticipate = await _db.Queryable<Participate>()
+                .Where(it => it.Player_Id == Player_Id && it.Event_Id == Event_Id)
+                .FirstAsync();
 
-            Player existingPlayer = new Player();
-            existingPlayer = _db.Queryable<Player>().Where(it => it.Id == Player_Id).First();
+            var existingPlayer = await _db.Queryable<Player>()
+                .Where(it => it.Id == Player_Id)
+                .FirstAsync();
 
             if (existingPlayer != null)
             {
@@ -78,8 +80,8 @@ namespace MarathonMaster.Controllers
             {
                 return "player id 不存在";
             }
- 
         }
+
 
         //删除报名
         [HttpDelete]
@@ -103,7 +105,7 @@ namespace MarathonMaster.Controllers
 
         // 查询选手报名的所有比赛ID
         [HttpGet]
-        public async Task<IActionResult> get_events_by_playerid(int Id)
+        public async Task<IActionResult> get_events_by_playerid([FromQuery] int Id)
         {
             try
             {
@@ -133,7 +135,7 @@ namespace MarathonMaster.Controllers
 
         // 根据比赛id和选手id查询比赛号码
         [HttpGet]
-        public async Task<IActionResult> get_number_by_eventid_and_playerid(string eventId, int playerId)
+        public async Task<IActionResult> get_number_by_eventid_and_playerid([FromQuery] string eventId, [FromQuery] int playerId)
         {
             try
             {
