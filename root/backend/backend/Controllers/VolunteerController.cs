@@ -17,8 +17,8 @@ namespace WebApplication1.Controllers
 
     [Route("/[Controller]/[action]")] // 指定路由模板和控制器的基本配置
     [ApiController]
-    //[EnableCors("any")]
-    [EnableCors("AllowAllOrigins")]  // 启用跨域请求    
+    [EnableCors("any")]
+    //[EnableCors("AllowAllOrigins")]  // 启用跨域请求    
     public class VolunteerController : ControllerBase
     {
 
