@@ -1,0 +1,99 @@
+#EventDetail {
+  height: 75vh;
+}
+
+.EventDetailContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 35px;
+  padding: 30px;
+  background-color: white;
+  border: 1px solid grey;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px white;
+}
+
+.EventDetailTitle {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 5%;
+  padding-left: 10%;
+}
+
+.EventDetailContainerInfo {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 10%;
+}
+
+.EventDetailContainerInfoItem {
+  display: flex;
+  align-items: left;
+  margin-bottom: 30px;
+  font-size: 20px;
+}
+
+.EventDetailContainerInfoOne .EventDetailContainerInfoItem span span {
+  display: inline-block;
+  width: 160px;
+  font-weight: bold;
+}
+
+.EventDetailContainerInfoTwo .EventDetailContainerInfoItem span span {
+  display: inline-block;
+  width: 100px;
+  font-weight: bold;
+}
+
+.EventDetailContainerIcon {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+}
+
+.EventDetailLink {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.EventDetailLink:hover {
+  color: red;
+}
+
+.EventDetailContainerButton {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.EventDetailContainerInfoOne {
+  width: 70%;
+}
+
+.EventDetailContainerInfoTwo {
+  width: 48%;
+}
+
+#EventDetail .el-button {
+  font-size: 22px;
+  background-color: #c63939;
+  /*important是为了覆盖原有的Element UI 的按钮组件有默认的样式优先级*/
+  color: white;
+  border: none !important;
+  /* 去掉按钮边框 */
+}
+
+#EventDetail .el-button--primary {
+  background-color: #c63939 !important;
+}
+
+#EventDetail .el-button--success {
+  background-color: #c63939 !important;
+}
+
+#EventDetail .el-button:hover {
+  background-color: #a62828 !important;
+  /* 悬停时的深红色背景 */
+}

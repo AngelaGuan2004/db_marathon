@@ -1,0 +1,65 @@
+.Header {
+  height: 100px;
+  width: 100%;
+  background-color: rgb(168, 27, 31);
+}
+
+.HeaderLogo {
+  display: inline-block;
+  width: 30%;
+  height: 100%;
+  text-align: center;
+
+}
+
+.HeaderLogo img {
+  height: 90%;
+  margin-bottom: 5px;
+}
+
+.HeaderTab {
+  display: inline-block;
+  height: 100%;
+}
+
+#Header .el-menu-demo {
+  height: 100%;
+}
+
+#Header .el-menu--horizontal>.el-menu-item {
+  font-size: 20px;
+  font-weight: normal;
+  height: 95%;
+  line-height: 100px;
+}
+
+#Header .el-menu--horizontal>.el-menu-item.is-active {
+  font-weight: bold;
+  background-color: transparent;
+}
+
+#Header .el-menu--horizontal>.el-menu-item:hover {
+  font-weight: bold;
+  background-color: transparent !important;
+}
+
+#Header .el-submenu__title:hover {
+  font-weight: bold;
+  background-color: transparent !important;
+}
+
+.HeaderLogin {
+  float: right;
+  margin-right: 2%;
+}
+
+.HeaderLogin .is-active {
+  border-bottom-color: transparent !important;
+}
+
+.el-icon-user-solid {
+  color: white;
+  font-size: 36px;
+  margin-top: -25px;
+  text-align: center;
+}
