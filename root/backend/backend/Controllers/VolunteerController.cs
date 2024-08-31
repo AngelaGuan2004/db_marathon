@@ -12,7 +12,7 @@ using System;
 
 
 
-namespace WebApplication1.Controllers
+namespace MarathonMaster.Controllers
 {
 
     [Route("/[Controller]/[action]")] // 指定路由模板和控制器的基本配置

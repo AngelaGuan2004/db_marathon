@@ -18,10 +18,9 @@ using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
 
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace WebApplication1.Controllers
+namespace MarathonMaster.Controllers
 {
     [Route("/[Controller]/[action]")] // 指定路由模板和控制器的基本配置
     [ApiController]
