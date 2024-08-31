@@ -38,10 +38,10 @@
             <img :src="photo.src" alt="Photo" class="photo"  @click="openPreview(photo)"/>
             <div class="info-box">
               <div style="text-align: left; font-size: 14px; padding-left: 5px; padding-top: 5px;">
-                <p>摄影师: {{ photo.photographer }}</p>
-                <p>日期: {{ photo.date }}</p>
+                <p>摄影师: {{ photo.photographer_name }}</p>
+                <p>日期: {{ photo.time }}</p>
                 <p>地点: {{ photo.location }}</p>
-                <p>赛事: {{ photo.event }}</p>
+                <p>赛事: {{ photo.event_name }}</p>
               </div>
               <button @click="toggleLike(index)" class="like-button" :class="{ liked: photo.liked }">
                 {{ photo.liked ? '❤️'+photo.likes : '🤍'+photo.likes }}
@@ -78,7 +78,8 @@
 </template>
   
   <script>
-  
+  import { getAllPhotos } from '@/api/Photo';
+
   export default {
     name: 'PhotoWall',
     props: {
@@ -86,18 +87,18 @@
     },
     data() {
       return {
-        photos: [
-          { src: require('@/assets/1.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师1', date: '2023-07-10', location: '地点1', likes: 1000},
-          { src: require('@/assets/2.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师2', date: '2023-07-11', location: '地点2', likes: 900},
-          { src: require('@/assets/3.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师3', date: '2023-07-12', location: '地点3', likes: 800},
-          { src: require('@/assets/4.jpg'), liked: false, event: '上海国际马拉松', photographer: '摄影师4', date: '2023-07-13', location: '地点4', likes: 700},
-          { src: require('@/assets/5.jpg'), liked: false, event: '上海国际马拉松', photographer: '摄影师5', date: '2023-07-14', location: '地点5', likes: 600},
-          { src: require('@/assets/6.jpg'), liked: false, event: '广州马拉松', photographer: '摄影师6', date: '2023-07-15', location: '地点6', likes: 500},
-          { src: require('@/assets/7.jpg'), liked: false, event: '广州马拉松', photographer: '摄影师7', date: '2023-07-15', location: '地点7', likes: 499},
-          { src: require('@/assets/8.jpg'), liked: false, event: '厦门马拉松', photographer: '摄影师8', date: '2023-07-20', location: '地点8', likes: 620},
-          { src: require('@/assets/9.jpg'), liked: false, event: '厦门马拉松',   photographer: '摄影师9', date: '2023-07-17', location: '地点9', likes: 50},
-        ],
-        //photos:[],
+        // photos: [
+        //   { src: require('@/assets/1.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师1', date: '2023-07-10', location: '地点1', likes: 1000},
+        //   { src: require('@/assets/2.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师2', date: '2023-07-11', location: '地点2', likes: 900},
+        //   { src: require('@/assets/3.jpg'), liked: false, event: '北京马拉松', photographer: '摄影师3', date: '2023-07-12', location: '地点3', likes: 800},
+        //   { src: require('@/assets/4.jpg'), liked: false, event: '上海国际马拉松', photographer: '摄影师4', date: '2023-07-13', location: '地点4', likes: 700},
+        //   { src: require('@/assets/5.jpg'), liked: false, event: '上海国际马拉松', photographer: '摄影师5', date: '2023-07-14', location: '地点5', likes: 600},
+        //   { src: require('@/assets/6.jpg'), liked: false, event: '广州马拉松', photographer: '摄影师6', date: '2023-07-15', location: '地点6', likes: 500},
+        //   { src: require('@/assets/7.jpg'), liked: false, event: '广州马拉松', photographer: '摄影师7', date: '2023-07-15', location: '地点7', likes: 499},
+        //   { src: require('@/assets/8.jpg'), liked: false, event: '厦门马拉松', photographer: '摄影师8', date: '2023-07-20', location: '地点8', likes: 620},
+        //   { src: require('@/assets/9.jpg'), liked: false, event: '厦门马拉松',   photographer: '摄影师9', date: '2023-07-17', location: '地点9', likes: 50},
+        // ],
+        photos:[],
         input3: '',  // 这是用于暂存输入内容的变量
         select: '2', // 默认排序为最热
         dialogVisible: false,
@@ -116,7 +117,19 @@
         return this.photos.slice(start, end);
       }
     },
+    async mounted(){
+      await this.getPhotos();
+    },
     methods: {
+      async getPhotos(){
+        try {
+          const response = await getAllPhotos();
+          this.photos = response;
+          console.log("收到的数据:", this.photos);
+        } catch (error) {
+          console.error('获所有照片时发生错误:', error);
+        }
+      },
       navigateTo(_path) {
         this.$router.push({path:_path},()=>{})
       },
@@ -126,12 +139,12 @@
         // 这里可以添加与数据库的交互来更新点赞数
       },
       getPhotoTooltip(photo) {
-        return `摄影师: ${photo.photographer}<br>日期: ${photo.date}<br>地点: ${photo.location}`;
+        return `摄影师: ${photo.photographer}<br>日期: ${photo.time}<br>地点: ${photo.location}`;
       },
       sortPhotos() {
         if (this.select === '1') {
           // 按日期排序，最新的在前
-          this.photos.sort((a, b) => new Date(b.date) - new Date(a.date));
+          this.photos.sort((a, b) => new Date(b.time) - new Date(a.time));
         } else if (this.select === '2') {
           // 按点赞数排序，最多的在前
           this.photos.sort((a, b) => b.likes - a.likes);
@@ -287,14 +300,14 @@
   .info-box{
     margin-top: 6px; 
     width: 100%;
-    height: 23%;
+    height: 21%;
     background-color: #f2f2f2;
     border-radius: 8px; 
   }
   
   .like-button {
     position: absolute;
-    bottom: 12px; 
+    bottom: 30px; 
     right: 5px; 
     background-color: #dcdcdc;
     border: none;
@@ -311,7 +324,7 @@
   .styled-select {
     background-color: #c81623; 
     color: #f0f0f0; 
-    padding: 5px;
+    padding: 5px; 
     border-radius: 10px;
     border: none; 
   }
