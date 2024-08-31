@@ -1,14 +1,14 @@
 <template>
   <div id="VolunteerSignup">
-    <el-dialog title="志愿者登录" :visible.sync="dialogVisible" width="55%">
+    <el-dialog title="志愿者报名" :visible.sync="dialogVisible" width="55%">
       <div class="RegistrationContainerWrapper">
         <!-- 添加 logo 图片 -->
         <img class="VolunteerSignupLogo" src="@/assets/images/JiMa.png" alt="Logo">
         <div class="RegistrationContainer">
-          <h1 style="margin-bottom: 30px;">志愿者登录</h1>
+          <h1 style="margin-bottom: 30px;">志愿者报名</h1>
           <div class="RegistrationInformation">
-            <div><b> 姓名：</b><span> {{ volunteer.name }}</span></div>
-            <div><b style="margin-right: 5px;"> 手机号：</b><span>{{ volunteer.phone }}</span> </div>
+            <div><b> 姓名：</b><span> {{ this.volunteer.playerName }}</span></div>
+            <div><b style="margin-right: 5px;"> 手机号：</b><span>{{ this.volunteer.playerPhone }}</span> </div>
           </div>
           <div class="button-group">
             <el-button type="primary" @click="modifyInfo">修改信息</el-button>
@@ -22,43 +22,64 @@
 
 <script>
 import { registerVolunteer } from '@/api/volunteer';
-/* 从 API 工具文件中引入了 registerVolunteer 函数 */
+import { getPlayerById } from '@/api/player';
 
 export default {
   name: 'VolunteerSignup',
   data() {
     return {
       volunteer: {
-        name: '王中凯',
-        phone: '13045395263'
+        playerName: '',
+        playerPhone: ''
       },
       dialogVisible: true
     };
   },
   mounted() {
-    // this.loadVolunteerInfo();
+    this.loadPlayerInfo();
   },
   methods: {
-    loadVolunteerInfo() {
-      const volunteerId = this.$route.params.id;
-      this.$http.get(`/api/volunteer/${volunteerId}`)
-        .then(response => {
-          this.volunteer = response.data;
-        })
-        .catch(error => {
-          console.error('Error loading volunteer info:', error);
-          this.$message.error('加载志愿者信息失败');
-        });
+    async loadPlayerInfo() {
+      try {
+        const userId = localStorage.getItem('UserId');
+        if (userId) {
+          const response = await getPlayerById(userId);
+          console.log(response)
+          if (response) {
+            this.volunteer.playerName = response.Name;
+            this.volunteer.playerPhone = response.Telephone_Number;
+          } else {
+            this.$message.error('未找到该玩家的信息');
+          }
+        } else {
+          this.$message.error('用户ID未找到');
+        }
+      } catch (error) {
+        console.error('Error fetching player data:', error);
+        this.$message.error('加载玩家信息失败');
+      }
     },
-    submitRegistration() {
-      registerVolunteer(this.volunteer)
-        .then(() => {
-          this.$message.success('报名成功');
-        })
-        .catch(error => {
-          console.error('Error submitting registration:', error);
-          this.$message.error('报名失败');
+    async submitRegistration() {
+      try {
+        const volunteerId = localStorage.getItem('UserId'); // 假设志愿者ID存储在localStorage中
+        const eventId = localStorage.getItem('EventId'); // 假设活动ID存储在localStorage中
+
+        if (!volunteerId || !eventId) {
+          this.$message.error('缺少志愿者ID或活动ID');
+          return;
+        }
+
+        // 发送包含 Event_Id 和 Volunteer_Id 的请求到后端
+        await registerVolunteer({
+          Event_Id: eventId,
+          Volunteer_Id: volunteerId
         });
+
+        this.$message.success('报名成功');
+      } catch (error) {
+        console.error('Error submitting registration:', error);
+        this.$message.error('报名失败');
+      }
     },
     modifyInfo() {
       this.$router.push({ name: 'UserTab' });

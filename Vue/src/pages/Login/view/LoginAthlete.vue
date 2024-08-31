@@ -48,7 +48,6 @@ export default {
     async LoginAthlete() {
       // 组织要发送的数据
       const data = {
-        Id: 1,
         Name: this.name,
         Id_Number: this.idNumber,
         Password: this.password
@@ -58,8 +57,10 @@ export default {
       try {
         const response = await loginPlayer(data);
         if (response) {
+          console.log(response.Id)
           this.$message.success('登录成功！')
           localStorage.setItem('UserRole', 'Athlete');
+          localStorage.setItem('UserId', response.Id);
           setTimeout(() => {
             location.href = 'index.html'; // 登录成功后跳转到首页
           }, 1000)

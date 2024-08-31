@@ -38,7 +38,6 @@
             <span>
               <span>物资：</span>
               <a @click="openPackageModal">详情>></a>
-              <a @click="openPackageManagement">管理>></a>
             </span>
           </div>
           <div class="EventDetailContainerInfoItem">
@@ -46,7 +45,6 @@
             <span>
               <span>补给点：</span>
               <a @click="openSupplypointModal">详情>></a>
-              <a @click="openSupplyManagement">管理>></a>
             </span>
           </div>
           <div class="EventDetailContainerInfoItem">
@@ -54,7 +52,6 @@
             <span>
               <span>医疗点：</span>
               <a @click="openMedicalModal">详情>></a>
-              <a @click="openMedicalModal">管理>></a>
             </span>
           </div>
           <div class="EventDetailContainerInfoItem">
@@ -242,12 +239,6 @@ export default {
     },
     closeVolunteerSignupModal() {
       this.showVolunteerSignupModal = false
-    },
-    openPackageManagement() {
-      this.$router.push({ name: 'ItemManagement' });
-    },
-    openSupplyManagement() {
-      this.$router.push({ name: 'SupplypointManagement' });
     },
     GoToEventRegistration() {
       this.$router.push({ name: 'EventRegistration', params: { id: this.$route.params.id } });

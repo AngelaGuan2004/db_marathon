@@ -34,7 +34,8 @@ import MedicalManagement from '@/view/EventVolunteer/MedicalManagement.vue'
 import SupplyManagement from '@/view/EventVolunteer/SupplyManagement.vue'
 import VolunManagement from '@/view/EventVolunteer/VolunManagement.vue'
 
-import PhotoWall from '@/view/PhotoWall/PhotoWall.vue'
+import PhotoWall from '@/view/PhotoGraph/PhotoWall.vue'
+import PhotographerCenter from '@/view/PhotoGraph/PhotographerCenter.vue'
 //创建并暴露一个路由器
 export default new VueRouter({
   mode: 'history',
@@ -152,7 +153,11 @@ export default new VueRouter({
           path: 'UserResults',
           name: 'UserResults',
           component: UserResults
-        }
+        }, {
+          path: 'PhotographerCenter',
+          name: 'PhotographerCenter',
+          component: PhotographerCenter
+        },
       ]
     }, {
       path: '/PhotoWall',

@@ -8,7 +8,7 @@
         </el-breadcrumb>
       </div>
       <div class="TabRight">
-        <div class="TabFlex">
+        <div class="TabFlex" v-if="GetRole() === 'Athlete'">
           <div class="Tab">
             <el-menu ref="UserMenu" :default-active="ActiveIndexForUserTab" class="el-menu-vertical-demo"
               @select="ActiveIndex" active-text-color="rgb(168, 27, 31)">
@@ -39,7 +39,7 @@ export default {
   name: 'UserTab',
   data() {
     return {
-      UserTabTitle: ['UserInfo', 'UserResults', 'UserRegistrations', 'UserVolunteering'],
+      UserTabTitle: ['UserInfo', 'UserResults', 'UserRegistrations', 'UserVolunteering', 'PhotographerCenter'],
       ActiveIndexForUserTab: "1"
     }
   },
@@ -48,10 +48,16 @@ export default {
       this.ActiveIndexForUserTab = index; // 设置当前激活的菜单项
       this.$refs.UserMenu.activeIndex = index;
       this.$router.push({ name: this.UserTabTitle[index - 1] });
+    },
+    GetRole() {
+      return localStorage.getItem('UserRole')
     }
   },
   mounted() {
-    this.$router.push({ name: 'UserInfo' })
+    if (localStorage.getItem('UserRole') === 'Athlete')
+      this.$router.push({ name: 'UserInfo' })
+    else
+      this.$router.push({ name: 'PhotographerCenter' })
     this.$bus.$on('ActiveIndexForUserTab', this.ActiveIndex);
   },
   beforeDestroy() {
@@ -88,7 +94,7 @@ export default {
 
 .User {
   width: 100%;
-  height: 80vh;
+  height: 85vh;
   background-color: rgb(244, 244, 244);
   padding: 0 100px;
   padding-top: 20px;

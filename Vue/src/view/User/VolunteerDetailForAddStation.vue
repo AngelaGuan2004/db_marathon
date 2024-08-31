@@ -2,7 +2,6 @@
   <div id="VolunteerDetailForAddStation">
     <el-dialog title="赛事志愿详情" :visible.sync="dialogTableVisible" :before-close="handleClose" width="35%">
       <div class="AidStation" v-if="aidStation">
-        <div class="AidStationHeader" style="color: rgb(168, 27, 31);">{{ aidStation.eventTitle }}</div>
         <div class="AidStationContent">
           <div style="width: 100%;">
             <div class="AidStationItem">
@@ -48,10 +47,10 @@ export default {
   },
   methods: {
     loadVolunteerInformation() {
-      const volunteerId = this.$route.params.volunteer_id;
+      const volunteerId = localStorage.getItem('UserId');
       const eventId = this.$route.params.event_id;
 
-      acquireVolunteerInformation(eventId, 10001)
+      acquireVolunteerInformation(eventId, volunteerId)
         .then(response => {
           console.log(response)
           this.aidStation = response; // 将后端返回的数据赋值给 aidStation

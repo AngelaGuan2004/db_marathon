@@ -41,3 +41,9 @@
 #Register .el-input__inner::placeholder {
   color: rgb(104, 104, 104);
 }
+
+.ErrorMessage {
+  color: rgb(219, 57, 56);
+  font-size: 14px;
+  margin-top: 5px;
+}

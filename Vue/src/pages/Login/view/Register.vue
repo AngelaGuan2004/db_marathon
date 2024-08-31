@@ -10,14 +10,14 @@
         </div>
         <div style="margin-top: 25px; margin-bottom: 25px;">
           <el-input v-model="idNumber" placeholder="请输入身份证号" @input="validateIdNumber"></el-input>
-          <div v-if="idNumberError" class="error-message">{{ idNumberError }}</div>
+          <div v-if="idNumberError" class="ErrorMessage">{{ idNumberError }}</div>
         </div>
         <div style="margin-top: 25px; margin-bottom: 25px;">
           <el-input v-model="password" placeholder="请输入密码" show-password></el-input>
         </div>
         <div style="margin-top: 25px; margin-bottom: 30px;">
           <el-input v-model="confirmPassword" placeholder="请确认输入密码" show-password @input="validatePassword"></el-input>
-          <div v-if="passwordMismatch" class="error-message">密码与确认密码不一致</div>
+          <div v-if="passwordMismatch" class="ErrorMessage">密码与确认密码不一致</div>
         </div>
         <div class="RegistGender">
           <div style="display:flex;margin-left: 15px;font-size: 16px;">
@@ -108,7 +108,7 @@ export default {
       registerPlayer(data).then((response) => {
         this.$message.success('注册成功');
         setTimeout(() => {
-          location.href = 'index.html'
+          location.href = 'login.html'
         }, 1000)
       }).catch(error => {
         console.error(error)
