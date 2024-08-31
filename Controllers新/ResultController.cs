@@ -38,7 +38,7 @@ namespace MarathonMaster.Controllers
 
         //查询选手历史成绩
         [HttpGet]
-        public async Task<List<Result_>> search_history_result([FromQuery] int Player_Id)
+        public async Task<IActionResult> search_history_result([FromQuery] int Player_Id)
         {
             List<Result_> results = await _db.Queryable<Result_>()
                 .Where(it => it.Player_Id == Player_Id)
@@ -47,18 +47,18 @@ namespace MarathonMaster.Controllers
             if (results.Count > 0)
             {
                 _logger.LogInformation("查找Player_Id对应的成绩信息成功: {@results}", results);
-                return results;
+                return Ok(results);
             }
             else
             {
                 _logger.LogInformation("无信息");
-                return null;
+                return Unauthorized("无信息");
             }
         }
 
         //查询选手历史半马成绩
         [HttpGet]
-        public async Task<List<Result_>> search_history_half_result([FromQuery] int Player_Id)
+        public async Task<IActionResult> search_history_half_result([FromQuery] int Player_Id)
         {
             List<Result_> results = await _db.Queryable<Result_>()
                 .InnerJoin<Event>((result, event_) => result.Event_Id == event_.Id && event_.Category == "半马")
@@ -69,19 +69,19 @@ namespace MarathonMaster.Controllers
             if (results.Count > 0)
             {
                 _logger.LogInformation("查找Player_Id对应的半马成绩信息成功: {@results}", results);
-                return results;
+                return Ok(results);
             }
             else
             {
                 _logger.LogInformation("无半马成绩信息");
-                return null;
+                return Unauthorized("无信息");
             }
         }
 
 
         //查询选手历史全马成绩
         [HttpGet]
-        public async Task<List<Result_>> search_history_full_result([FromQuery] int Player_Id)
+        public async Task<IActionResult> search_history_full_result([FromQuery] int Player_Id)
         {
             List<Result_> results = await _db.Queryable<Result_>()
                 .InnerJoin<Event>((result, event_) => result.Event_Id == event_.Id && event_.Category == "全马")
@@ -92,12 +92,12 @@ namespace MarathonMaster.Controllers
             if (results.Count > 0)
             {
                 _logger.LogInformation("查找Player_Id对应的全马成绩信息成功: {@results}", results);
-                return results;
+                return Ok(results);
             }
             else
             {
                 _logger.LogInformation("无全马成绩信息");
-                return null;
+                return Unauthorized("无信息");
             }
         }
 
@@ -161,17 +161,27 @@ namespace MarathonMaster.Controllers
 
         // 获取前N名选手列表
         [HttpGet]
-        public async Task<IActionResult> get_top_players([FromQuery] string event_id, [FromQuery] int topN)
+        public async Task<IActionResult> get_top_players([FromQuery] string event_id, [FromQuery] int topN, [FromQuery]string gender)
         {
             _logger.LogInformation("收到请求: event_id={@event_id}, topN={@topN}", event_id, topN);
 
             try
             {
-                List<Result_> topPlayers = await _db.Queryable<Result_>()
-                                                    .Where(it => it.Event_Id == event_id)
-                                                    .OrderBy(it => it.Rank) // 假设FinishTime是表示选手完赛时间的字段
-                                                    .Take(topN)
-                                                    .ToListAsync();
+                // 查询所有符合条件的成绩
+                var query = _db.Queryable<Result_>()
+                               .Where(it => it.Event_Id == event_id);
+
+                if (gender != "全部")
+                {
+                    // 通过Join Player表来筛选符合性别的选手
+                    query = query.InnerJoin<Player>((result, player) => result.Player_Id == player.Id && player.Gender == gender);
+                }
+
+                // 按照总排名或性别排名排序并取前N名
+                var topPlayers = await query
+                                     .OrderBy(result => result.Rank)
+                                     .Take(topN)
+                                     .ToListAsync();
 
                 if (topPlayers.Count > 0)
                 {

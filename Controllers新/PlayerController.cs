@@ -51,13 +51,13 @@ namespace MarathonMaster.Controllers
             {
                 _logger.LogError(ex, "报名失败: {@Participate}", participate); // 记录错误信息
 
-                return BadRequest(false);
+                return StatusCode(500,ex.Message);
             }
         }
 
         //查询中签信息、参赛号码
         [HttpGet]
-        public async Task<string> search_participate([FromQuery] int Player_Id, [FromQuery] string Event_Id)
+        public async Task<IActionResult> search_participate([FromQuery] int Player_Id, [FromQuery] string Event_Id)
         {
             var existingParticipate = await _db.Queryable<Participate>()
                 .Where(it => it.Player_Id == Player_Id && it.Event_Id == Event_Id)
@@ -74,11 +74,11 @@ namespace MarathonMaster.Controllers
                     Participate = existingParticipate,
                     Player = existingPlayer
                 };
-                return JsonSerializer.Serialize(participateAndPlayer);
+                return Ok(JsonSerializer.Serialize(participateAndPlayer));
             }
             else
             {
-                return "player id 不存在";
+                return Unauthorized("player id 不存在");
             }
         }
 

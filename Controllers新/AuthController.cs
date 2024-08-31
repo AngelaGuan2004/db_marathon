@@ -112,7 +112,7 @@ namespace MarathonMaster.Controllers
                 if (existingPlayer != null)
                 {
                     _logger.LogInformation("选手登录成功: {@Player}", player); // 记录登录成功
-                    return Ok(true);
+                    return Ok(JsonSerializer.Serialize(player));
                 }
                 else
                 {
@@ -210,49 +210,49 @@ namespace MarathonMaster.Controllers
             }
         }
 
-        //志愿者修改信息
-        [HttpPatch]
-        public async Task<IActionResult> update_volunteer([FromBody] Volunteer volunteer)
-        {
-            _logger.LogInformation("收到选手数据: {@Volunteer}", volunteer); // 记录收到的数据
+        ////志愿者修改信息
+        //[HttpPatch]
+        //public async Task<IActionResult> update_volunteer([FromBody] Volunteer volunteer)
+        //{
+        //    _logger.LogInformation("收到选手数据: {@Volunteer}", volunteer); // 记录收到的数据
 
-            try
-            {
-                await _db.Updateable(volunteer).ExecuteCommandAsync();
-                _logger.LogInformation("成功更改选手数据: {@Volunteer}", volunteer); // 记录插入成功
-                return Ok(true);
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, "更改选手数据失败: {@Volunteer}", volunteer); // 记录错误信息
+        //    try
+        //    {
+        //        await _db.Updateable(volunteer).ExecuteCommandAsync();
+        //        _logger.LogInformation("成功更改选手数据: {@Volunteer}", volunteer); // 记录插入成功
+        //        return Ok(true);
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        _logger.LogError(ex, "更改选手数据失败: {@Volunteer}", volunteer); // 记录错误信息
 
-                return BadRequest(false);
-            }
-        }
+        //        return BadRequest(false);
+        //    }
+        //}
 
         //摄影师修改信息
-        [HttpPatch]
-        public async Task<IActionResult> update_photographer([FromBody] Photographer photographer)
-        {
-            _logger.LogInformation("收到数据: {@Photographer}", photographer); // 记录收到的数据
+        //[HttpPatch]
+        //public async Task<IActionResult> update_photographer([FromBody] Photographer photographer)
+        //{
+        //    _logger.LogInformation("收到数据: {@Photographer}", photographer); // 记录收到的数据
 
-            try
-            {
-                await _db.Updateable(photographer).ExecuteCommandAsync();
-                _logger.LogInformation("成功更改数据: {@Photographer}", photographer); // 记录插入成功
-                return Ok(true);
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, "更改数据失败: {@Photographer}", photographer); // 记录错误信息
+        //    try
+        //    {
+        //        await _db.Updateable(photographer).ExecuteCommandAsync();
+        //        _logger.LogInformation("成功更改数据: {@Photographer}", photographer); // 记录插入成功
+        //        return Ok(true);
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        _logger.LogError(ex, "更改数据失败: {@Photographer}", photographer); // 记录错误信息
 
-                return BadRequest(false);
-            }
-        }
+        //        return BadRequest(false);
+        //    }
+        //}
 
         //查询id的选手
         [HttpGet]
-        public async Task<string> get_by_playerid([FromQuery] int Id)
+        public async Task<IActionResult> get_by_playerid([FromQuery] int Id)
         {
             Player player = await _db.Queryable<Player>()
                 .Where(it => it.Id == Id)
@@ -260,17 +260,17 @@ namespace MarathonMaster.Controllers
 
             if (player != null)
             {
-                return JsonSerializer.Serialize(player);
+                return Ok(JsonSerializer.Serialize(player));
             }
             else
             {
-                return "无"; // 或者返回一个适当的错误信息
+                return Unauthorized("无"); // 或者返回一个适当的错误信息
             }
         }
 
         //查询id的志愿者
         [HttpGet]
-        public async Task<string> get_by_volunteerid([FromQuery] int Id)
+        public async Task<IActionResult> get_by_volunteerid([FromQuery] int Id)
         {
             Volunteer volunteer = await _db.Queryable<Volunteer>()
                 .Where(it => it.Id == Id)
@@ -278,16 +278,16 @@ namespace MarathonMaster.Controllers
 
             if (volunteer != null)
             {
-                return JsonSerializer.Serialize(volunteer);
+                return Ok(JsonSerializer.Serialize(volunteer));
             }
             else
             {
-                return "无"; // 或者返回一个适当的错误信息
+                return Unauthorized("无"); // 或者返回一个适当的错误信息
             }
         }
         //查询id的摄影师
         [HttpGet]
-        public async Task<string> get_by_photographerid([FromQuery] int Id)
+        public async Task<IActionResult> get_by_photographerid([FromQuery] int Id)
         {
             Photographer photographer = await _db.Queryable<Photographer>()
                 .Where(it => it.Id == Id)
@@ -295,11 +295,11 @@ namespace MarathonMaster.Controllers
 
             if (photographer != null)
             {
-                return JsonSerializer.Serialize(photographer);
+                return Ok(JsonSerializer.Serialize(photographer));
             }
             else
             {
-                return "无"; // 或者返回一个适当的错误信息
+                return Unauthorized("无"); // 或者返回一个适当的错误信息
             }
         }
 

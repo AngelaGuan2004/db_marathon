@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using SqlSugar;
-using db_marathon.Models;
+using MarathonMaster.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
 
 
-namespace db_marathon.Controllers
+namespace MarathonMaster.Controllers
 {
     [Route("/[controller]/[action]")]
     [ApiController]
@@ -107,7 +107,7 @@ namespace db_marathon.Controllers
         //
         // 
         [HttpGet]
-        public async Task<IActionResult> get_players_by_event(int eventId)
+        public async Task<IActionResult> get_players_by_event(string eventId)
         {
             try
             {
@@ -140,5 +140,4 @@ namespace db_marathon.Controllers
 
     }
 
-    
 }
