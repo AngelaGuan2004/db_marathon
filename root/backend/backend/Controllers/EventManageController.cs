@@ -85,11 +85,11 @@ namespace MarathonMaster.Controllers
             {
                 foreach (var participate in pacerList)
                 {
-                    if (participate.Role_ != "runner")
+                    if (participate.Role_ != "normal")
                     {
-                        participate.Role_ = "runner";
+                        participate.Role_ = "normal";
                         await _db.Updateable(participate).ExecuteCommandAsync();
-                        _logger.LogInformation("身份更新为runner: {@Participate}", participate); // 记录更新身份的选手
+                        _logger.LogInformation("身份更新为normal: {@Participate}", participate); // 记录更新身份的选手
                     }
                 }
 
@@ -109,10 +109,9 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_players_by_event(string eventId)
         {
-            _logger.LogInformation(eventId);
             try
             {
-                // 从数据库中查询某个赛事的所有报名者
+                // 从数据库中查询某个赛事的所有参与者
                 var participants = await _db.Queryable<Participate>()
                                             .Where(p => p.Event_Id == eventId)
                                             .ToListAsync();

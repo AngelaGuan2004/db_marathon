@@ -15,7 +15,6 @@ using System.Text.Unicode;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging; // 引入日志记录命名空间
 using System.Numerics;
-using MarathonMaster.Models;
 using MarathonMaster;
 
 
@@ -41,33 +40,72 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> search_history_result([FromQuery] int Player_Id)
         {
-            _logger.LogInformation("收到的数据: {@Player_Id}", Player_Id); // 记录收到的数据
+            List<Result_> results = await _db.Queryable<Result_>()
+                .Where(it => it.Player_Id == Player_Id)
+                .ToListAsync();
 
-            try
+            if (results.Count > 0)
             {
-                List<Result_> results = await _db.Queryable<Result_>().Where(it => it.Player_Id == Player_Id).ToListAsync();
-                if (results.Count > 0)
-                {
-                    _logger.LogInformation("査找Player_Id对应的成绩信息成功:{ @results}", results);
-                    return Ok(results);
-                }
-                else
-                {
-                    _logger.LogInformation("无信息");
-                    return Unauthorized(null);
-                }
+                _logger.LogInformation("查找Player_Id对应的成绩信息成功: {@results}", results);
+                return Ok(results);
             }
-            catch (System.Exception ex)
+            else
             {
-                _logger.LogError(ex, "失败: {@Player_Id}", Player_Id); // 记录错误信息
-
-                return BadRequest(false);
+                _logger.LogInformation("无信息");
+                return Unauthorized("无信息");
             }
         }
 
+        //查询选手历史半马成绩
+        [HttpGet]
+        public async Task<IActionResult> search_history_half_result([FromQuery] int Player_Id)
+        {
+            List<Result_> results = await _db.Queryable<Result_>()
+                .InnerJoin<Event>((result, event_) => result.Event_Id == event_.Id && event_.Category == "半马")
+                .Where(result => result.Player_Id == Player_Id)
+                .OrderBy(result => result.Net_Result)  // 按净成绩由小到大排序
+                .ToListAsync();
+
+            if (results.Count > 0)
+            {
+                _logger.LogInformation("查找Player_Id对应的半马成绩信息成功: {@results}", results);
+                return Ok(results);
+            }
+            else
+            {
+                _logger.LogInformation("无半马成绩信息");
+                return Unauthorized("无信息");
+            }
+        }
+
+
+        //查询选手历史全马成绩
+        [HttpGet]
+        public async Task<IActionResult> search_history_full_result([FromQuery] int Player_Id)
+        {
+            List<Result_> results = await _db.Queryable<Result_>()
+                .InnerJoin<Event>((result, event_) => result.Event_Id == event_.Id && event_.Category == "全马")
+                .Where(result => result.Player_Id == Player_Id)
+                .OrderBy(result => result.Net_Result)  // 按净成绩由小到大排序
+                .ToListAsync();
+
+            if (results.Count > 0)
+            {
+                _logger.LogInformation("查找Player_Id对应的全马成绩信息成功: {@results}", results);
+                return Ok(results);
+            }
+            else
+            {
+                _logger.LogInformation("无全马成绩信息");
+                return Unauthorized("无信息");
+            }
+        }
+
+
+
         //查询选手某次成绩
         [HttpGet]
-        public async Task<IActionResult> search_result([FromQuery] int Player_Id, string Event_id)
+        public async Task<IActionResult> search_result([FromQuery] int Player_Id, [FromQuery] string Event_id)
         {
             _logger.LogInformation("收到的数据: {@Player_Id}", Player_Id); // 记录收到的数据
 
@@ -123,17 +161,27 @@ namespace MarathonMaster.Controllers
 
         // 获取前N名选手列表
         [HttpGet]
-        public async Task<IActionResult> get_top_players([FromQuery] string event_id, [FromQuery] int topN)
+        public async Task<IActionResult> get_top_players([FromQuery] string event_id, [FromQuery] int topN, [FromQuery]string gender)
         {
             _logger.LogInformation("收到请求: event_id={@event_id}, topN={@topN}", event_id, topN);
 
             try
             {
-                List<Result_> topPlayers = await _db.Queryable<Result_>()
-                                                    .Where(it => it.Event_Id == event_id)
-                                                    .OrderBy(it => it.Rank) // 假设FinishTime是表示选手完赛时间的字段
-                                                    .Take(topN)
-                                                    .ToListAsync();
+                // 查询所有符合条件的成绩
+                var query = _db.Queryable<Result_>()
+                               .Where(it => it.Event_Id == event_id);
+
+                if (gender != "全部")
+                {
+                    // 通过Join Player表来筛选符合性别的选手
+                    query = query.InnerJoin<Player>((result, player) => result.Player_Id == player.Id && player.Gender == gender);
+                }
+
+                // 按照总排名或性别排名排序并取前N名
+                var topPlayers = await query
+                                     .OrderBy(result => result.Rank)
+                                     .Take(topN)
+                                     .ToListAsync();
 
                 if (topPlayers.Count > 0)
                 {
@@ -183,6 +231,8 @@ namespace MarathonMaster.Controllers
                 return BadRequest($"获取数据失败: {ex.Message}");
             }
         }
+
+
 
 
     }

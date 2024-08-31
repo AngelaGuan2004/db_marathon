@@ -55,42 +55,37 @@ namespace MarathonMaster.Controllers
 
         }
 
-        ////event修改信息
-        //[HttpPatch]
-        //public async Task<IActionResult> update_event([FromBody] Event event_,Weather weather)
-        //{
-        //    _logger.LogInformation("收到赛事数据: {@Event}{@Weather}", event_, weather); // 记录收到的数据
-
-        //    try
-        //    {
-        //        await _db.Updateable(event_).ExecuteCommandAsync();
-        //        await _db.Updateable(weather).ExecuteCommandAsync();
-        //        _logger.LogInformation("成功更改赛事数据: {@Event}{@Weather}", event_, weather); // 记录更改成功
-        //        return Ok(true);
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        _logger.LogError(ex, "更改选赛事据失败: {@Event}{@Weather}", event_, weather); // 记录错误信息
-
-        //        return BadRequest(false);
-        //    }
-        //}
-
-        //删除赛事
-        [HttpDelete]
-        public async Task<IActionResult> delete_event([FromBody] Event event_)
+        //event修改信息
+        [HttpPatch]
+        public async Task<IActionResult> update_event([FromBody] Event event_)
         {
             _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
+
             try
             {
-                await _db.Deleteable<Event>(new Event() { Id = event_.Id }).ExecuteCommandAsync();
-                _logger.LogInformation("成功删除赛事数据: {@Event}", event_); // 记录删除成功
+                await _db.Updateable(event_).ExecuteCommandAsync();
+                _logger.LogInformation("成功更改赛事数据: {@Event}", event_); // 记录更改成功
                 return Ok(true);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "删除选赛事据失败: {@Event}", event_); // 记录错误信息
+                _logger.LogError(ex, "更改选赛事据失败: {@Event}", event_); // 记录错误信息
 
+                return BadRequest(false);
+            }
+        }
+
+        //删除赛事
+        [HttpDelete]
+        public async Task<IActionResult> delete_event([FromQuery] string Event_id)
+        {
+            try
+            {
+                await _db.Deleteable<Event>(new Event() { Id = Event_id}).ExecuteCommandAsync();
+                return Ok(true);
+            }
+            catch (System.Exception ex)
+            {
                 return BadRequest(false);
             }
         }
@@ -99,39 +94,30 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_by_id([FromQuery] string Id)
         {
-            try
+            Event existingEvent_ = await _db.Queryable<Event>()
+                .Where(it => it.Id == Id)
+                .FirstAsync();
+
+            Weather existingWeather = await _db.Queryable<Weather>()
+                .Where(it => it.Id == Id)
+                .FirstAsync();
+
+            if (existingEvent_ != null)
             {
-                var existingEvent_ = await _db.Queryable<Event>()
-                .Where(it => it.Id == Id)
-                .FirstAsync();
-
-                var existingWeather = await _db.Queryable<Weather>()
-                .Where(it => it.Id == Id)
-                .FirstAsync();
-
-                if (existingEvent_ != null)
+                var eventAndWeather = new
                 {
-                    var eventAndWeather = new
-                    {
-                        Event = existingEvent_,
-                        Weather = existingWeather
-                    };
-                    _logger.LogInformation("赛事查找成功: {ID}", Id); // 记录成功
-                    return Ok(eventAndWeather);
-                }
-                else
-                {
-                    _logger.LogWarning("赛事查找失败");
-                    return Unauthorized(null);
-                }
+                    Event = existingEvent_,
+                    Weather = existingWeather
+                };
+
+                return Ok(JsonSerializer.Serialize(eventAndWeather));
             }
-            catch (System.Exception ex)
+            else
             {
-                _logger.LogError(ex, "赛事查找失败", Id); // 记录错误信息
-
-                return BadRequest(false);
+                return Unauthorized("无");
             }
         }
+
 
         //获取所有赛事
         [HttpGet]
