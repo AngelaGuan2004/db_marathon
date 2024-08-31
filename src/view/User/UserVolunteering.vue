@@ -67,8 +67,7 @@ export default {
       this.$router.push({
         name: 'VolunteerDetailForAddStation',
         params: {
-          id: row.event_id,
-          voltype: row.voltype
+          event_id: row.event_id,
         }
       });
     },

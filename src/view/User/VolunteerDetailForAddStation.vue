@@ -6,38 +6,17 @@
         <div class="AidStationContent">
           <div style="width: 100%;">
             <div class="AidStationItem">
-              <span style="width: 40%;font-weight: bold;">赛事名称：</span><span>{{ aidStation.eventTitle }}</span>
+              <span style="width: 40%;font-weight: bold;">志愿者状态：</span><span>{{ aidStation.status }}</span>
             </div>
-            <div v-if="aidStation.jobCategory === '补给点'">
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">补给点 ID：</span><span>{{ aidStation.aidId }}</span>
+            <div class="AidStationItem">
+                <span style="width: 40%;font-weight: bold;">工作种类：</span><span>{{ aidStation.job_category }}</span>
               </div>
               <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">补给点地点：</span><span>{{ aidStation.aidLocation }}</span>
+                <span style="width: 40%;font-weight: bold;">是否排班：</span><span>{{ aidStation.is_scheduled }}</span>
               </div>
               <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">补给点类型：</span><span>{{ aidStation.aidType }}</span>
+                <span style="width: 40%;font-weight: bold;">搭档：</span><span>{{ aidStation.partners }}</span>
               </div>
-            </div>
-            <div v-else-if="aidStation.jobCategory === '医疗点'">
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">医疗点 ID：</span><span>{{ aidStation.medicalId }}</span>
-              </div>
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">医疗点位置：</span><span>{{ aidStation.medicalLocation }}</span>
-              </div>
-            </div>
-            <div v-else-if="aidStation.jobCategory === '接驳车'">
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">接驳车 ID：</span><span>{{ aidStation.shuttleId }}</span>
-              </div>
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">出发时间：</span><span>{{ aidStation.shuttleDepartureTime }}</span>
-              </div>
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">到达时间：</span><span>{{ aidStation.shuttleArrivalTime }}</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -46,7 +25,7 @@
 </template>
 
 <script>
-import { acquireVolunteerInformation } from '@/api/volunteer';
+import { acquireVolunteerInformation } from '@/api/detail';
 
 export default {
   name: 'VolunteerDetailForAddStation',
@@ -59,14 +38,18 @@ export default {
   created() {
     this.loadVolunteerInformation();
   },
+  watch: {
+    'this.$route.params.event_id': 'loadAidStation'
+  },
   methods: {
     loadVolunteerInformation() {
       const volunteerId = this.$route.params.volunteer_id;
       const eventId = this.$route.params.event_id;
 
-      acquireVolunteerInformation(volunteerId, eventId)
+      acquireVolunteerInformation(eventId,10001)
         .then(response => {
-          this.aidStation = response.data; // 将后端返回的数据赋值给 aidStation
+          console.log(response)
+          this.aidStation = response; // 将后端返回的数据赋值给 aidStation
         })
         .catch(error => {
           console.error('Error loading volunteer info:', error);
