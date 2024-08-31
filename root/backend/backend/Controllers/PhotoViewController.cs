@@ -155,22 +155,25 @@ namespace MarathonMaster.Controllers
             }
         }
 
-        //搜索照片--4.根据前端传过来的摄影师id，返回所有匹配的照片list
+        //搜索照片--4.根据前端传过来的摄影师name，返回所有匹配的照片list
         [HttpGet]
-        public async Task<IActionResult> inquiry_photo_by_photographer([FromQuery] int id) //收到地址
+        public async Task<IActionResult> inquiry_photo_by_photographer([FromQuery] string photographer_name) //收到地址
         {
-            _logger.LogInformation("收到照片的赛事名称信息: {@id}", id); // 记录收到的数据
+            _logger.LogInformation("收到照片的赛事名称信息: {@photographer_name}", photographer_name); // 记录收到的数据
 
             try
             {
-                List<Photo> photos = await _db.Queryable<Photo>().Where(it => it.Photographer_id == id).ToListAsync();
+                //List<Photo> photos = await _db.Queryable<Photo>().Where(it => it.Photographer_id == id).ToListAsync();
+                List<Photo> photos = await _db.Queryable<Photo>().
+                   LeftJoin<Photographer>((p1, p2) => p1.Photographer_id == p2.Id).Where((p1, p2) => p2.Name == photographer_name).
+                   Select(p1 => p1).ToListAsync();
 
-                _logger.LogInformation("查找摄影师id对应的照片信息成功: {@id}", id); // 查找赛事名称对应的照片信息成功
+                _logger.LogInformation("查找摄影师name对应的照片信息成功: {@photographer_name}", photographer_name); // 查找摄影师name对应的照片信息成功
                 return Ok(photos); //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查找摄影师id对应的照片信息失败: {@id}", id); // 记录错误信息
+                _logger.LogError(ex, "查找摄影师name对应的照片信息失败: {@photographer_name}", photographer_name); // 记录错误信息
 
                 return BadRequest(ex); //false表示失败
             }
