@@ -85,11 +85,11 @@ namespace MarathonMaster.Controllers
             {
                 foreach (var participate in pacerList)
                 {
-                    if (participate.Role_ != "runner")
+                    if (participate.Role_ != "normal")
                     {
-                        participate.Role_ = "runner";
+                        participate.Role_ = "normal";
                         await _db.Updateable(participate).ExecuteCommandAsync();
-                        _logger.LogInformation("身份更新为runner: {@Participate}", participate); // 记录更新身份的选手
+                        _logger.LogInformation("身份更新为normal: {@Participate}", participate); // 记录更新身份的选手
                     }
                 }
 

@@ -85,19 +85,15 @@ namespace MarathonMaster.Controllers
 
         //删除报名
         [HttpDelete]
-        public async Task<IActionResult> delete_participate([FromBody] Participate participate)
+        public async Task<IActionResult> delete_participate([FromQuery]int Player_Id, [FromQuery] string Event_Id)
         {
-            _logger.LogInformation("收到参赛数据: {@Participate}", participate); // 记录收到的数据
-
             try
             {
-                await _db.Deleteable<Participate>(new Participate() { Event_Id = participate.Event_Id, Player_Id = participate.Player_Id }).ExecuteCommandAsync();
-                _logger.LogInformation("成功删除参赛数据: {@Event}", participate); // 记录删除成功
+                await _db.Deleteable<Participate>(new Participate() { Event_Id = Event_Id, Player_Id = Player_Id }).ExecuteCommandAsync();
                 return Ok(true);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "删除参赛数据失败: {@Event}", participate); // 记录错误信息
 
                 return BadRequest(false);
             }
