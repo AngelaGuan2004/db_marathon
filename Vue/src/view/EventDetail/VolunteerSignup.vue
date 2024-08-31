@@ -5,7 +5,7 @@
         <!-- 添加 logo 图片 -->
         <img class="VolunteerSignupLogo" src="@/assets/images/JiMa.png" alt="Logo">
         <div class="RegistrationContainer">
-          <h1 style="margin-bottom: 30px;">志愿者报名</h1>
+          <h1 style="margin-bottom: 30px;">志愿者登录</h1>
           <div class="RegistrationInformation">
             <div><b> 姓名：</b><span> {{ volunteer.name }}</span></div>
             <div><b style="margin-right: 5px;"> 手机号：</b><span>{{ volunteer.phone }}</span> </div>

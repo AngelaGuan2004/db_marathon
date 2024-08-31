@@ -1,7 +1,6 @@
 <template>
   <div id="PackageDetail">
-    <el-dialog title="物资详情" :visible.sync="dialogVisible" width="40%" :before-close="handleClose"
-      class="PackageDetailDialog">
+    <el-dialog title="物资详情" :visible.sync="dialogVisible" width="40%" class="PackageDetailDialog">
       <div style="display: flex;width: 48%;">
         <el-table :data="packages">
           <el-table-column prop="type" label="参赛物资"></el-table-column>
@@ -44,6 +43,9 @@ export default {
         .catch(error => {
           console.error('Error loading package details:', error);
         });
+    },
+    handleClose() {
+      this.$emit('close');
     }
   }
 };

@@ -35,32 +35,55 @@
         <div class="EventDetailContainerInfoTwo">
           <div class="EventDetailContainerInfoItem">
             <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>物资：</span><a @click="navigateTo('supplies')" class="EventDetailLink">查看详情>></a></span>
+            <span>
+              <span>物资：</span>
+              <a @click="openPackageModal">详情>></a>
+              <a @click="openPackageManagement">管理>></a>
+            </span>
           </div>
           <div class="EventDetailContainerInfoItem">
             <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>补给点：</span><a @click="navigateTo('refreshments')" class="EventDetailLink">查看详情>></a></span>
+            <span>
+              <span>补给点：</span>
+              <a @click="openSupplypointModal">详情>></a>
+              <a @click="openSupplyManagement">管理>></a>
+            </span>
           </div>
           <div class="EventDetailContainerInfoItem">
             <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>医疗点：</span><a @click="navigateTo('medical')" class="EventDetailLink">查看详情>></a></span>
+            <span>
+              <span>医疗点：</span>
+              <a @click="openMedicalModal">详情>></a>
+              <a @click="openMedicalModal">管理>></a>
+            </span>
           </div>
           <div class="EventDetailContainerInfoItem">
             <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>接驳车：</span><a @click="navigateTo('shuttle')" class="EventDetailLink">查看详情>></a></span>
+            <span>
+              <span>接驳车：</span>
+              <a @click="openShuttleModal">详情>></a>
+            </span>
           </div>
           <div class="EventDetailContainerInfoItem">
             <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>天气：</span><a @click="openWeatherModal" class="EventDetailLink">查看详情>></a></span>
+            <span>
+              <span>天气：</span>
+              <a @click="openWeatherModal">详情>></a>
+            </span>
           </div>
         </div>
       </div>
-      <!-- 天气详情弹窗 -->
-      <WeatherDetailsModal v-if="showWeatherModal" :weatherDetails="weatherDetails" @close="closeWeatherModal" />
       <div class="EventDetailContainerButton">
-        <el-button @click="navigateTo('participant-registration')">选手报名</el-button>
-        <el-button @click="navigateTo('volunteer-registration')">志愿者报名</el-button>
+        <el-button @click="GoToEventRegistration">选手报名</el-button>
+        <el-button @click="openVolunteerSignupModal">志愿者报名</el-button>
       </div>
+      <!-- 详情弹窗 -->
+      <WeatherDetailsModal v-if="showWeatherModal" :weatherDetails="weatherDetails" @close="closeWeatherModal" />
+      <MedicalDetail v-if="showMedicalModal" :medicalPoints="medicalPoints" @close="closeMedicalModal" />
+      <PackageDetail v-if="showPackageModal" :packages="packages" @close="closePackageModal" />
+      <ShuttleDetail v-if="showShuttleModal" :shuttles="shuttles" @close="closeShuttleModal" />
+      <SupplypointDetail v-if="showSupplypointModal" :supplypoints="supplypoints" @close="closeSupplypointModal" />
+      <VolunteerSignup v-if="showVolunteerSignupModal" @close="closeVolunteerSignupModal" />
     </div>
   </div>
 
@@ -68,8 +91,14 @@
 
 <script>
 import { fetchEventDetails } from '@/api/EventDetails';
-import WeatherDetailsModal from './WeatherDetail.vue';
 import { getWeatherDetails } from '@/api/WeatherDetails';
+import WeatherDetailsModal from './WeatherDetail.vue';
+import MedicalDetail from './MedicalDetail.vue';
+import PackageDetail from './PackageDetail.vue';
+import ShuttleDetail from './ShuttleDetail.vue';
+import SupplypointDetail from './SupplypointDetail.vue';
+import VolunteerSignup from './VolunteerSignup.vue';
+
 
 export default {
   name: 'EventDetail',
@@ -112,11 +141,25 @@ export default {
           canProceed: '是'
         }
       ],
-      showWeatherModal: false
+      medicalPoints: [],
+      packages: [],
+      shuttles: [],
+      supplypoints: [],
+      showWeatherModal: false,
+      showMedicalModal: false,
+      showPackageModal: false,
+      showShuttleModal: false,
+      showSupplypointModal: false,
+      showVolunteerSignupModal: false,
     };
   },
   components: {
-    WeatherDetailsModal
+    WeatherDetailsModal,
+    MedicalDetail,
+    PackageDetail,
+    ShuttleDetail,
+    SupplypointDetail,
+    VolunteerSignup,
   },
   watch: {
     '$route.params.id': {
@@ -147,34 +190,67 @@ export default {
     //   }
     // },
     openWeatherModal() {
-      // this.loadWeatherDetails(); // 暂时注释掉接口调用
       this.showWeatherModal = true;
     },
     closeWeatherModal() {
       this.showWeatherModal = false;
     },
-    navigateTo(page) {
-      if (page === 'participant-registration') {
-        this.$router.push({ name: 'EventRegistration', params: { id: this.$route.params.id } });
-      }
-      else if (page === 'supplies') {
-        this.$router.push({ name: 'PackageDetail', params: { id: this.$route.params.id } });
-      }
-      else if (page === 'refreshments') {
-        this.$router.push({ name: 'SupplypointDetail', params: { id: this.$route.params.id } });
-      }
-      else if (page === 'medical') {
-        this.$router.push({ name: 'MedicalDetail', params: { id: this.$route.params.id } });
-      }
-      else if (page === 'shuttle') {
-        this.$router.push({ name: 'ShuttleDetail', params: { id: this.$route.params.id } });
-      }
-      else if (page === 'volunteer-registration') {
-        this.$router.push({ name: 'VolunteerSignup', params: { id: this.$route.params.id } });
-      }
-      else {
-        this.$router.push({ name: page });
-      }
+    openMedicalModal() {
+      this.showMedicalModal = false;  // 先设置为 false
+      this.$nextTick(() => {
+        this.showMedicalModal = true; // 再设置为 true，确保弹窗能正确打开
+      });
+    },
+    closeMedicalModal() {
+      this.showMedicalModal = false;
+    },
+    openPackageModal() {
+      // 加载物资详情逻辑
+      this.showPackageModal = false;  // 先设置为 false
+      this.$nextTick(() => {
+        this.showPackageModal = true; // 再设置为 true，确保弹窗能正确打开
+      });
+    },
+    closePackageModal() {
+      this.showPackageModal = false;
+    },
+    openShuttleModal() {
+      // 加载接驳车详情逻辑
+      this.showShuttleModal = false;  // 先设置为 false
+      this.$nextTick(() => {
+        this.showShuttleModal = true; // 再设置为 true，确保弹窗能正确打开
+      });
+    },
+    closeShuttleModal() {
+      this.showShuttleModal = false;
+    },
+    openSupplypointModal() {
+      // 加载补给点详情逻辑
+      this.showSupplypointModal = false;  // 先设置为 false
+      this.$nextTick(() => {
+        this.showSupplypointModal = true; // 再设置为 true，确保弹窗能正确打开
+      });
+    },
+    closeSupplypointModal() {
+      this.showSupplypointModal = false;
+    },
+    openVolunteerSignupModal() {
+      this.showVolunteerSignupModal = false
+      this.$nextTick(() => {
+        this.showVolunteerSignupModal = true; // 再设置为 true，确保弹窗能正确打开
+      });
+    },
+    closeVolunteerSignupModal() {
+      this.showVolunteerSignupModal = false
+    },
+    openPackageManagement() {
+      this.$router.push({ name: 'ItemManagement' });
+    },
+    openSupplyManagement() {
+      this.$router.push({ name: 'SupplypointManagement' });
+    },
+    GoToEventRegistration() {
+      this.$router.push({ name: 'EventRegistration', params: { id: this.$route.params.id } });
     }
   },
   created() {

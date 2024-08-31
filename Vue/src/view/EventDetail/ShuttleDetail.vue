@@ -1,6 +1,6 @@
 <template>
   <div id="ShuttleDetail">
-    <el-dialog title="接驳车详情" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
+    <el-dialog title="接驳车详情" :visible.sync="dialogVisible" width="40%">
       <el-table :data="shuttles">
         <el-table-column prop="departureTime" label="出发时间"></el-table-column>
         <el-table-column prop="arrivalTime" label="到达时间"></el-table-column>
@@ -39,6 +39,9 @@ export default {
         .catch(error => {
           console.error('Error loading shuttle details:', error);
         });
+    },
+    handleClose() {
+      this.$emit('close');
     }
   }
 };

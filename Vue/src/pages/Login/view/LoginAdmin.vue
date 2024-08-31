@@ -40,8 +40,11 @@ export default {
     },
     LoginAdmin() {
       if (this.adminKey === 'admin') {
+        this.$message.success('登录成功！')
         localStorage.setItem('UserRole', 'Admin')
-        location.href = 'index.html'
+        setTimeout(() => {
+          location.href = 'index.html'; // 登录成功后跳转到首页
+        }, 1000)
       } else {
         this.errorMessage = '密钥错误，请重新输入'
         setTimeout(() => {

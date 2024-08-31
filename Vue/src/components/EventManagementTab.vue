@@ -94,5 +94,6 @@ export default {
   background-color: rgb(244, 244, 244);
   padding: 0 100px;
   padding-top: 20px;
+  margin-top: 100px;
 }
 </style>

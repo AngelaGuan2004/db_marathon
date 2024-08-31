@@ -45,7 +45,7 @@ export default {
   name: 'Header',
   data() {
     return {
-      TabHerf: ['Home', 'EventList', '', '', '', 'UserTab'],
+      TabHerf: ['Home', 'EventList', '', '', 'PhotoWall', 'UserTab'],
       Role: '',
       ActiveIndexForHeader: "1"
     };

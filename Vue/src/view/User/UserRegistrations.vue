@@ -2,14 +2,19 @@
   <div id="UserRegistrations">
     <div class="UserRegistrations">
       <el-main>
-        <div style="width: 100%; overflow: auto ;height: 420px;margin-top: 20px;">
-          <el-table :data="events" class="table" row-class-name="clickable-row" stripe>
+        <div style="width: 100%; overflow: auto ;height: 100%;margin-top: 20px;">
+          <el-table :data="paginatedResults" class="table" row-class-name="clickable-row" stripe>
             <el-table-column prop="name" label="比赛名称" width="300"></el-table-column>
             <el-table-column prop="event_date" label="时间" width="150"></el-table-column>
             <el-table-column prop="type" label="赛事类型" width="150"></el-table-column>
             <el-table-column prop="result" label="结果" width="150">
               <template slot-scope="scope">
-                <div style="color: #c81623;">{{ scope.row.result }}</div>
+                <div v-if="scope.row.result === '已中签'" style="color: #c81623;font-weight: bold;">{{ scope.row.result }}
+                </div>
+                <div v-else-if="scope.row.result === '未中签'" style="color:rgb(175,175,175);font-weight: bold;">{{
+                  scope.row.result }}</div>
+                <div v-else style="color:rgb(230, 162, 60);font-weight: bold;">{{
+                  scope.row.result }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="number" label="号码" width="150"></el-table-column>
@@ -20,6 +25,10 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination v-if="events.length > 0" background layout="prev, pager, next" :total="events.length"
+            :page-size="pageSize" :current-page.sync="currentPage" @current-change="handlePageChange"
+            class="pagination">
+          </el-pagination>
         </div>
       </el-main>
     </div>
@@ -49,8 +58,8 @@ export default {
       events: [
         { event_id: '1', name: '2024天津团泊湖半程马拉松', event_date: '2024 7 12', type: '半马', result: '已中签', number: '22222' },
         { event_id: '2', name: '2024天津团泊湖半程马拉松', event_date: '2024 7 12', type: '全马', result: '已中签', number: '22222' },
-        { event_id: '3', name: '2024上海马拉松', event_date: '2024 7 12', type: '半马', result: '已中签', number: '22222' },
-        { event_id: '4', name: '2024上海马拉松', event_date: '2024 7 12', type: '全马', result: '已中签', number: '22222' },
+        { event_id: '3', name: '2024上海马拉松', event_date: '2024 7 12', type: '半马', result: '未中签', number: '22222' },
+        { event_id: '4', name: '2024上海马拉松', event_date: '2024 7 12', type: '全马', result: '待抽签', number: '22222' },
         { event_id: '1', name: '2024天津团泊湖半程马拉松', event_date: '2024 7 12', type: '半马', result: '已中签', number: '22222' },
         { event_id: '2', name: '2024天津团泊湖半程马拉松', event_date: '2024 7 12', type: '全马', result: '已中签', number: '22222' },
         { event_id: '3', name: '2024上海马拉松', event_date: '2024 7 12', type: '半马', result: '已中签', number: '22222' },
@@ -61,20 +70,25 @@ export default {
         { event_id: '4', name: '2024上海马拉松', event_date: '2024 7 12', type: '全马', result: '已中签', number: '22222' },
         { event_id: '1', name: '2024天津团泊湖半程马拉松', event_date: '2024 7 12', type: '半马', result: '已中签', number: '22222' },
         { event_id: '2', name: '2024天津团泊湖半程马拉松', event_date: '2024 7 12', type: '全马', result: '已中签', number: '22222' },
-        { event_id: '3', name: '2024上海马拉松', event_date: '2024 7 12', type: '半马', result: '已中签', number: '22222' },
-        { event_id: '4', name: '2024上海马拉松', event_date: '2024 7 12', type: '全马', result: '已中签', number: '22222' },
       ],
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 8,
     }
   },
   methods: {
     handleRowClick(row) {
       window.alert(row.event_id);
     },
+    handlePageChange(page) {
+      this.currentPage = page;
+    },
   },
   computed: {
-
+    paginatedResults() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.events.slice(start, end);
+    }
   },
 }
 </script>
@@ -90,8 +104,12 @@ export default {
   justify-content: center;
   align-items: flex-end;
   background-color: white;
-  margin-top: 80px;
-  width: 75%;
+  margin-top: 8%;
   font-size: 15px;
+  margin-right: 25px;
+}
+
+.UserRegistrations {
+  width: 100%;
 }
 </style>

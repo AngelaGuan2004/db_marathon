@@ -1,31 +1,15 @@
 import request from '@/utils/request';
 
-// 查询接驳车信息
-export function inquireShuttlecarInfo(event_id) {
+// 志愿者信息获取 API 接口
+export function acquireVolunteerInformation(volunteer_id, event_id) {
   return request({
-    url: '/Shuttlecar/inquire_shuttlecar_info',
+    url: '/Volunteer/acquire_volunteer_information',
     method: 'get',
-    params: { event_id: event_id }
+    params: {
+      volunteer_id: volunteer_id,
+      event_id: event_id
+    }
   });
 }
 
-
-// 查询补给点信息
-export function getAllSupplyPoints(event_id) {
-  return request({
-    url: '/Supply/get_all_supplypoint',
-    method: 'get',
-    params: { Event_Id: event_id }
-  });
-}
-
-
-// 查询医疗点信息
-export function getAllMedicalPoints(event_id) {
-  return request({
-    url: '/Medical/get_all_medicalpoint',
-    method: 'get',
-    params: { Event_Id: event_id }
-  });
-}
 

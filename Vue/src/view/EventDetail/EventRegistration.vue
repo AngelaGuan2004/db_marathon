@@ -9,7 +9,7 @@
       </el-breadcrumb>
     </div>
     <div class="RegistrationContainer">
-      <h2 style="margin-left: 25px;">赛事报名</h2>
+      <h2 style="margin-left: 25px;margin-bottom: 5%;">赛事报名</h2>
       <el-form :model="participant" label-width="130px">
         <el-form-item label="选手姓名">
           <el-input v-model="participant.name"></el-input>
@@ -147,41 +147,8 @@ export default {
 };
 </script>
 
-<style>
-.RegistrationContainer {
-  max-width: 600px;
-  margin: 50px auto;
-  padding: 10px 30px;
-  background-color: white;
-  border: 1px solid grey;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 7%;
-  margin-bottom: 10px;
-}
-
-#EventRegistration .el-color-picker__icon,
-#EventRegistration .el-input,
-#EventRegistration .el-textarea {
-  width: 85%;
-  margin-left: 20px;
-}
-
-#EventRegistration .el-form-item__label {
-  font-size: 16px;
-}
-
-#EventRegistration .el-input--mini .el-input__inner {
-  height: 40px;
-}
-
-button {
-  background-color: rgb(201, 64, 64);
-  font-weight: bold;
-}
+<style scoped>
+@import "@/assets/css/Base.css";
+@import 'element-ui/lib/theme-chalk/index.css';
+@import "@/assets/css/EventRegistration.css";
 </style>

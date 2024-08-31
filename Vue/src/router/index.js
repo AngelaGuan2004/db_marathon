@@ -18,11 +18,10 @@ import EventList from '@/components/EventList.vue'
 import EventDetail from '@/view/EventDetail/EventDetail.vue'
 import VolunteerSignup from '@/view/EventDetail/VolunteerSignup.vue';
 import EventRegistration from '@/view/EventDetail/EventRegistration.vue'
-import PackageDetail from '@/view/EventDetail/PackageDetail.vue';
-import SupplypointDetail from '@/view/EventDetail/SupplypointDetail.vue';
-import MedicalDetail from '@/view/EventDetail/MedicalDetail.vue';
-import ShuttleDetail from '@/view/EventDetail/ShuttleDetail.vue'
-import WeatherDetail from '@/view/EventDetail/WeatherDetail.vue'
+
+import ItemManagement from '@/view/EventDetail/ItemManagement.vue'
+import PackageManagement from '@/view/EventDetail/PackageManagement.vue'
+import SupplypointManagement from '@/view/EventDetail/SupplypointManagement.vue'
 
 import ParticipantLottery from '@/view/EventManagement/ParticipantLottery.vue'
 import PacerSelection from '@/view/EventManagement/PacerSelection.vue'
@@ -34,6 +33,8 @@ import CarManagement from '@/view/EventVolunteer/CarManagement.vue'
 import MedicalManagement from '@/view/EventVolunteer/MedicalManagement.vue'
 import SupplyManagement from '@/view/EventVolunteer/SupplyManagement.vue'
 import VolunManagement from '@/view/EventVolunteer/VolunManagement.vue'
+
+import PhotoWall from '@/view/PhotoWall/PhotoWall.vue'
 //创建并暴露一个路由器
 export default new VueRouter({
   mode: 'history',
@@ -50,6 +51,18 @@ export default new VueRouter({
       path: '/EventDetail',
       name: 'EventDetail',
       component: EventDetail,
+    }, {
+      path: '/ItemManagement',
+      name: 'ItemManagement',
+      component: ItemManagement,
+    }, {
+      path: '/PackageManagement',
+      name: 'PackageManagement',
+      component: PackageManagement,
+    }, {
+      path: '/SupplypointManagement',
+      name: 'SupplypointManagement',
+      component: SupplypointManagement,
     },
     {
       path: '/EventRegistration',
@@ -59,26 +72,6 @@ export default new VueRouter({
       path: '/VolunteerSignup',
       name: 'VolunteerSignup',
       component: VolunteerSignup
-    }, {
-      path: '/PackageDetail',
-      name: 'PackageDetail',
-      component: PackageDetail
-    }, {
-      path: '/SupplypointDetail',
-      name: 'SupplypointDetail',
-      component: SupplypointDetail
-    }, {
-      path: '/MedicalDetail',
-      name: 'MedicalDetail',
-      component: MedicalDetail
-    }, {
-      path: '/ShuttleDetail',
-      name: 'ShuttleDetail',
-      component: ShuttleDetail
-    }, {
-      path: '/WeatherDetail',
-      name: 'WeatherDetail',
-      component: WeatherDetail
     },
     {
       path: '/EventManagementTab',
@@ -154,13 +147,17 @@ export default new VueRouter({
         }, {
           name: 'VolunteerDetailForAddStation',
           component: VolunteerDetailForAddStation,
-          path: 'VolunteerDetailForAddStation/:id/:voltype',
+          path: 'VolunteerDetailForAddStation/:event_id',
         }, {
           path: 'UserResults',
           name: 'UserResults',
           component: UserResults
         }
       ]
+    }, {
+      path: '/PhotoWall',
+      name: 'PhotoWall',
+      component: PhotoWall
     },
   ],
 })

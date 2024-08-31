@@ -1,6 +1,6 @@
 <template>
   <div id="MedicalDetail">
-    <el-dialog title="医疗点详情" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
+    <el-dialog title="医疗点详情" :visible.sync="dialogVisible" width="40%">
       <el-table :data="medicalPoints">
         <el-table-column prop="location" label="医疗点位置"></el-table-column>
       </el-table>
@@ -36,6 +36,9 @@ export default {
         .catch(error => {
           console.error('Error loading medical details:', error);
         });
+    },
+    handleClose() {
+      this.$emit('close');
     }
   }
 };

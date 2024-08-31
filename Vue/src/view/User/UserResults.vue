@@ -1,67 +1,59 @@
 <template>
-  <div>
-    <div id="div-right">
+  <div id="UserResults">
+    <div class="UserResultsContent">
       <div>
         <!-- 筛选和最佳成绩栏目 -->
-        <div class="pick_best">
-          <span>比赛类型：</span>
-          <el-select v-model="filterType" placeholder="选择比赛类型">
+        <div class="UserResultsRaceType">
+          <span style="margin-right: 5px;">比赛类型：</span>
+          <el-select v-model="filterType" placeholder="选择比赛类型" @change="showBest">
             <el-option label="全部" value="all"></el-option>
             <el-option label="全程马拉松" value="full"></el-option>
             <el-option label="半程马拉松" value="half"></el-option>
           </el-select>
-
-          <span>最好成绩：</span>
-          <el-select v-model="bestResultType" placeholder="选择比赛类型" @change="showBest">
-            <el-option label="全程马拉松" value="full"></el-option>
-            <el-option label="半程马拉松" value="half"></el-option>
-          </el-select>
-
-          <div class="best_grades" v-if="bestResultSelected">
-            <div :class="['result_item', bestResult.type, 'best_result']">
-              {{ bestResult.name }} {{ bestResult.type === 'half' ? '半马 ' : '全马 ' }}
+          <!-- 
+          <div class="UserResultsBestGrade" v-if="bestResultSelected">
+            <span>最好成绩：</span>
+            <span :class="['result_item', bestResult.type, 'best_result']">
+              {{ bestResult.name }}
               <span class="highlight">{{ bestResult.time }}</span>
-              <span>&nbsp;</span> <!-- 插入一个空格 -->
+              <span>&nbsp;</span>
               <span class="highlight">{{ bestResult.rank }}名</span>
-            </div>
-          </div>
+            </span>
+          </div> -->
 
           <!-- 搜索框 -->
-          <div class="search_container">
+          <div class="UserResultsSearch">
             <el-input v-model="searchQuery" placeholder="搜索比赛..." class="search_input" @keyup.enter.native="search" />
-            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
           </div>
         </div>
 
         <!-- 比赛成绩表格 -->
-        <div class="grades">
-          <table class="result_table">
-            <thead>
-              <tr>
-                <th>比赛名称</th>
-                <th>比赛类型</th>
-                <th>净成绩</th>
-                <th>排名</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="result in paginatedResults" :key="result.name">
-                <td>{{ result.name }}</td>
-                <td>{{ result.type === 'half' ? '半马' : '全马' }}</td>
-                <td :style="{ color: 'red' }">{{ result.time }}</td>
-                <td :style="{ color: 'red' }">{{ result.rank }}名</td>
-              </tr>
-            </tbody>
-          </table>
+        <div>
+          <el-table :data="paginatedResults" class="table" row-class-name="clickable-row" stripe>
+            <el-table-column prop="name" label="比赛名称" width="350"></el-table-column>
+            <el-table-column prop="type" label="比赛类型" width="150">
+              <template slot-scope="scope">
+                <div>{{ getRaceType(scope.row.type) }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="time" label="净成绩" width="200">
+              <template slot-scope="scope">
+                <div style="font-weight: bold;">{{ scope.row.time }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="rank" label="排名" width="150">
+              <template slot-scope="scope">
+                <div style="color: #c81623;font-weight: bold;">{{ scope.row.rank }}</div>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination v-if="filteredResults.length > 0" background layout="prev, pager, next"
+            :total="filteredResults.length" :page-size="pageSize" :current-page.sync="currentPage"
+            @current-change="handlePageChange" class="Pagination">
+          </el-pagination>
         </div>
 
-        <!-- 分页组件 -->
-        <el-pagination v-if="filteredResults.length > 0" background layout="prev, pager, next"
-          :total="filteredResults.length" :page-size="pageSize" :current-page.sync="currentPage"
-          @current-change="handlePageChange" class="pagination_bar">
-        </el-pagination>
       </div>
-      <!--插入cyy页面结束-->
     </div>
   </div>
 </template>
@@ -71,11 +63,8 @@ export default {
   name: 'UserResults',
   data() {
     return {
-
-      ischecked: [false, true, false, false],
       searchQuery: '',
       bestResultSelected: false,
-      bestResultType: '',
       bestResult: {},
       filterType: 'all',
       currentPage: 1,
@@ -104,14 +93,23 @@ export default {
       console.log('Searching for:', this.searchQuery);
     },
     showBest(type) {
-      this.bestResultSelected = true;
-      const bestResult = this.results
-        .filter(result => result.type === type)
-        .reduce((best, result) => best.time < result.time ? best : result, {});
-      this.bestResult = bestResult;
+      if (type !== 'all') {
+        this.bestResultSelected = true;
+        const bestResult = this.results
+          .filter(result => result.type === type)
+          .reduce((best, result) => best.time < result.time ? best : result, {});
+        this.bestResult = bestResult;
+      }
+      else {
+        this.bestResultSelected = false;
+        this.bestResult = ''
+      }
     },
     handlePageChange(page) {
       this.currentPage = page;
+    },
+    getRaceType(type) {
+      return type === 'full' ? '全马' : '半马';
     }
 
   },
@@ -133,148 +131,7 @@ export default {
 </script>
 
 <style scoped>
-#div-right {
-  width: 1000px;
-  height: 420px;
-  margin-right: 30px;
-  margin-top: 30px;
-
-}
-
-.down-right-img {
-  width: 500px;
-  height: 420px;
-}
-
-/* 下部分的左间部分 */
-.inactive {
-  margin-left: 20px;
-  font-size: 20px;
-  color: black;
-  background-color: white;
-  margin-top: 30px;
-}
-
-.active {
-  margin-left: 20px;
-  margin-top: 30px;
-  font-size: 20px;
-  color: rgb(168, 27, 31);
-  background-color: white;
-}
-
-.break {
-  margin-top: 60px;
-}
-
-.relative-button {
-  position: absolute;
-  top: 8px;
-  right: 100px;
-  font-size: 20px;
-  color: rgb(168, 27, 31);
-  background-color: white;
-}
-
-/* 下部分的右边 */
-#div-right {
-  background-color: white;
-  margin-top: 30px;
-  width: 1000px;
-  height: 500px;
-  font-size: 15px;
-
-}
-
-.search_container {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-  /* 将搜索框放置在最右边 */
-}
-
-.el-input {
-  width: 200px;
-}
-
-.el-button--primary {
-  background-color: #c81623;
-  /* 酒红色 */
-}
-
-.pick_best {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 20px 0;
-
-  top: 50px;
-  /* 位置在导航栏下面 */
-  background: white;
-  padding: 0px 0;
-  height: 30px;
-}
-
-.best_result {
-  display: inline-block;
-  margin-left: 20px;
-  background-color: #ffffff;
-  color: rgb(12, 5, 5);
-  padding: 5px 8px 2px 8px;
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.grades {
-  z-index: 1000;
-  max-height: calc(100vh - 280px);
-  overflow-y: auto;
-  /* 滚动条 */
-  text-align: center;
-  position: relative;
-  max-height: 550px;
-  scrollbar-color: #888 transparent;
-}
-
-
-.result_table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 16px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  margin-top: 20px;
-}
-
-.result_table th,
-.result_table td {
-  padding: 10px 20px;
-  border-bottom: 1px solid #ddd;
-}
-
-.result_table th {
-  background-color: #f9f9f9;
-  font-weight: bold;
-}
-
-.result_table td {
-  vertical-align: middle;
-}
-
-.result_table td.red {
-  color: red;
-}
-
-.pagination_bar {
-  background-color: #ffffff;
-  text-align: center;
-  padding: 10px;
-
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  font-size: 24px;
-  height: 50px;
-}
+@import 'element-ui/lib/theme-chalk/index.css';
+@import "@/assets/css/Base.css";
+@import "@/assets/css/UserResults.css";
 </style>

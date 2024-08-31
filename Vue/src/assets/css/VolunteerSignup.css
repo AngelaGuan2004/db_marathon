@@ -48,7 +48,7 @@
 
 .RegistrationInformation b {
   display: inline-block;
-  width: 26%;
+  width: 30%;
   margin-top: 20px;
   margin-left: 20%;
 }
@@ -60,11 +60,12 @@
 }
 
 #VolunteerSignup .el-button {
+  font-size: 18px !important;
   background-color: #c63939;
   /*important是为了覆盖原有的Element UI 的按钮组件有默认的样式优先级*/
   color: white;
   border: none !important;
-  margin: 0 10px;
+  margin: 0 15px;
   /* 去掉按钮边框 */
 }
 

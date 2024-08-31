@@ -2,42 +2,25 @@
   <div id="VolunteerDetailForAddStation">
     <el-dialog title="赛事志愿详情" :visible.sync="dialogTableVisible" :before-close="handleClose" width="35%">
       <div class="AidStation" v-if="aidStation">
-        <div class="AidStationHeader" style="  color: rgb(168, 27, 31);">{{ aidStation.eventTitle }}</div>
+        <div class="AidStationHeader" style="color: rgb(168, 27, 31);">{{ aidStation.eventTitle }}</div>
         <div class="AidStationContent">
           <div style="width: 100%;">
             <div class="AidStationItem">
-              <span style="width: 40%;font-weight: bold;">赛事名称：</span><span>{{ aidStation.eventTitle }}</span>
+              <span style="width: 40%;font-weight: bold;">志愿者状态：</span><span>
+                {{ aidStationChange(aidStation.status) }}</span>
             </div>
-            <div v-if="this.aidStation.voltype === '补给'">
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">补给点 ID：</span><span>{{ aidStation.aidId }}</span>
-              </div>
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">补给点地点：</span><span> {{ aidStation.aidLocation }}</span>
-              </div>
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">补给点类型：</span><span>{{ aidStation.aidType }}</span>
-              </div>
+            <div class="AidStationItem">
+              <span style="width: 40%;font-weight: bold;">工作种类：</span><span>
+                {{ jobCategoryChange(aidStation.job_category) }}</span>
             </div>
-            <div v-else-if="this.aidStation.voltype === '医疗'">
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">医疗点 ID：</span><span>{{ aidStation.medicalId }}</span>
-              </div>
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">医疗点位置：</span><span> {{ aidStation.medicalLocation }}</span>
-              </div>
+            <div class="AidStationItem">
+              <span style="width: 40%;font-weight: bold;">是否排班：</span><span>
+                {{ isScheduledChange(aidStation.is_scheduled) }}</span>
             </div>
-            <div v-else-if="this.aidStation.voltype === '接驳车'">
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">接驳车 ID：</span><span>{{ aidStation.shuttleId }}</span>
-              </div>
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">出发时间：</span><span>{{ aidStation.shuttleDepartureTime
-                  }}</span>
-              </div>
-              <div class="AidStationItem">
-                <span style="width: 40%;font-weight: bold;">到达时间：</span><span>{{ aidStation.shuttleArrivalTime }}</span>
-              </div>
+            <div class="AidStationItem">
+              <span style="width: 40%;font-weight: bold;">搭档：</span>
+              <span v-if="!aidStation.partners.length">无</span>
+              <span><span v-for="partner in aidStation.partners" :key="partner.id">{{ partner.name }}</span></span>
             </div>
           </div>
         </div>
@@ -47,47 +30,57 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { acquireVolunteerInformation } from '@/api/detail';
+
 export default {
   name: 'VolunteerDetailForAddStation',
   data() {
     return {
-      aidStation: {
-        eventTitle: '123213123',
-        id: this.$route.params.id,
-        aidId: '5645465',
-        aidLocation: '123123213',
-        aidType: '1231231232',
-        medicalId: '1231231232',
-        medicalLocation: '1231231232',
-        shuttleId: '1231231232',
-        shuttleDepartureTime: '1231231232',
-        shuttleArrivalTime: '1231231232',
-        voltype: this.$route.params.voltype,
-      },
+      aidStation: null,
       dialogTableVisible: true
     };
   },
   created() {
-    // this.loadAidStation();
+    this.loadVolunteerInformation();
   },
   watch: {
-    'this.$route.params.id': 'loadAidStation'
+    'this.$route.params.event_id': 'loadAidStation'
   },
   methods: {
-    loadAidStation() {
-      const aidStationId = this.$route.params.id;
-      axios.get(`/api/aid-stations/${aidStationId}`)
+    loadVolunteerInformation() {
+      const volunteerId = this.$route.params.volunteer_id;
+      const eventId = this.$route.params.event_id;
+
+      acquireVolunteerInformation(eventId, 10001)
         .then(response => {
-          this.aidStation = response.data;
+          console.log(response)
+          this.aidStation = response; // 将后端返回的数据赋值给 aidStation
         })
         .catch(error => {
-          console.error('Error loading aid station info:', error);
-          this.$message.error('加载补给点信息失败');
+          console.error('Error loading volunteer info:', error);
+          this.$message.error('加载志愿者信息失败');
         });
     },
     handleClose() {
       this.$router.back()
+    },
+    aidStationChange(res) {
+      if (res === 1)
+        return "已分工"
+      else
+        return "未分工"
+    },
+    isScheduledChange(res) {
+      if (res)
+        return '已排班'
+      else
+        return '未排班'
+    },
+    jobCategoryChange(res) {
+      if (res === '未排班')
+        return '未分配'
+      else
+        return res
     }
   }
 }

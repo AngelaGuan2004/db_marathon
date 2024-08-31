@@ -52,8 +52,11 @@ export default {
       try {
         const response = await loginPhotographer(data);
         if (response.data) {
+          this.$message.success('登录成功！')
           localStorage.setItem('UserRole', 'Photographer');
-          location.href = 'index.html'; // 登录成功后跳转到首页
+          setTimeout(() => {
+            location.href = 'index.html'; // 登录成功后跳转到首页
+          }, 1000)
         }
       } catch (error) {
         this.errorMessage = '登录失败，请重试'; // 处理登录失败情况

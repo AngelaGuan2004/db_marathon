@@ -1,3 +1,7 @@
+#Home {
+  margin-top: 100px;
+}
+
 #Home .el-carousel__item h3 {
   color: #475669;
   font-size: 14px;
@@ -78,7 +82,7 @@
 }
 
 #Home .el-timeline-item__content {
-  padding-left: 10px;
+  padding-left: 5%;
   margin: 10px 0;
   font-size: 24px;
   font-weight: bold;
@@ -107,9 +111,13 @@
 #Home .el-timeline-item:hover {
   height: 100px;
   width: 750px;
-  line-height: 120px;
+  line-height: 80px;
   background-color: rgb(246, 232, 232);
   border-radius: 20px;
+}
+
+#Home .el-timeline-item:hover .RecentlyStartedTimestamp {
+  margin-top: 18px;
 }
 
 #Home .el-timeline-item::before {
@@ -121,7 +129,7 @@
   width: calc(100% + 150px);
   height: 100%;
   background-color: transparent;
-  z-index: -1;
+  z-index: 0;
   border-radius: 20px;
 }
 
@@ -243,4 +251,17 @@
 
 .BestScore {
   margin-top: 50px;
+}
+
+#Home .el-timeline-item:hover .extra-info {
+  display: block;
+  color: rgb(168, 27, 31);
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 15px;
+}
+
+.extra-info {
+  display: none;
+  /* 额外的样式可以根据你的需求添加 */
 }

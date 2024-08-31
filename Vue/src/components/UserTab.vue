@@ -11,7 +11,7 @@
         <div class="TabFlex">
           <div class="Tab">
             <el-menu ref="UserMenu" :default-active="ActiveIndexForUserTab" class="el-menu-vertical-demo"
-              @select="ActiveTab" active-text-color="rgb(168, 27, 31)">
+              @select="ActiveIndex" active-text-color="rgb(168, 27, 31)">
               <el-menu-item index="1">
                 <span>个人信息</span>
               </el-menu-item>
@@ -21,13 +21,9 @@
               <el-menu-item index="3">
                 <span>我的报名</span>
               </el-menu-item>
-              <el-submenu index="6" menu-trigger="hover">
-                <template slot="title">
-                  <span>我的志愿</span>
-                </template>
-                <el-menu-item index="4">成为志愿者</el-menu-item>
-                <el-menu-item index="5" style="margin-bottom: 10px;">已报名志愿</el-menu-item>
-              </el-submenu>
+              <el-menu-item index="4">
+                <span>我的志愿</span>
+              </el-menu-item>
             </el-menu>
           </div>
         </div>
@@ -43,24 +39,15 @@ export default {
   name: 'UserTab',
   data() {
     return {
-      UserTabTitle: ['UserInfo', 'UserResults', 'UserRegistrations', 'UserVolunteerSignup', 'UserVolunteering'],
+      UserTabTitle: ['UserInfo', 'UserResults', 'UserRegistrations', 'UserVolunteering'],
       ActiveIndexForUserTab: "1"
     }
   },
   methods: {
-    ActiveTab(index) {
-
-      this.$router.push({ name: this.UserTabTitle[index - 1], })
-    },
     ActiveIndex(index) {
       this.ActiveIndexForUserTab = index; // 设置当前激活的菜单项
       this.$refs.UserMenu.activeIndex = index;
-      if (index.includes('-')) { // 处理submenu的子项
-        const [mainIndex, subIndex] = index.split('-');
-        this.$router.push({ name: this.UserTabTitle[parseInt(mainIndex, 10) - 1 + parseInt(subIndex, 10) - 1] });
-      } else {
-        this.$router.push({ name: this.UserTabTitle[index - 1] });
-      }
+      this.$router.push({ name: this.UserTabTitle[index - 1] });
     }
   },
   mounted() {
@@ -101,9 +88,10 @@ export default {
 
 .User {
   width: 100%;
-  height: 600px;
+  height: 80vh;
   background-color: rgb(244, 244, 244);
   padding: 0 100px;
   padding-top: 20px;
+  margin-top: 100px;
 }
 </style>

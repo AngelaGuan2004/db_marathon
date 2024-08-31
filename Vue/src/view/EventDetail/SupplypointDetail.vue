@@ -1,6 +1,6 @@
 <template>
   <div id="SupplypointDetail">
-    <el-dialog title="补给点详情" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
+    <el-dialog title="补给点详情" :visible.sync="dialogVisible" width="40%">
       <el-table :data="supplypoints">
         <el-table-column prop="location" label="补给点地点"></el-table-column>
         <el-table-column prop="type" label="补给点类型"></el-table-column>
@@ -39,6 +39,9 @@ export default {
         .catch(error => {
           console.error('Error loading supplypoint details:', error);
         });
+    },
+    handleClose() {
+      this.$emit('close');
     }
   }
 };

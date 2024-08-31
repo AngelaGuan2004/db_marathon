@@ -1,5 +1,6 @@
 #EventDetail {
   height: 75vh;
+  margin-top: 125px;
 }
 
 .EventDetailContainer {
@@ -52,8 +53,10 @@
   margin-right: 10px;
 }
 
-.EventDetailLink {
-  color: black;
+.EventDetailContainerInfoItem a {
+  color: rgb(88, 165, 255);
+  font-weight: bold;
+  margin-right: 25px;
   text-decoration: none;
   cursor: pointer;
 }

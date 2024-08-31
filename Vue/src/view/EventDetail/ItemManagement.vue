@@ -1,28 +1,30 @@
 <template>
-  <div class="management-container">
-    <h2>物品管理</h2>
-    <el-table :data="items" @row-click="handleRowClick">
-      <el-table-column prop="id" label="物品ID"></el-table-column>
-      <el-table-column prop="name" label="物品名"></el-table-column>
-      <el-table-column label="选择">
-        <template slot-scope="scope">
-          <el-checkbox v-model="scope.row.selected" @change="handleSelectChange(scope.row)">
-          </el-checkbox>
-          <div v-if="scope.row.selected" class="input-container">
-            <el-input v-model="scope.row.quantity" placeholder="输入数量"
-              style="margin-left: 10px; width: 150px;"></el-input>
-            <el-select v-if="showCategorySelect" v-model="scope.row.category" placeholder="选择类别"
-              style="margin-left: 10px; width: 150px;">
-              <el-option label="参赛物资" value="参赛物资"></el-option>
-              <el-option label="完赛物资" value="完赛物资"></el-option>
-            </el-select>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="button-group">
-      <button type="primary" @click="saveItems">保存</button>
-    </div>
+  <div id="ItemManagement">
+    <el-dialog title="物资管理" :visible.sync="dialogVisible" width="40%">
+      <el-table :data="items">
+        <el-table-column prop="id" label="物品ID" width="125"></el-table-column>
+        <el-table-column prop="name" label="物品名" width="125"></el-table-column>
+        <el-table-column label="选择" width="325">
+          <template slot-scope="scope">
+            <div style="display: inline-block;">
+              <el-checkbox v-model="scope.row.selected" @change="handleSelectChange(scope.row)"></el-checkbox>
+            </div>
+            <div v-if="scope.row.selected" class="input-container">
+              <el-input v-model="scope.row.quantity" placeholder="输入数量"
+                style="margin-left: 20px; width: 150px;"></el-input>
+              <el-select v-if="showCategorySelect" v-model="scope.row.category" placeholder="选择类别"
+                style="margin-left: 20px; width: 150px;">
+                <el-option label="参赛物资" value="参赛物资"></el-option>
+                <el-option label="完赛物资" value="完赛物资"></el-option>
+              </el-select>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div style=" text-align: right;margin-top: 35px;margin-right: 10px;">
+        <button type="primary" @click="saveItems">保存</button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -30,15 +32,28 @@
 import { getItems } from '@/api/ItemManagement';
 
 export default {
+  name: 'ItemManagement',
   props: {
     showCategorySelect: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
     return {
-      items: []
+      items: [
+        {
+          id: "1",
+          name: '156454',
+        }, {
+          id: "1",
+          name: '156454',
+        }, {
+          id: "1",
+          name: '156454',
+        }
+      ],
+      dialogVisible: true,
     };
   },
   created() {
@@ -80,25 +95,25 @@ export default {
 };
 </script>
 
-<style>
-.management-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 30px;
-  background-color: white;
-  border: 1px solid grey;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.button-group {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
+<style scoped>
+@import "@/assets/css/Base.css";
+@import 'element-ui/lib/theme-chalk/index.css';
 
 .input-container {
-  display: flex;
-  align-items: center;
+  display: inline-block;
+  text-align: center;
+}
+
+#ItemManagement .el-dialog__body {
+  margin-bottom: 15px;
+}
+
+#ItemManagement .el-input {
+  width: 90px !important;
+}
+
+#ItemManagement .el-select,
+#ItemManagement .el-select .el-input {
+  width: 120px !important;
 }
 </style>

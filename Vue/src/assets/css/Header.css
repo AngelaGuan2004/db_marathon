@@ -1,4 +1,8 @@
 .Header {
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  left: 0;
   height: 100px;
   width: 100%;
   background-color: rgb(168, 27, 31);
@@ -9,7 +13,6 @@
   width: 30%;
   height: 100%;
   text-align: center;
-
 }
 
 .HeaderLogo img {

@@ -57,7 +57,8 @@ export default {
       // 调用API进行登录
       try {
         const response = await loginPlayer(data);
-        if (response.data) {
+        if (response) {
+          this.$message.success('登录成功！')
           localStorage.setItem('UserRole', 'Athlete');
           setTimeout(() => {
             location.href = 'index.html'; // 登录成功后跳转到首页

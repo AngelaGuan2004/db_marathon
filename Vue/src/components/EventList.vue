@@ -64,7 +64,7 @@
           <el-table-column label="赛事管理" width="100">
             <div class="EventTableDetail" @click.prevent="handleEventManagement">详情</div>
           </el-table-column>
-          <el-table-column label="志愿详情" width="100">
+          <el-table-column label="志愿管理" width="100">
             <div class="EventTableDetail" @click.prevent="handleEventVolunteer">详情</div>
           </el-table-column>
         </el-table>
@@ -145,14 +145,22 @@ export default {
       this.currentPage = page;
     },
     handleEventManagement(event) {
-      this.$router.push({ name: 'EventManagementTab', params: { id: event.id } });
+      event.stopPropagation();
+      if (localStorage.getItem('UserRole') === 'Admin')
+        this.$router.push({ name: 'EventManagementTab', params: { id: event.id } });
+      else
+        this.$message.error('您不是管理员，没有权限')
     },
-    handleEventVolunteer() {
-      this.$router.push({ name: 'EventVolunteerTab', });
+    handleEventVolunteer(event) {
+      event.stopPropagation();
+      if (localStorage.getItem('UserRole') === 'Admin')
+        this.$router.push({ name: 'EventVolunteerTab', params: { id: event.id } });
+      else
+        this.$message.error('您不是管理员，没有权限')
     },
     handleRowClick(event) {
       this.$router.push({ name: 'EventDetail', params: { id: event.id } });
-    }
+    },
   }
 };
 </script>

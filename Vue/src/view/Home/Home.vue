@@ -18,14 +18,18 @@
           <div>近期开赛</div>
           <div class="RecentlyStartedTitleLine"></div>
         </div>
-        <span class="RecentlyStartedMore">查看更多></span>
+        <span class="RecentlyStartedMore" @click="GoToEvent">查看更多></span>
       </div>
       <div class="RecentlyStartedBody">
         <el-timeline :reverse="false">
-          <el-timeline-item v-for="(RecentlyStartedEvent, index) in RecentlyStartedEvents" :key="index"
-            :timestamp="RecentlyStartedEvent.timestamp" :hide-timestamp="true">
-            <div class="RecentlyStartedTimestamp">{{ RecentlyStartedEvent.timestamp }}</div>
-            <div style="display: inline-block;">{{ RecentlyStartedEvent.content }}</div>
+          <el-timeline-item v-for="(RecentlyStartedEvent, index) in RecentlyStartEvents" :key="index"
+            :timestamp="RecentlyStartedEvent.date" :hide-timestamp="true">
+            <div class="RecentlyStartedTimestamp">{{ RecentlyStartedEvent.date }}</div>
+            <div style="display: inline-block;">{{ RecentlyStartedEvent.name }}</div>
+            <div class="extra-info">
+              <span style="margin-right: 15px;">类型: {{ RecentlyStartedEvent.type }}</span>
+              <span>规模: {{ RecentlyStartedEvent.scale }}</span>
+            </div>
           </el-timeline-item>
         </el-timeline>
       </div>
@@ -136,25 +140,30 @@ export default {
           text: `2024无锡马拉松|何杰2:06:57再度打破全国纪录，中国男子马拉松进入206时代`
         }
       ],
-      RecentlyStartedEvents: [{
-        content: '2024巴东野三关半程马拉松',
-        timestamp: '2024.08.25'
-      }, {
-        content: '2024哈尔滨马拉松',
-        timestamp: '2024.08.25'
-      }, {
-        content: '2024康保马拉松',
-        timestamp: '2024.08.25'
-      }, {
-        content: '2024兰州新区半程马拉松',
-        timestamp: '2024.09.01'
-      }, {
-        content: '2024长春马拉松赛',
-        timestamp: '2024.09.01'
-      }, {
-        content: '2024宁夏黄河金岸（吴忠）马拉松',
-        timestamp: '2024.09.08'
-      }]
+      events: [
+        { id: '1', date: '2024-09-22', name: '2024天津团泊湖半程马拉松', type: '半马', scale: '6000人' },
+        { id: '2', date: '2024-09-16', name: '2024邯郸半程马拉松', type: '半马', scale: '10000人' },
+        { id: '3', date: '2024-09-08', name: '2024长治环漳泽湖马拉松赛', type: '全马', scale: '10000人' },
+        { id: '4', date: '2024-09-01', name: '2024长春马拉松赛', type: '全马，半马', scale: '30000人' },
+        { id: '5', date: '2024-08-31', name: '2024广元半程马拉松赛', type: '半马', scale: '10000人' },
+        { id: '6', date: '2024-08-25', name: '2024鄂州环梁子湖马拉松比赛', type: '半马', scale: '3000人' },
+        { id: '7', date: '2024-09-22', name: '2024天津团泊湖半程马拉松', type: '半马', scale: '6000人' },
+        { id: '8', date: '2024-09-16', name: '2024邯郸半程马拉松', type: '半马', scale: '10000人' },
+        { id: '9', date: '2024-09-08', name: '2024长治环漳泽湖马拉松赛', type: '全马', scale: '10000人' },
+        { id: '10', date: '2024-09-01', name: '2024长春马拉松赛', type: '全马，半马', scale: '30000人' },
+        { id: '11', date: '2024-08-31', name: '2024广元半程马拉松赛', type: '半马', scale: '10000人' },
+        { id: '12', date: '2024-08-25', name: '2024鄂州环梁子湖马拉松比赛', type: '半马', scale: '3000人' }
+      ],
+    }
+  },
+  methods: {
+    GoToEvent() {
+      this.$router.push({ name: "EventList" })
+    },
+  },
+  computed: {
+    RecentlyStartEvents() {
+      return this.events.slice(0, 8).sort((a, b) => new Date(a.date) - new Date(b.date));
     }
   }
 }
