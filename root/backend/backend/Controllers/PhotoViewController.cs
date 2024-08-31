@@ -185,16 +185,18 @@ namespace WebApplication1.Controllers
 
                 List<Photo_Information> information_of_photos = await _db.Queryable<Photo>()
                .LeftJoin<Event>((p, e) => p.Event_id == e.Id)//多个条件用&&
-               .LeftJoin<Photographer>((p1, e, p2) => p1.Photographer_id == p2.Id)
-               .Select((p1, e, p2) => new Photo_Information
+               .LeftJoin<Photographer>((p, e, p2) => p.Photographer_id == p2.Id)
+               .OrderBy((p, e, p2) => p.Likes,OrderByType.Desc) //按点赞数降序
+               .OrderBy((p, e, p2) => p.Id)  //按id升序
+               .Select((p, e, p2) => new Photo_Information
                {
-                   Id = p1.Id,
+                   Id = p.Id,
                    Event_name = e.Name,
-                   Time = p1.Time,
-                   Location = p1.Location,
+                   Time = p.Time,
+                   Location = p.Location,
                    Photographer_name = p2.Name,
-                   Address = p1.Address,
-                   Likes = p1.Likes
+                   Address = p.Address,
+                   Likes = p.Likes
                })
                .ToListAsync();
 
