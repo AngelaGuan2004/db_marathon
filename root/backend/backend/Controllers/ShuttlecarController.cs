@@ -92,6 +92,28 @@ namespace MarathonMaster.Controllers
                 return BadRequest(false); //false表示失败
             }
         }
+        //接驳车删除，根据接驳车id删除相应的接驳车信息
+        [HttpDelete]
+        public async Task<IActionResult> delete_shuttlecar([FromQuery] int shuttlecar_id)
+        {
+            _logger.LogInformation("收到删除接驳车班次的id数据: {@shuttlecar_id}", shuttlecar_id); // 记录收到的数据
+
+            try
+            {
+
+                await _db.Deleteable<Shuttlecar>().In(shuttlecar_id).ExecuteCommandAsync();
+
+                _logger.LogInformation("成功删除id的接驳车班次信息: {@shuttlecar_id}", shuttlecar_id); // 记录查询成功
+                return Ok(shuttlecar_id);
+
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "删除该id的接驳车班次信息失败: {@shuttlecar_id}", shuttlecar_id); // 记录错误信息
+
+                return BadRequest(false); //false表示失败
+            }
+        }
     }
 
 }
