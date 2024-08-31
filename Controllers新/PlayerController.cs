@@ -66,15 +66,19 @@ namespace MarathonMaster.Controllers
             var existingPlayer = await _db.Queryable<Player>()
                 .Where(it => it.Id == Player_Id)
                 .FirstAsync();
+            var existingEvent = await _db.Queryable<Event>()
+                .Where(it => it.Id == Event_Id)
+                .FirstAsync();
 
             if (existingPlayer != null)
             {
-                var participateAndPlayer = new
+                var participateAndPlayerAndEvent = new
                 {
                     Participate = existingParticipate,
-                    Player = existingPlayer
+                    Player = existingPlayer,
+                    Event=existingEvent
                 };
-                return Ok(JsonSerializer.Serialize(participateAndPlayer));
+                return Ok(JsonSerializer.Serialize(participateAndPlayerAndEvent));
             }
             else
             {

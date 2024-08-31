@@ -174,7 +174,7 @@ namespace MarathonMaster.Controllers
                 if (existingPhotographer != null)
                 {
                     _logger.LogInformation("摄影师登录成功: {@Volunteer}", photographer); // 记录登录成功
-                    return Ok(true);
+                    return Ok(JsonSerializer.Serialize(photographer));
                 }
                 else
                 {
