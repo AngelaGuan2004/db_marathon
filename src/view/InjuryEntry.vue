@@ -83,8 +83,8 @@
                   <el-option
                     v-for="point in medicalPoints"
                     :key="point.value"
-                   :label="point.label"
-                   :value="point.value">
+                   :label="point.id"
+                   :value="point.label">
                  </el-option>             
                 </el-select>
               </el-form-item>
@@ -109,24 +109,22 @@
       name:'InjuryEntry',
       data() {
         return {
-          injuredPlayers: [
-          { name: '周一', ID: '1234561', medicalPoint: '上海市普陀区金沙江路 1518 弄' }, 
-          { name: '钱二', ID: '1234562', medicalPoint: '上海市普陀区金沙江路 1500 弄' }, 
-          { name: '张三', ID: '1234563', medicalPoint: '上海市普陀区金沙江路 1522 弄' }, 
-          { name: '李四', ID: '1234564', medicalPoint: '上海市普陀区金沙江路 1517 弄' }, 
-          { name: '王五', ID: '1234565', medicalPoint: '上海市普陀区金沙江路 1519 弄' }, 
-          { name: '赵六', ID: '1234566', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
-          { name: '何七', ID: '1234567', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
-          { name: '郑八', ID: '1234568', medicalPoint: '上海市普陀区金沙江路 1547 弄' }, 
-          { name: '郭九', ID: '1234569', medicalPoint: '上海市普陀区金沙江路 1538 弄' }
-          ],
-
-          // medicalPoints: [
-          //   { value: '上海市普陀区金沙江路 1518 弄', label: '普陀区金沙江路 1518 弄' },
-          //   { value: '上海市普陀区金沙江路 1500 弄', label: '普陀区金沙江路 1500 弄' },
+          // injuredPlayers: [
+          // { name: '周一', ID: '1234561', medicalPoint: '上海市普陀区金沙江路 1518 弄' }, 
+          // { name: '钱二', ID: '1234562', medicalPoint: '上海市普陀区金沙江路 1500 弄' }, 
+          // { name: '张三', ID: '1234563', medicalPoint: '上海市普陀区金沙江路 1522 弄' }, 
+          // { name: '李四', ID: '1234564', medicalPoint: '上海市普陀区金沙江路 1517 弄' }, 
+          // { name: '王五', ID: '1234565', medicalPoint: '上海市普陀区金沙江路 1519 弄' }, 
+          // { name: '赵六', ID: '1234566', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
+          // { name: '何七', ID: '1234567', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
+          // { name: '郑八', ID: '1234568', medicalPoint: '上海市普陀区金沙江路 1547 弄' }, 
+          // { name: '郭九', ID: '1234569', medicalPoint: '上海市普陀区金沙江路 1538 弄' }
           // ],
+
+          injuredPlayers:[],
+
           medicalPoint:[],
-          eventID: null,//需要一个函数来get
+          eventID: 10001,//需要一个函数来get
 
           formVisible: false,
           editingIndex: null,
@@ -153,12 +151,11 @@
       },
       async mounted() {
         try {
-        // 假设的赛事ID
-        const params = { Event_Id: 'your-event-id' };
-        const response = await getAllMedicalPoints(params);
+        const response = await getAllMedicalPoints(this.eventID);
         this.medicalPoints = response.data.map(point => ({
-          label: point.Name 
-        }));
+          value: point.id,
+          label: point.place // 使用 place 作为显示内容
+          }));
         } catch (error) {
           console.error('获取医疗点失败:', error);
         }
@@ -192,15 +189,9 @@
             if (deleteIndex !== -1) {
               this.injuredPlayers.splice(deleteIndex, 1);
             }
-            this.$message({
-              type: 'success',
-              message: '删除成功!',
-            });
+            this.$message.success('删除成功!');
           }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除',
-            });
+            this.$message.info('已取消删除');
           });
         },
         handleAddRow() {
