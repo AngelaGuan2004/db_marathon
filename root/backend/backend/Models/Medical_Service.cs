@@ -16,4 +16,11 @@ namespace MarathonMaster.Models
         [SugarColumn(IsPrimaryKey = true)]
         public int Player_Id { get; set; }         //选手名字
     }
+    public class Injury
+    {
+        public Medicalpoint medicalpoint { get; set; }
+        public Player injury { get; set; }
+    }
+
+    
 }

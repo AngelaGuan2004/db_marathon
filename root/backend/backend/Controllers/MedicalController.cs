@@ -6,6 +6,7 @@ using MarathonMaster;
 using Microsoft.AspNetCore.Cors;
 using MarathonMaster.Models;
 using System.Numerics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MarathonMaster.Controllers
 {
@@ -114,7 +115,73 @@ namespace MarathonMaster.Controllers
         }
 
 
+        /*查询某场赛事所有（某个医疗点）的伤员*/
+        [HttpGet]
+        public async Task<IActionResult> get_injury([FromQuery] string? Event_Id, [FromQuery] string? medical_id = null)
+        {
+            _logger.LogInformation("收到查伤员信息");
 
+            try
+            {
+                List<Medical_Service> medical_Services;
+                if(medical_id == null && Event_Id == null)
+                {
+                    return BadRequest("未传id参数");
+                }
+                if (medical_id != null)
+                {
+                    _logger.LogInformation("根据医疗点id查");
+                    medical_Services = await _db.Queryable<Medical_Service>().Where(e => e.Medicalpoint_Id == medical_id).ToListAsync();
+                }
+                else
+                {
+                    _logger.LogInformation("根据赛事id查");
+                    medical_Services = await _db.Queryable<Medical_Service>().Where(s => s.Medicalpoint_Id.StartsWith(Event_Id)).ToListAsync();
+                }
+                List<Injury> injuryList = new List<Injury>();
+                if (medical_Services == null || medical_Services.Count == 0)
+                {
+                    // _logger.LogInformation("为空");
+                    return Ok(injuryList);
+                }
+                else
+                {
+                    foreach (var service in medical_Services)
+                    {
+                        // 通过 medical_id 查询对应的 medical 记录
+                        Medicalpoint medical_point = await _db.Queryable<Medicalpoint>()
+                                               .Where(m => m.Id == service.Medicalpoint_Id)
+                                               .FirstAsync();
+                        // 根据每条结果的伤员id找伤员信息
+                        Player player = await _db.Queryable<Player>()
+                                               .Where(m => m.Id == service.Player_Id)
+                                               .FirstAsync();
+                        // 确保查询到了 player 和 medical_point
+                        if (medical_point != null && player != null)
+                        {
+                            Injury injury_item = new Injury
+                            {
+                                injury = player,
+                                medicalpoint = medical_point
+                            };
+
+                            // 添加到 injuryList
+                            injuryList.Add(injury_item);
+                        }
+                        else
+                        {
+                            return BadRequest("查询到的 medical_point 或 player 为空");
+                        }
+                    }
+                    return Ok(injuryList);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查询伤员数据失败");
+                return BadRequest(ex.Message);
+            }
+        }
 
 
     }
