@@ -52,18 +52,18 @@ export function getMyRegistrations(Id) {
       }
   })
 }
-/*
+
 export function getEventInfo(Player_Id,Event_Id) {
   return request({
-      url: '/Event/get_by_id',
+      url: '/Player/get_number_by_eventid_and_playerid',
       method: 'get',
       params: {
-        Player_Id:Player_Id,
-        Event_Id:Event_Id
+        playerid:Player_Id,
+        eventid:Number(Event_Id)
       }
   })
 }
-  */
+
 
 
 

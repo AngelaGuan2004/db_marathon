@@ -1,12 +1,14 @@
 #EventDetail {
-  height: 75vh;
+  height: 62vh;
   margin-top: 125px;
+  margin-bottom: 15%;
 }
 
 .EventDetailContainer {
   max-width: 1200px;
+  height: 100%;
   margin: 0 auto;
-  margin-top: 35px;
+  margin-top: 50px;
   padding: 30px;
   background-color: white;
   border: 1px solid grey;
@@ -30,8 +32,7 @@
 
 .EventDetailContainerInfoItem {
   display: flex;
-  align-items: left;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   font-size: 20px;
 }
 

@@ -16,7 +16,7 @@
 
 .Tab {
   width: 225px;
-  margin-top: 45%;
+  margin-bottom: 75px;
 }
 
 [id$="Tab"] .el-menu-item,

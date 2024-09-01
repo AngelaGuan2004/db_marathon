@@ -8,28 +8,28 @@
       </el-breadcrumb>
     </div>
     <div class="EventDetailContainer" v-if="event">
-      <div class="EventDetailTitle">{{ event.title }}</div>
+      <div class="EventDetailTitle">{{ event.Name }}</div>
       <div class="EventDetailContainerInfo">
         <div class="EventDetailContainerInfoOne">
           <div class="EventDetailContainerInfoItem">
-            <img :src="require(`@/assets/images/location.png`)" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>赛事名称：</span>{{ event.title }}</span>
+            <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
+            <span><span>赛事名称：</span>{{ event.Name }}</span>
           </div>
           <div class="EventDetailContainerInfoItem">
-            <img :src="require(`@/assets/images/location.png`)" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>赛事类型：</span>{{ event.type }}</span>
+            <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
+            <span><span>赛事类型：</span>{{ event.Category }}</span>
           </div>
           <div class="EventDetailContainerInfoItem">
-            <img :src="require(`@/assets/images/location.png`)" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>报名开始时间：</span>{{ event.registration_start }}</span>
+            <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
+            <span><span>报名开始时间：</span>{{ event.Start_Date }}</span>
           </div>
           <div class="EventDetailContainerInfoItem">
-            <img :src="require(`@/assets/images/location.png`)" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>报名结束时间：</span>{{ event.registration_end }}</span>
+            <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
+            <span><span>报名结束时间：</span>{{ event.End_Date }}</span>
           </div>
           <div class="EventDetailContainerInfoItem">
-            <img :src="require(`@/assets/images/location.png`)" alt="Event Image" class="EventDetailContainerIcon">
-            <span><span>正式比赛时间：</span>{{ event.date }}</span>
+            <img src="@/assets/images/location.png" alt="Event Image" class="EventDetailContainerIcon">
+            <span><span>正式比赛时间：</span>{{ event.Event_Date }}</span>
           </div>
         </div>
         <div class="EventDetailContainerInfoTwo">
@@ -75,12 +75,12 @@
         <el-button @click="openVolunteerSignupModal">志愿者报名</el-button>
       </div>
       <!-- 详情弹窗 -->
-      <WeatherDetailsModal v-if="showWeatherModal" :weatherDetails="weatherDetails" @close="closeWeatherModal" />
-      <MedicalDetail v-if="showMedicalModal" :medicalPoints="medicalPoints" @close="closeMedicalModal" />
-      <PackageDetail v-if="showPackageModal" :packages="packages" @close="closePackageModal" />
-      <ShuttleDetail v-if="showShuttleModal" :shuttles="shuttles" @close="closeShuttleModal" />
-      <SupplypointDetail v-if="showSupplypointModal" :supplypoints="supplypoints" @close="closeSupplypointModal" />
-      <VolunteerSignup v-if="showVolunteerSignupModal" @close="closeVolunteerSignupModal" />
+      <WeatherDetailsModal v-if="showWeatherModal" :eventId="this.eventId" @close="closeWeatherModal" />
+      <MedicalDetail v-if="showMedicalModal" :eventId="this.eventId" @close="closeMedicalModal" />
+      <PackageDetail v-if="showPackageModal" :eventId="this.eventId" @close="closePackageModal" />
+      <ShuttleDetail v-if="showShuttleModal" :eventId="this.eventId" @close="closeShuttleModal" />
+      <SupplypointDetail v-if="showSupplypointModal" :eventId="this.eventId" @close="closeSupplypointModal" />
+      <VolunteerSignup v-if="showVolunteerSignupModal" :eventId="this.eventId" @close="closeVolunteerSignupModal" />
     </div>
   </div>
 
@@ -88,7 +88,6 @@
 
 <script>
 import { fetchEventDetails } from '@/api/EventDetails';
-import { getWeatherDetails } from '@/api/WeatherDetails';
 import WeatherDetailsModal from './WeatherDetail.vue';
 import MedicalDetail from './MedicalDetail.vue';
 import PackageDetail from './PackageDetail.vue';
@@ -101,47 +100,8 @@ export default {
   name: 'EventDetail',
   data() {
     return {
-      events: {
-        1: {
-          title: '2024拉萨半程马拉松',
-          type: '公路',
-          registration_start: '2024.05.20 10:00:00',
-          registration_end: '2024.07.26 10:00:00',
-          date: '2024.09.01',
-        },
-        2: {
-          title: '2024长春马拉松赛',
-          type: '公路',
-          registration_start: '2024.05.20 10:00:00',
-          registration_end: '2024.07.26 10:00:00',
-          date: '2024.09.01',
-        }
-      },
       event: null,
-      weatherDetails: [
-        {
-          time: '2024-08-17 08:00',
-          temperature: '15°C',
-          condition: '晴',
-          canProceed: '是'
-        },
-        {
-          time: '2024-08-17 12:00',
-          temperature: '20°C',
-          condition: '多云',
-          canProceed: '是'
-        },
-        {
-          time: '2024-08-17 16:00',
-          temperature: '18°C',
-          condition: '小雨',
-          canProceed: '是'
-        }
-      ],
-      medicalPoints: [],
-      packages: [],
-      shuttles: [],
-      supplypoints: [],
+      eventId: '10001',
       showWeatherModal: false,
       showMedicalModal: false,
       showPackageModal: false,
@@ -164,28 +124,30 @@ export default {
       immediate: true
     }
   },
+  mounted() {
+    this.loadEvent();
+  },
   methods: {
     async loadEvent() {
-      const event = localStorage.getItem('eventid')
-      this.event = this.events[event];
+      const eventId = this.eventId;
+      try {
+        console.log('请求的 URL:', `http://113.44.75.241:5158/Event/get_by_id?Id=${eventId}`);
 
-      // try {
-      //   const res = await fetchEventDetails(eventId);
-      //   this.event = res.data;
-      // } catch (error) {
-      //   console.error('加载赛事详情失败:', error);
-      //   alert('加载赛事详情失败');
-      // }
+        const res = await fetchEventDetails(eventId);
+        console.log('接口响应:', res);
+
+        if (res) {
+          this.event = res.Event; // 获取赛事详情
+          this.weatherDetails = res.weather; // 获取天气详情
+        } else {
+          this.$message.error('未收到有效响应数据')
+          throw new Error('未收到有效响应数据');
+        }
+      } catch (error) {
+        console.error('加载赛事详情失败:', error);
+        this.$message.error('加载赛事详情失败');
+      }
     },
-    // async loadWeatherDetails() {
-    //   try {
-    //     const res = await getWeatherDetails(this.$route.params.id);
-    //     this.weatherDetails = res.data;
-    //   } catch (error) {
-    //     console.error('加载天气详情失败:', error);
-    //     alert('加载天气详情失败');
-    //   }
-    // },
     openWeatherModal() {
       this.showWeatherModal = true;
     },
@@ -241,13 +203,8 @@ export default {
       this.showVolunteerSignupModal = false
     },
     GoToEventRegistration() {
-      this.$router.push({ name: 'EventRegistration', params: { id: this.$route.params.id } });
+      this.$router.push({ name: 'EventRegistration', params: { id: this.eventId } });
     }
-  },
-  created() {
-    const id = this.$route.params.id || localStorage.getItem('eventid')
-    localStorage.setItem('eventid', id)
-    this.loadEvent();
   },
 }
 </script>

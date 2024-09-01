@@ -33,9 +33,12 @@ import CarManagement from '@/view/EventVolunteer/CarManagement.vue'
 import MedicalManagement from '@/view/EventVolunteer/MedicalManagement.vue'
 import SupplyManagement from '@/view/EventVolunteer/SupplyManagement.vue'
 import VolunManagement from '@/view/EventVolunteer/VolunManagement.vue'
+import InjuryEntry from '@/view/EventVolunteer/InjuryEntry.vue'
 
 import PhotoWall from '@/view/PhotoGraph/PhotoWall.vue'
 import PhotographerCenter from '@/view/PhotoGraph/PhotographerCenter.vue'
+import MyPhotographyWorks from '@/view/PhotoGraph/MyPhotographyWorks.vue'
+
 //创建并暴露一个路由器
 export default new VueRouter({
   mode: 'history',
@@ -124,6 +127,10 @@ export default new VueRouter({
           path: '/VolunManagement',
           name: 'VolunManagement',
           component: VolunManagement
+        }, {
+          path: '/InjuryEntry',
+          name: 'InjuryEntry',
+          component: InjuryEntry
         },
       ]
     },
@@ -157,6 +164,10 @@ export default new VueRouter({
           path: 'PhotographerCenter',
           name: 'PhotographerCenter',
           component: PhotographerCenter
+        }, {
+          path: 'MyPhotographyWorks',
+          name: 'MyPhotographyWorks',
+          component: MyPhotographyWorks
         },
       ]
     }, {

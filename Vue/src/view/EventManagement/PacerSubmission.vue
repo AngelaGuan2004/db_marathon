@@ -116,10 +116,12 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   background-color: white;
-  margin-top: 80px;
-  width: 72%;
+  width: 105vh;
+  height: 72vh;
+  margin-right: 35px;
+  margin-bottom: 75px;
   font-size: 15px;
 }
 </style>

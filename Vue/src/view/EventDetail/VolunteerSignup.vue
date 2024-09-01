@@ -35,6 +35,7 @@ export default {
       dialogVisible: true
     };
   },
+  props: ['eventId'],
   mounted() {
     this.loadPlayerInfo();
   },
@@ -62,10 +63,10 @@ export default {
     async submitRegistration() {
       try {
         const volunteerId = localStorage.getItem('UserId'); // 假设志愿者ID存储在localStorage中
-        const eventId = localStorage.getItem('EventId'); // 假设活动ID存储在localStorage中
+        const eventId = this.eventId; // 假设活动ID存储在localStorage中
 
         if (!volunteerId || !eventId) {
-          this.$message.error('缺少志愿者ID或活动ID');
+          this.$message.error('信息缺失，请重试');
           return;
         }
 

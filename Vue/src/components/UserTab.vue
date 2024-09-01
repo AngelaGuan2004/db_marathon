@@ -94,7 +94,7 @@ export default {
 
 .User {
   width: 100%;
-  height: 85vh;
+  height: 100%;
   background-color: rgb(244, 244, 244);
   padding: 0 100px;
   padding-top: 20px;

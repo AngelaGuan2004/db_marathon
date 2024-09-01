@@ -8,7 +8,7 @@
           <el-breadcrumb-item>赛事管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <div class="TabRight" style="margin-right: 15%;margin-top: 5%;">
+      <div class="TabRight" style="margin-right: 15%;margin-top: 10%;">
         <div class="TabFlex">
           <div class="Tab" style="margin-top: 0;">
             <el-menu ref="EventManagementTab" :default-active="ActiveIndexForEventManagementTab"

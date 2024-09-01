@@ -18,31 +18,37 @@
         </div>
       </div>
       <div class="PhotographerContent">
-        <div class="myPhotographyWorks" @click="navigateTo('/photographerCenter/myPhotographyWorks')">
+        <div class="myPhotographyWorks" @click="navigateTo('/UserTab/myPhotographyWorks')">
           <h2 style="font-size: 24px;margin-left: 10px;">我的摄影作品</h2>
           <div class="photo-bar">
             <div class="photo-frame" v-for="(photo, index) in photos" :key="index">
               <img :src="photo.src" alt="Photo" class="photo" />
             </div>
           </div>
-          <button @click="navigateTo('/photographerCenter/myPhotographyWorks')"
+          <button @click="navigateTo('/UserTab/myPhotographyWorks')"
             style="font-size: 16px; color: #007bff; background: none; border: none; margin-top:10px;">&gt;点击查看详情...</button>
         </div>
-
         <div class="uploadNewPhotography">
           <h2 style="font-size: 24px;margin-left: 10px;">上传新摄影</h2>
           <div class="upload-button-container">
             <div class="upload-button" @click="handleUpload()">+</div>
-
             <el-dialog :visible.sync="formVisible" title="（单次上传一张摄影作品）">
-              <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-                <el-form-item label="摄影时间" prop="date1">
+              <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+                <el-form-item label="摄影时间" prop="time">
                   <el-col :span="15">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date1"
+                    <el-date-picker type="date" placeholder="选择日期" v-model="form.time"
                       style="width: 100%;"></el-date-picker>
                   </el-col>
                 </el-form-item>
-
+                <el-form-item label="赛事" prop="event">
+                  <el-select v-model="form.event" placeholder="请选择赛事">
+                    <el-option v-for="event in events" :key="event.value" :label="event.label" :value="event.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="拍摄地点" prop="location">
+                  <el-input v-model="form.location"></el-input>
+                </el-form-item>
                 <el-form-item>
                   <el-upload action="#" list-type="picture-card" limit="1" :on-success="handleSuccess"
                     :file-list="fileList" :on-change="handleChange" :auto-upload="false">
@@ -59,16 +65,13 @@
                       </span>
                     </div>
                   </el-upload>
-
                   <el-dialog :visible.sync="dialogVisible">
                     <img width="100%" :src="dialogImageUrl" alt="">
                   </el-dialog>
-
                 </el-form-item>
-
                 <el-form-item>
-                  <el-button type="primary" @click="onSubmit">上传</el-button>
-                  <el-button @click="handleCancel">取消</el-button>
+                  <el-button type="primary" @click="onSubmit" class="PhotographerCenterButton">上传</el-button>
+                  <el-button @click="handleCancel" class="PhotographerCenterButton">取消</el-button>
                 </el-form-item>
               </el-form>
             </el-dialog>
@@ -88,7 +91,7 @@ export default {
   data() {
     return {
       name: '',
-      ID: 3,   /* 这个参数怎么来？存疑 */
+      ID: '',
       subWeb: 'PhotoWall',
       photos: [
         { src: require('@/assets/images/1.jpg') },
@@ -105,14 +108,23 @@ export default {
       disabled: false,
       fileSelected: false,
       fileList: [],
+      event: [],
 
       form: {
-        date1: '',
+        time: '',
+        event: '',
+        location: '',
         desc: ''
       },
       rules: {
-        date1: [
+        time: [
           { required: true, message: '请选择摄影时间', trigger: 'change' }
+        ],
+        event: [
+          { required: true, message: '请选择照片所属赛事', trigger: 'change' }
+        ],
+        location: [
+          { required: true, message: '请输入拍摄地点', trigger: 'blur' }
         ]
       }
     }
@@ -189,6 +201,7 @@ export default {
     }
   },
   mounted() {
+    this.ID = localStorage.getItem('UserId')
     getPhotographerInfor(this.ID)
       .then((res) => {
         this.name = res.Name;
@@ -205,202 +218,5 @@ export default {
 <style scoped>
 @import 'element-ui/lib/theme-chalk/index.css';
 @import "@/assets/css/Base.css";
-
-#PhotographerCenter {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 6%;
-  font-size: 15px;
-}
-
-.MainContent {
-  display: flex;
-  margin-top: 80px;
-}
-
-.sidebar {
-  width: 200px;
-  height: 100vh;
-  position: fixed;
-  background-color: #ffebeb;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar-button {
-  width: 100%;
-  background-color: #ffebeb;
-  color: #565656;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  font-size: 18px;
-  margin-bottom: 10px;
-  margin-top: 20px;
-  border-radius: 5px;
-}
-
-.sidebar-button:hover {
-  background-color: #ffd7d7;
-  font-weight: bold;
-}
-
-.PhotographerContent {
-  padding: 20px;
-  position: relative;
-  left: 6%;
-}
-
-.photo-bar {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.photo-frame {
-  display: inline-block;
-  width: 130px;
-  height: 180px;
-  position: relative;
-  overflow: hidden;
-  border: 2px;
-  border-radius: 5px;
-  background-color: rgb(210, 210, 210);
-  margin-left: 17px;
-}
-
-.photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-#PhotographerCenter button {
-  background-color: #c81623;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-#PhotographerCenter button:hover {
-  font-weight: bold;
-}
-
-.upload-button-container {
-  display: flex;
-  justify-content: flex-start;
-  margin-left: 20px;
-  margin-top: 15px;
-}
-
-.upload-button {
-  background-color: #c5c5c5;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 30px 45px;
-  cursor: pointer;
-  font-size: 50px;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-
-.myPhotographyWorks {
-  background-color: #ffffff;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  height: 300px;
-  padding: 10px 20px;
-  margin-top: 10px;
-}
-
-.uploadNewPhotography {
-  background-color: #ffffff;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  height: 260px;
-  padding: 10px 20px;
-  margin-top: 25px;
-}
-
-.PhotographerInfo {
-  width: 375px;
-  height: 500px;
-  background-color: white;
-  left: 2%;
-  margin-top: 5%;
-  position: relative;
-}
-
-.PhotographerInfoImg {
-  width: 450px;
-  height: 100%;
-  left: -200px;
-  margin-top: 30px;
-}
-
-.PhotographerInfoImg img {
-  width: 100%;
-}
-
-.PhotographerInfoUpper {
-  width: 100%;
-  height: 60px;
-}
-
-.PhotographerInfoTitle {
-  display: inline-block;
-  line-height: 65px;
-  font-size: 24px;
-  font-weight: bold;
-  text-align: left;
-  margin-left: 50px;
-}
-
-.PhotographerInfoText {
-  width: 100%;
-  height: 300px;
-  padding-top: 5px;
-}
-
-.line {
-  border: none;
-  height: 2px;
-  background-color: #f4f4f6;
-}
-
-.down-notice {
-  width: 100px;
-  color: black;
-  font-weight: bold;
-  text-align: left;
-  margin-left: 50px;
-  margin-top: 35px;
-}
-
-.down-notice2 {
-  color: black;
-  text-align: left;
-  margin-top: 35px;
-}
-
-.a-button {
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  line-height: 10px;
-}
-
-.border {
-  border: 1px solid #2c3e50;
-}
+@import "@/assets/css/PhotographerCenter.css";
 </style>

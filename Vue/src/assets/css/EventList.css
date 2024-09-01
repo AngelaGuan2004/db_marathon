@@ -16,6 +16,10 @@
   margin-left: 20px;
 }
 
+#EventList button {
+  padding: 0;
+}
+
 .EventFilterContainer {
   display: flex;
   justify-content: center;
@@ -81,8 +85,8 @@
   margin: 20px 0;
 }
 
-.clickable-row {
-  cursor: pointer;
+#EventList .clickable-row {
+  cursor: pointer !important;
 }
 
 .clickable-row:hover {

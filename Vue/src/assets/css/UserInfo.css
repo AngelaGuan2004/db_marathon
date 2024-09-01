@@ -1,8 +1,11 @@
 #UserInfo {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-end;
+  justify-content: center;
+  align-items: center;
+  width: 110vh;
+  height: 60vh;
+  margin-bottom: 75px;
 }
 
 .UserInfo {
@@ -10,7 +13,6 @@
   height: 530px;
   background-color: white;
   left: -10%;
-  margin-top: 100px;
   position: relative;
 }
 
@@ -18,7 +20,7 @@
   width: 450px;
   height: 100%;
   left: -200px;
-  margin-top: 30px;
+  margin-top: 10vh;
 }
 
 .UserInfoImg img {

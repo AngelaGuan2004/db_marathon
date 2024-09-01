@@ -8,7 +8,7 @@
           <el-breadcrumb-item>志愿管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <div class="TabRight" style="margin-right: 15%;margin-top: 5%;">
+      <div class="TabRight" style="margin-right: 15%;margin-top: 10%;">
         <div class="TabFlex">
           <div class="Tab" style="margin-top: 0;">
             <el-menu ref="EventVolunteerTab" :default-active="ActiveIndexForVolunteerTab" class="el-menu-vertical-demo"
@@ -25,6 +25,9 @@
               <el-menu-item index="4">
                 <span>摆渡车排班</span>
               </el-menu-item>
+              <el-menu-item index="5">
+                <span>伤员管理</span>
+              </el-menu-item>
             </el-menu>
           </div>
         </div>
@@ -40,7 +43,7 @@ export default {
   data() {
     return {
       ActiveIndexForVolunteerTab: '',
-      EventTabTitle: ['VolunManagement', 'SupplyManagement', 'MedicalManagement', 'CarManagement'],
+      EventTabTitle: ['VolunManagement', 'SupplyManagement', 'MedicalManagement', 'CarManagement', 'InjuryEntry'],
     };
   },
   methods: {

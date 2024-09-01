@@ -2,8 +2,8 @@
   <div id="SupplypointDetail">
     <el-dialog title="补给点详情" :visible.sync="dialogVisible" width="40%">
       <el-table :data="supplypoints">
-        <el-table-column prop="location" label="补给点地点"></el-table-column>
-        <el-table-column prop="type" label="补给点类型"></el-table-column>
+        <el-table-column prop="place" label="补给点地点"></el-table-column>
+        <el-table-column prop="kind" label="补给点类型"></el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -16,29 +16,32 @@ export default {
   name: 'SupplypointDetail',
   data() {
     return {
-      supplypoints: [{
-        location: '2024拉萨半程马拉松',
-        type: '公路',
-      }, {
-        location: '2024拉萨半程马拉松',
-        type: '公路',
-      }],
+      supplypoints: [],
       dialogVisible: true
     };
   },
+  props: ['eventId'],
   created() {
     this.loadSupplypointDetails();
   },
   methods: {
-    loadSupplypointDetails() {
-      const eventId = this.$route.params.id;
-      getSupplypointDetails(eventId)
-        .then(response => {
-          this.supplypoints = response.data;
-        })
-        .catch(error => {
-          console.error('Error loading supplypoint details:', error);
-        });
+    async loadSupplypointDetails() {
+      const eventId = this.eventId; // 从路由参数或默认值中获取 eventId
+      try {
+        const response = await getSupplypointDetails(eventId);
+        console.log('完整响应对象:', response);
+        if (response && Array.isArray(response.data)) {
+          this.supplypoints = response.data; // 将 API 返回的数据赋值给 supplypoints 数组
+        } else if (response && Array.isArray(response)) {
+          this.supplypoints = response; // 直接使用 response 数组
+        } else {
+          this.$message.error('未收到有效响应数据');
+          throw new Error('未收到有效响应数据');
+        }
+      } catch (error) {
+        console.error('加载补给点详情失败:', error);
+        this.$message.error('加载补给点详情失败');
+      }
     },
     handleClose() {
       this.$emit('close');

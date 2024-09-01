@@ -23,6 +23,7 @@
 .HeaderTab {
   display: inline-block;
   height: 100%;
+  width: 50%;
 }
 
 #Header .el-menu-demo {
@@ -34,6 +35,8 @@
   font-weight: normal;
   height: 95%;
   line-height: 100px;
+  padding: 0 5%;
+  margin: 0 3%;
 }
 
 #Header .el-menu--horizontal>.el-menu-item.is-active {
@@ -53,7 +56,7 @@
 
 .HeaderLogin {
   float: right;
-  margin-right: 2%;
+  width: 14%;
 }
 
 .HeaderLogin .is-active {

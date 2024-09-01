@@ -9,20 +9,18 @@
           background-color="transparent" text-color="white" active-text-color="white">
           <el-menu-item index="1">首页</el-menu-item>
           <el-menu-item index="2">赛历</el-menu-item>
-          <el-menu-item index="3" :disabled="!(GetRole() === 'Admin')">赛事管理</el-menu-item>
-          <el-menu-item index="4" :disabled="!(GetRole() === 'Admin' || GetRole() === 'Volunteer')">志愿服务</el-menu-item>
-          <el-menu-item index="5">照片墙</el-menu-item>
-          <el-menu-item index="6">我的</el-menu-item>
+          <el-menu-item index="3">照片墙</el-menu-item>
+          <el-menu-item index="4">我的</el-menu-item>
         </el-menu>
       </div>
-      <div class="HeaderTab HeaderLogin">
+      <div class="HeaderLogin">
         <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelectLogin" background-color="transparent"
           text-color="white" active-text-color="white" v-if="GetRole() === 'Visitor'">
           <el-menu-item index="1">登录</el-menu-item>
         </el-menu>
         <div v-else>
           <div
-            style="display: inline-block;height: 100px;vertical-align: top;text-align: center;margin-top: 35px;margin-right: 25px;">
+            style="display: inline-block;height: 100px;vertical-align: top;text-align: center;margin-top: 35px;margin-right: 35px;">
             <i class="el-icon-user-solid"></i>
             <div style="font-size: 16px;color: white;margin-top: 5px;">{{ TranslateRoleToChinese(GetRole()) }}</div>
           </div>
@@ -45,7 +43,7 @@ export default {
   name: 'Header',
   data() {
     return {
-      TabHerf: ['Home', 'EventList', '', '', 'PhotoWall', 'UserTab'],
+      TabHerf: ['Home', 'EventList', 'PhotoWall', 'UserTab'],
       Role: '',
       ActiveIndexForHeader: "1"
     };
