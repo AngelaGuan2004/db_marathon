@@ -36,14 +36,14 @@ namespace MarathonMaster.Controllers
 
         //上传照片
         [HttpPost]
-        public async Task<IActionResult> upload_photo([FromBody] int id, string time, string location, int photographer_id, IFormFile file)  //IFormFile file 参数表示上传的文件，这里指photo
+        public async Task<IActionResult> upload_photo([FromQuery] int id, string time, string location, int photographer_id, IFormFile file)  //IFormFile file 参数表示上传的文件，这里指photo
         {
             _logger.LogInformation("收到要上传的照片id: {@id}", id); // 记录收到的数据
 
             if (file == null || file.Length == 0)  //检查文件是否为空或文件大小是否为零
                 return Unauthorized("No file uploaded.");
 
-            var uploads = Path.Combine("C:\\Users\\Administrator\\Desktop\\DBexcel\\photo", "uploads");
+            var uploads = Path.Combine("C:\\Users\\86178\\Desktop\\photo", "uploads");
             //var uploads = Path.Combine(_environment.WebRootPath, "uploads");
             //意味着上传文件将被存储在'_environment.WebRootPath/uploads'目录下
 
@@ -65,7 +65,8 @@ namespace MarathonMaster.Controllers
                 Time = time,
                 Location = location,
                 Photographer_id = photographer_id,
-                Address = filePath
+                Address = filePath,
+                Likes = 0
             };  //创建要插入的photo信息，并赋值
 
 
