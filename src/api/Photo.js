@@ -7,6 +7,15 @@ import request from '@/utils/request'
       method: 'get'
     });
   }
+  
+  // 获取一张照片
+  export function getPhotoById(photo_id) {
+    return request({
+      url: '/Photo/get_photo_by_id',
+      method: 'get',
+      params:{photo_id}
+    });
+  }
 
   // 获取所有匹配的照片拍摄地址列表
   export function inquiryLocation(location_key) {
@@ -82,3 +91,11 @@ import request from '@/utils/request'
       data: { id }
     });
   }
+
+  //获取所有赛事
+export function getAllEvents() {
+  return request({
+      url: '/Event/get_all_event',
+      method:'get',
+  })
+}
