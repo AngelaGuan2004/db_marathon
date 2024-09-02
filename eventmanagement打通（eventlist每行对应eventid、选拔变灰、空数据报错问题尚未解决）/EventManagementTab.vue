@@ -75,7 +75,6 @@ export default {
   },
   created() {
     this.checkIsLottery(); // 页面加载时检查是否已经抽签
-    this.$store.dispatch('loadInitialData');
   },
   mounted() {
     this.$router.push({ name: 'ParticipantLottery' });
