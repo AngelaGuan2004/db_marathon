@@ -62,8 +62,8 @@
 </template>
 
 <script>
-/*import {completeInfor} from '@/api/UserCenter.js'*/
-/*import {getInfor} from '@/api/UserCenter.js' */
+import {completeInfor} from '@/api/UserCenter.js'
+import {getInfor} from '@/api/UserCenter.js' 
 export default {
   name: 'UserInfo',
   data() {
@@ -72,16 +72,17 @@ export default {
       bianji: false,
       tele_right: true,
       age_right:true,
-      name:'闫雯晴',
-      old_telephone:'12637152637',
-      telephone:'12637152637',
-      ID_number:'273618633622772662',
-      ID:'2272186183',   /* 这个参数怎么来？存疑 */
-      gender:'女',
+      name:'',
+      old_telephone:'',
+      telephone:'',
+      ID_number:'',
+      ID:502,   /* 这个参数怎么来？存疑 */
+      gender:'',
       old_age:'',
       age:'',
       old_region:'',
       region:'',
+      Password:'',
       provinces: [
         '北京', '天津', '上海', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江',
         '江苏', '浙江', '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南',
@@ -129,24 +130,23 @@ export default {
     }
   },
   mounted() {
-    /* 
     getInfor(this.ID)
       .then((res) => {
-        this.name = res.name;
-        this.old_telephone = res.Telephone_number;
-        this.telephone = res.Telephone_number;
-        this.ID_number= res.Id_number;
-        this.gender=res.gender;
-        this.old_age=res.age;
-        this.old_region=this.region;
-        this.age=res.age;
-        this.region=this.region;
+        this.name = res.Name;
+        this.old_telephone = res.Telephone_Number;
+        this.telephone = res.Telephone_Number;
+        this.ID_number= res.Id_Number;
+        this.gender=res.Gender;
+        this.old_age=res.Age;
+        this.old_region=res.Region;
+        this.age=res.Age;
+        this.region=res.Region;
+        this.Password=res.Password
       })
       .catch(error => {
         console.error('查询失败:', error);
         alert('查询失败');
       });
-    */
   },
   methods: {
     validateAge(age) {
@@ -187,8 +187,8 @@ export default {
           //三层：改变了数据
           else{
             this.$confirm("是否保存数据?", "提示", {
-              confirmButtonText: "确定（A按钮）",
-              cancelButtonText: "取消（B按钮）",
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
               type: "warning",
               distinguishCancelAndClose: true,    // 重要，设置为true才会把右上角X和取消区分开来
               closeOnClickModal: false
@@ -198,7 +198,7 @@ export default {
               this.old_region=this.region;
               this.old_age=this.age;
               /* 调用js */
-              /*this.submit();*/
+              this.submit();
               this.buttonText='编辑'
               this.bianji=false
               
@@ -215,9 +215,9 @@ export default {
         }
         //二层：编辑的内容不合规
         else{
-          this.$confirm("是否...数据?", "提示", {
-            confirmButtonText: "退出（不保存编辑）（A按钮）",
-            cancelButtonText: "好的（B按钮）",
+          this.$confirm("目前数据有误，是否继续编辑数据?", "提示", {
+            confirmButtonText: "退出（不保存编辑）",
+            cancelButtonText: "继续编辑",
             type: "warning",
             distinguishCancelAndClose: true,    // 重要，设置为true才会把右上角X和取消区分开来
             closeOnClickModal: false
@@ -241,12 +241,12 @@ export default {
         }
       }
     },
-    /*
+    
     submit() {
       try{
-        completeInfor({ID: this.ID, region:this.region,telephone:this.telephone}).then((res) => {
+        completeInfor({Id: this.ID,Name:this.name, Gender:this.gender,Age:this.age,Region:this.region,Telephone_Number:this.telephone,Id_Number:this.ID_number,Password:this.Password}).then((res) => {
           if (res.data === false) {
-            alert("总会成功的！");
+            alert("总会成功的！!");
           } else {
             alert("提交成功");
           }
@@ -256,7 +256,7 @@ export default {
         alert('总会成功的！');
       }
     },
-    */
+    
     updateCities() {
       if (this.cities.length > 0) {
         this.selectedCity = this.cities[0]
