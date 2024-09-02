@@ -142,6 +142,7 @@ export default {
   justify-content: center;
   align-items: flex-end;
   background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-right: 3%;
   width: 67%;
   font-size: 15px;

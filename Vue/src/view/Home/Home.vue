@@ -140,25 +140,15 @@ export default {
           text: `2024无锡马拉松|何杰2:06:57再度打破全国纪录，中国男子马拉松进入206时代`
         }
       ],
-      events: [
-        { id: '1', date: '2024-09-22', name: '2024天津团泊湖半程马拉松', type: '半马', scale: '6000人' },
-        { id: '2', date: '2024-09-16', name: '2024邯郸半程马拉松', type: '半马', scale: '10000人' },
-        { id: '3', date: '2024-09-08', name: '2024长治环漳泽湖马拉松赛', type: '全马', scale: '10000人' },
-        { id: '4', date: '2024-09-01', name: '2024长春马拉松赛', type: '全马，半马', scale: '30000人' },
-        { id: '5', date: '2024-08-31', name: '2024广元半程马拉松赛', type: '半马', scale: '10000人' },
-        { id: '6', date: '2024-08-25', name: '2024鄂州环梁子湖马拉松比赛', type: '半马', scale: '3000人' },
-        { id: '7', date: '2024-09-22', name: '2024天津团泊湖半程马拉松', type: '半马', scale: '6000人' },
-        { id: '8', date: '2024-09-16', name: '2024邯郸半程马拉松', type: '半马', scale: '10000人' },
-        { id: '9', date: '2024-09-08', name: '2024长治环漳泽湖马拉松赛', type: '全马', scale: '10000人' },
-        { id: '10', date: '2024-09-01', name: '2024长春马拉松赛', type: '全马，半马', scale: '30000人' },
-        { id: '11', date: '2024-08-31', name: '2024广元半程马拉松赛', type: '半马', scale: '10000人' },
-        { id: '12', date: '2024-08-25', name: '2024鄂州环梁子湖马拉松比赛', type: '半马', scale: '3000人' }
-      ],
+      events: [],
     }
+  },
+  mounted() {
+    this.events = this.$route.params.events
   },
   methods: {
     GoToEvent() {
-      this.$router.push({ name: "EventList" })
+      this.$router.push({ name: "EventList", params: { events: this.events } })
     },
   },
   computed: {

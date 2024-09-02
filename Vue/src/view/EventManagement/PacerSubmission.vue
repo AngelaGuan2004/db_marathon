@@ -118,6 +118,7 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 105vh;
   height: 72vh;
   margin-right: 35px;

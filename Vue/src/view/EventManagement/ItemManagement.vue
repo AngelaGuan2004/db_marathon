@@ -1,9 +1,9 @@
 <template>
   <div id="ItemManagement">
-    <el-dialog title="物资管理" :visible.sync="dialogVisible" width="40%">
-      <el-table :data="items">
+    <el-dialog title="物资管理" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+      <el-table :data="items" height="50vh">
         <el-table-column prop="id" label="物品ID" width="125"></el-table-column>
-        <el-table-column prop="name" label="物品名" width="125"></el-table-column>
+        <el-table-column prop="name" label="物品名" width="300"></el-table-column>
         <el-table-column label="选择" width="325">
           <template slot-scope="scope">
             <div style="display: inline-block;">
@@ -29,44 +29,41 @@
 </template>
 
 <script>
-import { getItems } from '@/api/ItemManagement';
+import { getItem } from '@/api/ItemManagement';
 
 export default {
   name: 'ItemManagement',
   props: {
     showCategorySelect: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data() {
     return {
-      items: [
-        {
-          id: "1",
-          name: '156454',
-        }, {
-          id: "1",
-          name: '156454',
-        }, {
-          id: "1",
-          name: '156454',
-        }
-      ],
+      items: [],
       dialogVisible: true,
     };
   },
   created() {
+    this.dialogVisible = true;
     this.loadItems();
   },
   methods: {
     loadItems() {
-      getItems()
+      getItem()
         .then(response => {
-          this.items = response.data.map(item => ({ ...item, selected: false, quantity: '', category: '' }));
+          // 映射API返回的数据，并初始化 selected, quantity, category
+          this.items = response.data.map(item => ({
+            ...item,
+            selected: false,
+            quantity: '',
+            category: ''
+          }));
+          console.log('加载的物品数据:', this.items); // 调试信息
         })
         .catch(error => {
-          console.error('Error loading items:', error);
+          console.error('加载物品数据失败:', error);
         });
     },
     handleSelectChange(row) {
@@ -76,12 +73,32 @@ export default {
       }
     },
     saveItems() {
-      const selectedItems = this.items.filter(item => item.selected).map(item => ({
-        id: item.id,
-        name: item.name,
-        quantity: item.quantity,
-        category: this.showCategorySelect ? item.category : ''
-      }));
+      // 创建一个临时对象用于合并相同物品ID的数量
+      const itemMap = {};
+
+      this.items.forEach(item => {
+        if (item.selected) {
+          const quantity = parseInt(item.quantity) || 0; // 如果 quantity 不是有效数字，则使用 0
+          if (itemMap[item.id]) {
+            // 如果物品已经存在，则合并数量
+            itemMap[item.id].quantity += quantity;
+          } else {
+            // 如果物品不存在，则添加到 itemMap
+            itemMap[item.id] = {
+              id: item.id,
+              name: item.name,
+              quantity: quantity,
+              category: this.showCategorySelect ? item.category : ''
+            };
+          }
+        }
+      });
+
+      // 将合并后的物品列表转换为数组
+      const selectedItems = Object.values(itemMap);
+
+      console.log('合并后的物品数据:', selectedItems); // 调试信息
+
       this.$emit('save', selectedItems);
     },
     resetItems() {
@@ -90,12 +107,15 @@ export default {
         item.quantity = '';
         item.category = '';
       });
+    },
+    handleClose() {
+      this.dialogVisible = false;
     }
   }
 };
 </script>
 
-<style scoped>
+<style>
 @import "@/assets/css/Base.css";
 @import 'element-ui/lib/theme-chalk/index.css';
 

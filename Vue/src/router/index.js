@@ -12,6 +12,7 @@ import VolunteerDetailForAddStation from '@/view/User/VolunteerDetailForAddStati
 
 import EventManagementTab from '@/components/EventManagementTab.vue'
 import EventVolunteerTab from '@/components/EventVolunteerTab.vue'
+import LeaderBoard from '@/view/EventDetail/LeaderBoard.vue'
 
 import EventList from '@/components/EventList.vue'
 
@@ -19,9 +20,9 @@ import EventDetail from '@/view/EventDetail/EventDetail.vue'
 import VolunteerSignup from '@/view/EventDetail/VolunteerSignup.vue';
 import EventRegistration from '@/view/EventDetail/EventRegistration.vue'
 
-import ItemManagement from '@/view/EventDetail/ItemManagement.vue'
-import PackageManagement from '@/view/EventDetail/PackageManagement.vue'
-import SupplypointManagement from '@/view/EventDetail/SupplypointManagement.vue'
+import ItemManagement from '@/view/EventManagement/ItemManagement.vue'
+import PackageManagement from '@/view/EventManagement/PackageManagement.vue'
+import SupplypointManagement from '@/view/EventManagement/SupplypointManagement.vue'
 
 import ParticipantLottery from '@/view/EventManagement/ParticipantLottery.vue'
 import PacerSelection from '@/view/EventManagement/PacerSelection.vue'
@@ -35,6 +36,7 @@ import SupplyManagement from '@/view/EventVolunteer/SupplyManagement.vue'
 import VolunManagement from '@/view/EventVolunteer/VolunManagement.vue'
 import InjuryEntry from '@/view/EventVolunteer/InjuryEntry.vue'
 
+
 import PhotoWall from '@/view/PhotoGraph/PhotoWall.vue'
 import PhotographerCenter from '@/view/PhotoGraph/PhotographerCenter.vue'
 import MyPhotographyWorks from '@/view/PhotoGraph/MyPhotographyWorks.vue'
@@ -44,29 +46,17 @@ export default new VueRouter({
   mode: 'history',
   routes: [
     {
-      path: '/Home',
+      path: '/Home/:events',
       name: 'Home',
       component: Home
     }, {
-      path: '/EventList',
+      path: '/EventList/:events',
       name: 'EventList',
       component: EventList
     }, {
-      path: '/EventDetail',
+      path: '/EventDetail/:event_id',
       name: 'EventDetail',
       component: EventDetail,
-    }, {
-      path: '/ItemManagement',
-      name: 'ItemManagement',
-      component: ItemManagement,
-    }, {
-      path: '/PackageManagement',
-      name: 'PackageManagement',
-      component: PackageManagement,
-    }, {
-      path: '/SupplypointManagement',
-      name: 'SupplypointManagement',
-      component: SupplypointManagement,
     },
     {
       path: '/EventRegistration',
@@ -76,9 +66,13 @@ export default new VueRouter({
       path: '/VolunteerSignup',
       name: 'VolunteerSignup',
       component: VolunteerSignup
+    }, {
+      path: '/LeaderBoard/:event_id:name',
+      name: 'LeaderBoard',
+      component: LeaderBoard
     },
     {
-      path: '/EventManagementTab',
+      path: '/EventManagementTab:event_id:name',
       name: 'EventManagementTab',
       component: EventManagementTab,
       children: [
@@ -104,31 +98,43 @@ export default new VueRouter({
           path: 'EmergencyRunnerSubmission',
           name: 'EmergencyRunnerSubmission',
           component: EmergencyRunnerSubmission
+        }, {
+          path: '/ItemManagement',
+          name: 'ItemManagement',
+          component: ItemManagement,
+        }, {
+          path: '/PackageManagement:event_id:name',
+          name: 'PackageManagement',
+          component: PackageManagement,
+        }, {
+          path: '/SupplypointManagement:event_id:name',
+          name: 'SupplypointManagement',
+          component: SupplypointManagement,
         },
       ]
     }, {
-      path: '/EventVolunteerTab',
+      path: '/EventVolunteerTab:event_id:name',
       name: 'EventVolunteerTab',
       component: EventVolunteerTab,
       children: [
         {
-          path: '/CarManagement',
+          path: '/CarManagement:event_id:name',
           name: 'CarManagement',
           component: CarManagement
         }, {
-          path: '/MedicalManagement',
+          path: '/MedicalManagement:event_id:name',
           name: 'MedicalManagement',
           component: MedicalManagement
         }, {
-          path: '/SupplyManagement',
+          path: '/SupplyManagement:event_id:name',
           name: 'SupplyManagement',
           component: SupplyManagement
         }, {
-          path: '/VolunManagement',
+          path: '/VolunManagement:event_id:name',
           name: 'VolunManagement',
           component: VolunManagement
         }, {
-          path: '/InjuryEntry',
+          path: '/InjuryEntry:event_id:name',
           name: 'InjuryEntry',
           component: InjuryEntry
         },

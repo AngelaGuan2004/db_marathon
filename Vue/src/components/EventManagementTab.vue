@@ -16,19 +16,26 @@
               <el-menu-item index="1">
                 <span>选手抽签</span>
               </el-menu-item>
-              <el-submenu index="6" menu-trigger="hover">
+              <el-submenu index="111" menu-trigger="hover">
                 <template slot="title">
                   <span>配速员选拔</span>
                 </template>
                 <el-menu-item index="2">待选跑者</el-menu-item>
                 <el-menu-item index="3">已选跑者</el-menu-item>
               </el-submenu>
-              <el-submenu index="7" menu-trigger="hover">
+              <el-submenu index="222" menu-trigger="hover">
                 <template slot="title">
                   <span>急救跑者选拔</span>
                 </template>
                 <el-menu-item index="4">待选跑者</el-menu-item>
                 <el-menu-item index="5" style="margin-bottom: 10px;">已选跑者</el-menu-item>
+              </el-submenu>
+              <el-submenu index="333" menu-trigger="hover">
+                <template slot="title">
+                  <span>赛事信息管理</span>
+                </template>
+                <el-menu-item index="6">物资包管理</el-menu-item>
+                <el-menu-item index="7" style="margin-bottom: 10px;">补给点管理</el-menu-item>
               </el-submenu>
             </el-menu>
           </div>
@@ -46,20 +53,20 @@ export default {
     return {
       ActiveIndexForEventManagementTab: '',
       IsLottery: false,
-      EventManagementTabTitle: ['ParticipantLottery', 'PacerSelection', 'PacerSubmission', 'EmergencyRunnerSelection', 'EmergencyRunnerSubmission'],
+      EventManagementTabTitle: ['ParticipantLottery', 'PacerSelection', 'PacerSubmission', 'EmergencyRunnerSelection', 'EmergencyRunnerSubmission', 'PackageManagement', 'SupplypointManagement'],
     };
   },
   methods: {
     ActiveIndex(index) {
-      if (this.IsLottery || index === '1') {
+      if (this.IsLottery || index === '1' || index === '6' || index === '7') {
         this.ActiveIndexForEventManagementTab = index; // 设置当前激活的菜单项
-        this.$router.push({ name: this.EventManagementTabTitle[index - 1] });
+        this.$router.push({ name: this.EventManagementTabTitle[index - 1], params: { event_id: this.$route.params.event_id, name: this.$route.params.name } });
       }
       else {
         this.$message.warning('请先完成抽签');
         this.$bus.$emit('ActiveIndexForEventManagementTab', '1')
         this.$refs.EventManagementTab.activeIndex = '1';
-        this.$router.push({ name: 'ParticipantLottery' });
+        this.$router.push({ name: 'ParticipantLottery', params: { event_id: this.$route.params.event_id, name: this.$route.params.name } });
       }
     },
     LotteryPermission() {
@@ -92,6 +99,7 @@ export default {
   width: 100%;
   height: 750px;
   background-color: rgb(244, 244, 244);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 0 100px;
   padding-top: 20px;
   margin-top: 100px;

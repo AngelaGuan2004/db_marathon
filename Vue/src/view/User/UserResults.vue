@@ -36,7 +36,7 @@
         <!-- 比赛成绩表格 -->
         <div>
           <el-table :data="paginatedResults" v-loading='loading' class="table" row-class-name="clickable-row" stripe>
-            <el-table-column prop="name" label="比赛名称" width="350"></el-table-column>
+            <el-table-column prop="event_Name" label="比赛名称" width="350"></el-table-column>
             <el-table-column prop="type" label="比赛类型" width="150">
               <template slot-scope="scope">
                 <div>{{ getRaceType(scope.row.type) }}</div>
@@ -91,7 +91,6 @@ export default {
       try {
         const Player_ID = localStorage.getItem('UserId');
         const response = await getMyResults(Player_ID);
-        console.log(111, response)
         this.results = response; // 假设 API 返回的数据在 data 属性中
         this.filteredResults = this.results; // 初始化筛选结果
         this.loading = false
@@ -105,7 +104,7 @@ export default {
       if (query) {
         // 根据搜索框输入的内容搜索
         this.filteredResults = this.results.filter(result =>
-          result.name.includes(query) || result.Event_ID.toString() === query
+          result.event_Name.includes(query) || result.event_ID === query
         );
       } else {
         // 如果搜索框为空，显示所有成绩

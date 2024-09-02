@@ -96,6 +96,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgb(244, 244, 244);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 0 100px;
   padding-top: 20px;
   margin-top: 100px;

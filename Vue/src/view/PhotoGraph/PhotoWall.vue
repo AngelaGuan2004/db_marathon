@@ -19,7 +19,7 @@
             <el-button slot="append" icon="el-icon-search"></el-button>
           </div>
         </div>
-        <div class="PhotoWallGallery">
+        <div class="PhotoWallGallery" v-loading="loading">
           <div class="PhotoFrame" v-for="(photo, index) in paginatedPhotos" :key="index">
             <span style="width: 100%;height:72%;position: relative;display: inline-block;">
               <button @click="toggleLike(index)" class="like-button" :class="{ liked: photo.liked }">
@@ -54,6 +54,7 @@
 <script>
 import { getAllPhotos } from '@/api/Photo';
 import { likePhoto } from '@/api/Photo';
+import { getPhotoById } from '@/api/Photo';
 
 export default {
   name: 'PhotoWall',
@@ -62,27 +63,6 @@ export default {
   },
   data() {
     return {
-      // photos: [
-      //   { id: 1, src: require('@/assets/images/1.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师1', time: '2023-07-10', location: '地点1', likes: 1000 },
-      //   { id: 2, src: require('@/assets/images/1.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师1', time: '2023-07-10', location: '地点1', likes: 1000 },
-      //   { id: 3, src: require('@/assets/images/2.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师2', time: '2023-07-11', location: '地点2', likes: 900 },
-      //   { id: 4, src: require('@/assets/images/3.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师3', time: '2023-07-12', location: '地点3', likes: 800 },
-      //   { id: 5, src: require('@/assets/images/4.jpg'), liked: false, event_name: '上海国际马拉松', photographer_name: '摄影师4', time: '2023-07-13', location: '地点4', likes: 700 },
-      //   { id: 6, src: require('@/assets/images/5.jpg'), liked: false, event_name: '上海国际马拉松', photographer_name: '摄影师5', time: '2023-07-14', location: '地点5', likes: 600 },
-      //   { id: 7, src: require('@/assets/images/6.jpg'), liked: false, event_name: '广州马拉松', photographer_name: '摄影师6', time: '2023-07-15', location: '地点6', likes: 500 },
-      //   { id: 8, src: require('@/assets/images/7.jpg'), liked: false, event_name: '广州马拉松', photographer_name: '摄影师7', time: '2023-07-15', location: '地点7', likes: 499 },
-      //   { id: 9, src: require('@/assets/images/8.jpg'), liked: false, event_name: '厦门马拉松', photographer_name: '摄影师8', time: '2023-07-20', location: '地点8', likes: 620 },
-      //   { id: 10, src: require('@/assets/images/9.jpg'), liked: false, event_name: '厦门马拉松', photographer_name: '摄影师9', time: '2023-07-17', location: '地点9', likes: 50 },
-      //   { id: 11, src: require('@/assets/images/1.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师1', time: '2023-07-10', location: '地点1', likes: 1000 },
-      //   { id: 12, src: require('@/assets/images/2.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师2', time: '2023-07-11', location: '地点2', likes: 900 },
-      //   { id: 13, src: require('@/assets/images/3.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师3', time: '2023-07-12', location: '地点3', likes: 800 },
-      //   { id: 14, src: require('@/assets/images/4.jpg'), liked: false, event_name: '上海国际马拉松', photographer_name: '摄影师4', time: '2023-07-13', location: '地点4', likes: 700 },
-      //   { id: 15, src: require('@/assets/images/5.jpg'), liked: false, event_name: '上海国际马拉松', photographer_name: '摄影师5', time: '2023-07-14', location: '地点5', likes: 600 },
-      //   { id: 16, src: require('@/assets/images/6.jpg'), liked: false, event_name: '广州马拉松', photographer_name: '摄影师6', time: '2023-07-15', location: '地点6', likes: 500 },
-      //   { id: 17, src: require('@/assets/images/7.jpg'), liked: false, event_name: '广州马拉松', photographer_name: '摄影师7', time: '2023-07-15', location: '地点7', likes: 499 },
-      //   { id: 18, src: require('@/assets/images/8.jpg'), liked: false, event_name: '厦门马拉松', photographer_name: '摄影师8', time: '2023-07-20', location: '地点8', likes: 620 },
-      //   { id: 19, src: require('@/assets/images/9.jpg'), liked: false, event_name: '厦门马拉松', photographer_name: '摄影师9', time: '2023-07-17', location: '地点9', likes: 50 },
-      // ],
       photos: [],
       input3: '',  // 这是用于暂存输入内容的变量
       select: '2', // 默认排序为最热
@@ -90,7 +70,7 @@ export default {
       currentPhoto: {},
       currentPage: 1, // 当前页码
       pageSize: 10,    // 每页显示的照片数量
-
+      loading: true
     }
   },
   computed: {
@@ -121,9 +101,27 @@ export default {
   methods: {
     async getPhotos() {
       try {
+
+        //第一步：拿到照片基本数据
         const response = await getAllPhotos();
         this.photos = response;
-        console.log("收到的数据:", this.photos);
+        console.log("收到照片基本数据:", this.photos);
+
+        // 第二步：遍历每张照片，获取它的图片 URL
+        for (const photo of this.photos) {
+          try {
+            // 通过照片的 ID 获取照片的 URL
+            const photoBlob = await getPhotoById(photo.id);
+            const blob = new Blob([photoBlob], { type: 'image/jpeg' });
+            const photoUrl = URL.createObjectURL(blob);
+
+            // 将获取的 URL 存入照片对象中
+            photo.src = photoUrl;
+          } catch (error) {
+            console.error(`获取照片ID ${photo.id} 的图片时发生错误:`, error);
+          }
+        }
+        console.log("最终带有图片URL的数据:", this.photos);
       } catch (error) {
         console.error('获所有照片时发生错误:', error);
       }

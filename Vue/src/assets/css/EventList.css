@@ -7,8 +7,8 @@
 
 .EventFilterItem {
   flex: 1;
-  min-width: 200px;
-  margin: 0 15px;
+  min-width: 250px;
+  margin: 0 5%;
 }
 
 #EventList .el-menu-demo {
@@ -16,8 +16,12 @@
   margin-left: 20px;
 }
 
-#EventList button {
-  padding: 0;
+.el-picker-panel__icon-btn {
+  padding: 2px 10px;
+}
+
+.el-picker-panel__icon-btn:hover {
+  background-color: transparent;
 }
 
 .EventFilterContainer {
@@ -27,11 +31,11 @@
   gap: 10px;
   margin: 0 auto;
   margin-bottom: 30px;
-  width: 46%;
+  width: 60%;
 }
 
 .EventInfoTable {
-  width: 60%;
+  width: 65%;
   margin: 0 auto;
   table-layout: fixed;
   border: none;
@@ -73,7 +77,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  font-size: 26px;
+  height: 50vh;
   color: #999;
   width: 100%;
   text-align: center;

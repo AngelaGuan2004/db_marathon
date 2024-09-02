@@ -24,8 +24,8 @@
             请选择性别：
           </div>
           <div style="display:flex;margin-left: 20px;">
-            <el-radio v-model="gender" label="1" style="float: left;margin-left: 25px;">男</el-radio>
-            <el-radio v-model="gender" label="2" style="float: right;margin-right: 25px;">女</el-radio>
+            <el-radio v-model="gender" label="男" style="float: left;margin-left: 25px;">男</el-radio>
+            <el-radio v-model="gender" label="女" style="float: right;margin-right: 25px;">女</el-radio>
           </div>
         </div>
         <div class="RegisterReturn">
@@ -95,14 +95,10 @@ export default {
       }
 
       const data = {
-        Id: 645132,
         Name: this.name,
         Gender: this.gender,
-        Age: this.age,
         Id_Number: this.idNumber,
         Password: this.password,
-        Region: '',
-        Telephone_Number: '',
       };
 
       registerPlayer(data).then((response) => {

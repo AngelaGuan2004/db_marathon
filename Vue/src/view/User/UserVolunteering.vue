@@ -92,6 +92,7 @@ export default {
   align-items: center;
   margin-right: 5%;
   background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 15px;
   width: 110vh;
   height: 65vh;

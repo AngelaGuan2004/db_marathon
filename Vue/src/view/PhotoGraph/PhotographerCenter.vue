@@ -108,7 +108,7 @@ export default {
       disabled: false,
       fileSelected: false,
       fileList: [],
-      event: [],
+      events: [],
 
       form: {
         time: '',

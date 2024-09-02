@@ -3,7 +3,7 @@
     <div class="injury-list">
       <div style="margin-left: 45px;height: 30%;display: flex;justify-content: space-between;">
         <div style="display: inline-block;">
-          <h2 style="font-size: 24px; color: black;">这里是赛事名称</h2>
+          <h2 style="font-size: 24px; color: black;">{{ this.$route.params.name }}</h2>
           <h2 style="font-size: 24px; color: black;">伤员名单</h2>
         </div>
         <div style="display: inline-block;">
@@ -38,7 +38,7 @@
           </el-table-column>
         </el-table>
 
-        <el-dialog :visible.sync="formVisible" width="40%" title="添加伤员">
+        <el-dialog :visible.sync="formVisible" width="40%" title="添加伤员" class="InjuryEntryDialog">
           <el-form ref="form" :model="form" :rules="rules" label-width="25%" :row-key="getRowKey">
             <el-form-item label="伤员姓名" prop="name">
               <el-input v-model="form.name"></el-input>
@@ -115,8 +115,10 @@ export default {
     }
   },
   async mounted() {
+    this.eventID = this.$route.params.event_id
     try {
       const response = await getAllMedicalPoints(this.eventID);
+      console.log(response)
       this.medicalPoints = response.data.map(point => ({
         value: point.id,
         label: point.place // 使用 place 作为显示内容

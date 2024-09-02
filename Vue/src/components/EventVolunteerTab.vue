@@ -49,7 +49,7 @@ export default {
   methods: {
     ActiveIndex(index) {
       this.ActiveIndexForVolunteerTab = index; // 设置当前激活的菜单项
-      this.$router.push({ name: this.EventTabTitle[index - 1] });
+      this.$router.push({ name: this.EventTabTitle[index - 1], params: { event_id: this.$route.params.event_id, name: this.$route.params.name } });
     },
   },
   created() {
@@ -78,6 +78,7 @@ export default {
   width: 100%;
   height: 750px;
   background-color: rgb(244, 244, 244);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 0 100px;
   padding-top: 20px;
   margin-top: 100px;

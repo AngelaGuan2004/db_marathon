@@ -8,7 +8,16 @@
       </el-breadcrumb>
     </div>
     <div class="EventDetailContainer" v-if="event">
-      <div class="EventDetailTitle">{{ event.Name }}</div>
+      <div style="display: flex;justify-content: space-between;">
+        <div class="EventDetailTitle">
+          {{ event.Name }}
+        </div>
+        <div class="EventDetailStatistic">
+          <el-statistic ref="statistic" @finish="hilarity" format="DD天HH小时mm分钟ss秒" :value="EventCount" title="距离报名结束还有："
+            time-indices>
+          </el-statistic>
+        </div>
+      </div>
       <div class="EventDetailContainerInfo">
         <div class="EventDetailContainerInfoOne">
           <div class="EventDetailContainerInfoItem">
@@ -71,8 +80,8 @@
         </div>
       </div>
       <div class="EventDetailContainerButton">
-        <el-button @click="GoToEventRegistration">选手报名</el-button>
-        <el-button @click="openVolunteerSignupModal">志愿者报名</el-button>
+        <el-button @click="GoToEventRegistration" :disabled="Disabled">选手报名</el-button>
+        <el-button @click="openVolunteerSignupModal" :disabled="Disabled">志愿者报名</el-button>
       </div>
       <!-- 详情弹窗 -->
       <WeatherDetailsModal v-if="showWeatherModal" :eventId="this.eventId" @close="closeWeatherModal" />
@@ -101,13 +110,15 @@ export default {
   data() {
     return {
       event: null,
-      eventId: '10001',
+      eventId: '',
       showWeatherModal: false,
       showMedicalModal: false,
       showPackageModal: false,
       showShuttleModal: false,
       showSupplypointModal: false,
       showVolunteerSignupModal: false,
+      EventCount: 0,
+      Disabled: false
     };
   },
   components: {
@@ -129,16 +140,16 @@ export default {
   },
   methods: {
     async loadEvent() {
-      const eventId = this.eventId;
+      this.eventId = this.$route.params.event_id;
       try {
-        console.log('请求的 URL:', `http://113.44.75.241:5158/Event/get_by_id?Id=${eventId}`);
-
-        const res = await fetchEventDetails(eventId);
+        console.log('请求的 URL:', `http://113.44.75.241:5158/Event/get_by_id?Id=${this.eventId}`);
+        const res = await fetchEventDetails(this.eventId);
         console.log('接口响应:', res);
 
         if (res) {
           this.event = res.Event; // 获取赛事详情
           this.weatherDetails = res.weather; // 获取天气详情
+          this.EventCount = Date.now() + (new Date(this.event.End_Date) - Date.now())
         } else {
           this.$message.error('未收到有效响应数据')
           throw new Error('未收到有效响应数据');
@@ -204,7 +215,14 @@ export default {
     },
     GoToEventRegistration() {
       this.$router.push({ name: 'EventRegistration', params: { id: this.eventId } });
-    }
+    },
+    hilarity() {
+      this.$message.warning({
+        title: "提示",
+        message: "报名已结束",
+      });
+      this.Disabled = true
+    },
   },
 }
 </script>
