@@ -32,7 +32,7 @@
               <img :src="photo.address" alt="Photo" class="photo" @click="openPreview(photo)" />
               <div class="info-box">
                 <div style="text-align: left; font-size: 14px; padding-left: 15px; padding-top: 2px;line-height: 10px;">
-                  <p>日期：{{ photo.date }}</p>
+                  <p>日期：{{ photo.time }}</p>
                   <p>地点：{{ photo.location }}</p>
                   <p style="color:crimson">❤️：{{ photo.likes }}</p>
                 </div>
@@ -58,20 +58,13 @@
 
 <script>
 import { inquiryPhotoByPhotographer } from '@/api/Photo';
+import { inquiryPhotographerNameById } from '@/api/Photo';
+
 export default {
   name: 'MyPhotographyWorks',
   data() {
     return {
-      photographer_Id:73,
-      // myphotos: [
-      //   { src: require('@/assets/images/1.jpg'), date: '2023-07-10', location: '地点1', likes: 1000 },
-      //   { src: require('@/assets/images/3.jpg'), date: '2023-07-12', location: '地点3', likes: 800 },
-      //   { src: require('@/assets/images/5.jpg'), date: '2023-07-14', location: '地点5', likes: 600 },
-      //   { src: require('@/assets/images/7.jpg'), date: '2023-07-15', location: '地点7', likes: 499 },
-      //   { src: require('@/assets/images/9.jpg'), date: '2023-07-17', location: '地点9', likes: 50 },
-      //   { src: require('@/assets/images/10.jpg'), date: '2023-06-10', location: '地点3', likes: 666 },
-      //   { src: require('@/assets/images/11.jpg'), date: '2023-05-22', location: '地点1', likes: 888 },
-      // ],
+      photographer_Id:'',
       myphotos:[],
       select: '2', // 默认排序为最热
       dialogVisible: false,
@@ -84,19 +77,18 @@ export default {
       // 将 myphotos 按日期降序排列，并取出最近的 6 张照片
       return this.myphotos
         .slice() 
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .sort((a, b) => new Date(b.time) - new Date(a.time))
         .slice(0, 6);
     }
   },
 
   async mounted(){
-    await this.fetchPhotosByPhotographer(this.photographer_Id)
-  },
+    this.photographer_Id = localStorage.getItem('UserId')
+    const photographerName = await inquiryPhotographerNameById(this.photographer_Id);
+    try {
+          const response = await inquiryPhotoByPhotographer(photographerName);  
+            console.log('得到摄影师名',photographerName);
 
-  methods: {
-    async fetchPhotosByPhotographer(ID) {
-        try {
-          const response = await inquiryPhotoByPhotographer(ID);
           this.photos=response.map(photo=>{
             return {
               ...photo,
@@ -109,11 +101,13 @@ export default {
           console.error('获取摄影作品时发生错误:', error);
           this.$message.error('获取摄影作品失败');
         }
-      },
+  },
+
+  methods: {
     sortPhotos() {
       if (this.select === '1') {
         // 按日期排序，最新的在前
-        this.myphotos.sort((a, b) => new Date(b.date) - new Date(a.date));
+        this.myphotos.sort((a, b) => new Date(b.time) - new Date(a.time));
       } else if (this.select === '2') {
         // 按点赞数排序，最多的在前
         this.myphotos.sort((a, b) => b.likes - a.likes);
