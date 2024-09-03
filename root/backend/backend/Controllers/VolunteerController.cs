@@ -272,6 +272,38 @@ namespace MarathonMaster.Controllers
             }
             return partners;
         }
+
+        //查询赛事的志愿者
+        [HttpGet]
+        public async Task<IActionResult> inquiry_volunteer_by_eventid([FromQuery] string event_id) //收到一个schedule类的值schedulei，其job_category的值为null
+        {
+            _logger.LogInformation("收到查询赛事志愿者数据: {@event_id)}", event_id); // 记录收到的数据
+
+            try
+            {
+                List<Volunteer> volunteers = await _db.Queryable<Schedule>()
+                    .LeftJoin<Event>((s, e) => s.Event_Id == e.Id)
+                    .LeftJoin<Volunteer>((s, e, v) => s.Volunteer_Id == v.Id)
+                    .Where((s, e, v) => s.Event_Id == event_id)
+                    .Select((s, e, v) => new Volunteer
+                    {
+                        Id = s.Volunteer_Id,
+                        Telephone_Number = v.Telephone_Number,
+                        Name = v.Name
+                    }).ToListAsync();
+
+                _logger.LogInformation("成功查询赛事志愿者数据: {@event_id}", event_id); // 记录插入成功
+                return Ok(volunteers); //true表示成功？？
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查询赛事志愿者数据失败: {@event_id}", event_id); // 记录错误信息
+
+                return BadRequest(false); //false表示失败
+            }
+        }
+
+
         //查找志愿者报名的赛事
         [HttpGet]
         public async Task<IActionResult> acquire_volunteer_event([FromQuery] int volunteer_id)
@@ -306,6 +338,8 @@ namespace MarathonMaster.Controllers
             }
         }
     }
+
+
 }
 
 
