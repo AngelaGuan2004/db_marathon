@@ -24,7 +24,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ID" label="编号" sortable width="160">
+          <el-table-column prop="ID" label="身份证号" sortable width="160">
           </el-table-column>
           <el-table-column prop="medicalPoint" label="医疗点">
           </el-table-column>
@@ -43,7 +43,7 @@
             <el-form-item label="伤员姓名" prop="name">
               <el-input v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item label="伤员编号" prop="ID">
+            <el-form-item label="伤员身份证号" prop="ID">
               <el-input v-model="form.ID"></el-input>
             </el-form-item>
             <el-form-item label="医疗点" prop="medicalPoint">
@@ -93,7 +93,7 @@ export default {
           { required: true, message: '请输入伤员姓名', trigger: 'blur' }
         ],
         ID: [
-          { required: true, message: '请输入伤员编号', trigger: 'blur' }
+          { required: true, message: '请输入伤员身份证号', trigger: 'blur' }
         ],
         medicalPoint: [
           { required: true, message: '请选择医疗点', trigger: 'blur' }
@@ -119,7 +119,7 @@ export default {
       const injuryResponse = await getInjury(this.eventID);
       this.injuredPlayers = injuryResponse.map(injuredPlayer => ({
         name: injuredPlayer.injury.name,
-        ID: injuredPlayer.injury.id,
+        ID: injuredPlayer.injury.id_Number,
         medicalPoint: injuredPlayer.medicalpoint.place
       }));
       console.log('伤员',this.injuredPlayers);
@@ -166,50 +166,41 @@ export default {
       this.resetForm();
     },
     async onSubmit() {
-      this.$refs.form.validate(async (valid) => {
-        if (valid) {
-          if (this.editingMode && this.editingIndex !== null) {
-            // 编辑模式：更新已有数据
-            const index = this.injuredPlayers.findIndex(player => player.ID === this.editingId);
-            if (index !== -1) {
-              this.$set(this.injuredPlayers, index, {
-                date: this.form.date,
-                name: this.form.name,
-                ID: this.form.ID,
-                medicalPoint: this.form.medicalPoint
-              });
-              this.$message.success('编辑成功');
-            }
-          } else {
-            // 非编辑模式：通过 API 提交新增数据
-            const response = await addInjury({
-              name: this.form.name,
-              ID: this.form.ID,
-              medicalPoint: this.form.medicalPoint
-            });
+    this.$refs.form.validate(async (valid) => {
+      if (valid) {
+        try {
+          // 使用表单中的数据调用 addInjury 函数
+          const response = await addInjury({
+            medicalpoint_Id: this.form.medicalPoint, // 传递医疗点ID
+            player_Id: this.form.id_Number // 传递选手身份证号
+          });
 
-            if (response.data.success) {
-              // 如果请求成功，添加到前端的表格中
-              this.injuredPlayers.push({
-                date: this.form.date,
-                name: this.form.name,
-                ID: this.form.ID,
-                medicalPoint: this.form.medicalPoint
-              });
-              this.$message.success('上传成功');
-            } else {
-              // 处理请求失败的情况
-              this.$message.error(`上传失败: ${response.data.message}`);
-            }
+          if (response.data.success) {
+            // 成功后，将新数据添加到表格中
+            this.injuredPlayers.push({
+              name: this.form.name, // 伤员姓名
+              ID: this.form.id_Number, // 伤员身份证号
+              medicalPoint: this.medicalPoints.find(point => point.id === this.form.medicalPoint).place // 查找对应的医疗点名称
+            });
+            this.$message.success('上传成功');
+          } else {
+            // 如果后端返回错误，显示错误信息
+            this.$message.error(`上传失败: ${response.data.message}`);
           }
+
+          // 重置表单并关闭弹窗
           this.formVisible = false;
           this.resetForm();
-        } else {
-          this.$message.error('表单验证失败');
-          return false;
+        } catch (error) {
+          // 捕获异常并显示错误信息
+          this.$message.error('上传失败，请稍后再试');
+          console.error('Error submitting data:', error);
         }
-      });
-    },
+      } else {
+        this.$message.error('表单验证失败');
+      }
+    });
+  },
     resetForm() {
       this.$refs.form.resetFields();
       this.form = {
