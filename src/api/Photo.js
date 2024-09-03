@@ -61,6 +61,15 @@ import request from '@/utils/request'
       params: { id }
     })
   }
+
+  //根据摄影师ID获取摄影师名字
+  export function inquiryPhotographerNameById(id) {
+    return request({
+      url: '/PhotoView/get_photographer_name_by_id',
+      method: 'get',
+      params: { id }
+    })
+  }
   
 
   // 上传照片
