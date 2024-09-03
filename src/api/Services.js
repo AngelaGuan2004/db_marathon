@@ -25,7 +25,7 @@ export function addInjury(data) {
         method: 'post',
         data: { 
          // name: data.name,
-          player_Id: data.ID,
+          player_Id: data.player_Id,
           medicalPoint_Id: data.medicalPoint
         }
     })
