@@ -337,6 +337,166 @@ namespace MarathonMaster.Controllers
                 return BadRequest(ex); //false表示失败
             }
         }
+
+        /*查询某场赛事所有（某个补给点）的志愿者*/
+        [HttpGet]
+        public async Task<IActionResult> get_supply_volunteer([FromQuery] string? Event_Id, [FromQuery] string? supplypoint_id = null)
+        {
+            _logger.LogInformation("收到查补给志愿者信息");
+
+            try
+            {
+                List<VolunteerSupplypoint> volunteerSupplypoints;
+                if (supplypoint_id == null && Event_Id == null)
+                {
+                    return BadRequest("未传id参数");
+                }
+                if (supplypoint_id != null)
+                {
+                    _logger.LogInformation("根据补给点id查");
+                    volunteerSupplypoints = await _db.Queryable<VolunteerSupplypoint>().Where(e => e.supplypoint_id == supplypoint_id).ToListAsync();
+                }
+                else
+                {
+                    _logger.LogInformation("根据赛事id查");
+                    volunteerSupplypoints = await _db.Queryable<VolunteerSupplypoint>().Where(s => s.supplypoint_id.StartsWith(Event_Id)).ToListAsync();
+                }
+                List<Volunteer> volunteers = new List<Volunteer>();
+                if (volunteerSupplypoints == null || volunteerSupplypoints.Count == 0)
+                {
+                    // _logger.LogInformation("为空");
+                    return Ok(volunteers);
+                }
+                else
+                {
+                    List<Player> playerlist = new List<Player>();
+                    foreach (var service in volunteerSupplypoints)
+                    {
+
+                        // 根据每条结果的id找志愿者信息
+                        Player player = await _db.Queryable<Player>()
+                                               .Where(m => m.Id == service.volunteer_id)
+                                               .FirstAsync();
+                        if (player != null) playerlist.Add(player);
+                    }
+                    return Ok(playerlist);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查询某场赛事所有（某个补给点）的志愿者");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /*查询某场赛事所有（某个医疗点）的志愿者*/
+        [HttpGet]
+        public async Task<IActionResult> get_medical_volunteer([FromQuery] string? Event_Id, [FromQuery] string? medicalpoint_id = null)
+        {
+            _logger.LogInformation("收到查补给志愿者信息");
+
+            try
+            {
+                List<VolunteerMedicalpoint> volunteerMedicalpoints;
+                if (medicalpoint_id == null && Event_Id == null)
+                {
+                    return BadRequest("未传id参数");
+                }
+                if (medicalpoint_id != null)
+                {
+                    _logger.LogInformation("根据医疗点id查");
+                    volunteerMedicalpoints = await _db.Queryable<VolunteerMedicalpoint>().Where(e => e.medicalpoint_id == medicalpoint_id).ToListAsync();
+                }
+                else
+                {
+                    _logger.LogInformation("根据赛事id查");
+                    volunteerMedicalpoints = await _db.Queryable<VolunteerMedicalpoint>().Where(s => s.medicalpoint_id.StartsWith(Event_Id)).ToListAsync();
+                }
+                List<Volunteer> volunteers = new List<Volunteer>();
+                if (volunteerMedicalpoints == null || volunteerMedicalpoints.Count == 0)
+                {
+                    // _logger.LogInformation("为空");
+                    return Ok(volunteers);
+                }
+                else
+                {
+                    List<Player> playerlist = new List<Player>();
+                    foreach (var service in volunteerMedicalpoints)
+                    {
+
+                        // 根据每条结果的id找志愿者信息
+                        Player player = await _db.Queryable<Player>()
+                                               .Where(m => m.Id == service.volunteer_id)
+                                               .FirstAsync();
+                        if (player != null) playerlist.Add(player);
+                    }
+                    return Ok(playerlist);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "某场赛事所有（某个医疗点）的志愿者失败");
+                return BadRequest(ex.Message);
+            }
+        }
+        /*查询某场赛事所有（某个接驳车）的志愿者*/
+        [HttpGet]
+        public async Task<IActionResult> get_shuttlecar_volunteer([FromQuery] string? Event_Id, [FromQuery] int? shuttlecar_id = null)
+        {
+            _logger.LogInformation("收到查接驳车志愿者信息");
+
+            try
+            {
+                List<Drive> drives;
+                if (shuttlecar_id == null && Event_Id == null)
+                {
+                    return BadRequest("未传id参数");
+                }
+                if (shuttlecar_id != null)
+                {
+                    _logger.LogInformation("根据接驳车id查");
+                    drives = await _db.Queryable<Drive>().Where(e => e.Shuttlecar_Id == shuttlecar_id).ToListAsync();
+                }
+                else
+                {
+                    _logger.LogInformation("根据赛事id查接驳车");
+                    drives = await _db.Queryable<Drive>()
+                        .LeftJoin<Volunteer>((d,v)=>d.Volunteer_Id == v.Id)
+                        .LeftJoin<Shuttlecar>((d, v,s) => d.Shuttlecar_Id  == s.Id && s.Event_Id == Event_Id)                      
+                        .Select((d, v, s) => new Drive
+                        {
+                            Volunteer_Id =d.Volunteer_Id,
+                            Shuttlecar_Id = d.Shuttlecar_Id
+                        })
+                        .ToListAsync();
+                }
+                List<Volunteer> volunteers = new List<Volunteer>();
+                if (drives == null || drives.Count == 0)
+                {
+                    // _logger.LogInformation("为空");
+                    return Ok(volunteers);
+                }
+                else
+                {
+                    List<Player> playerlist = new List<Player>();
+                    foreach (var service in drives)
+                    {
+
+                        // 根据每条结果的id找志愿者信息
+                        Player player = await _db.Queryable<Player>()
+                                               .Where(m => m.Id == service.Volunteer_Id)
+                                               .FirstAsync();
+                        if (player != null) playerlist.Add(player);
+                    }
+                    return Ok(playerlist);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查询某场赛事所有（某个接驳车）的志愿者失败");
+                return BadRequest(ex.Message);
+            }
+        }
     }
 
 
