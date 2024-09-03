@@ -5,23 +5,21 @@ export function get_medical_point(Event_id) {
     return request({
         url: '/Medical/get_all_medicalpoint',
         method: 'get',
-        params: { 
-           Event_id, 
+        params: {
+            Event_id,
         }
     })
 }
 
 /*增加医疗点*/
-export function add_medical_point(Event_id){
+export function add_medical_point(Event_id) {
     return request({
-        url:'/Medical/add_medicalpoint',
-        method:'patch',
-        data:{
-            data: {
-                Event_id: Event_id,
-                medicalPointID: id,
-                medicalPointLocation: place,
-            }
+        url: '/Medical/add_medicalpoint',
+        method: 'patch',
+        data: {
+            Event_id: Event_id.Event_id,
+            Id: Event_id.medicalPointID,
+            medicalPointLocation: Event_id.place,
         }
     }
     )
@@ -33,7 +31,7 @@ export function delete_medical_point(medicalPointID) {
         url: '/Medical/delete_medicalpoint',
         method: 'delete',
         params: {
-            medicalPointID: id,
+            Id: medicalPointID,
         }
     });
 }

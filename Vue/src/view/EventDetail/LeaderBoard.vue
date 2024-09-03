@@ -30,7 +30,7 @@
         </el-row>
 
         <!-- 成绩排行榜 -->
-        <el-table :data="paginatedResults" :style="{ width: '100%' }">
+        <el-table :data="paginatedResults" :style="{ width: '100%' }" max-height="45vh">
           <el-table-column label="姓名" header-align="center" align="center">
             <template v-slot:default="scope">
               <span>{{ scope.row.name }}</span>

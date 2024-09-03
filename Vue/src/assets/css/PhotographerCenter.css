@@ -45,9 +45,10 @@
 }
 
 #PhotographerCenter .PhotographerContent {
+  width: 100vh;
   padding: 20px;
   position: relative;
-  left: 6%;
+  left: 10%;
 }
 
 #PhotographerCenter .photo-bar {
@@ -137,7 +138,7 @@
   width: 375px;
   height: 500px;
   background-color: white;
-  left: 2%;
+  left: 5%;
   margin-top: 5%;
   position: relative;
 }

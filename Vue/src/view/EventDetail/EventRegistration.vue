@@ -128,6 +128,7 @@ export default {
     },
     modifyInfo() {
       this.$router.push({ name: 'UserInfo' })
+      this.$bus.$emit('updateActiveIndex', '4');
     },
     async submitRegistration() {
       const playerId = localStorage.getItem('UserId');

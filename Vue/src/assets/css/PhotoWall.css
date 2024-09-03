@@ -62,7 +62,7 @@
   row-gap: 30px;
   background-color: white;
   padding: 25px 10px;
-  height: 50vh;
+  height: 105vh;
   margin-bottom: 25px;
 }
 
@@ -76,7 +76,7 @@
   margin-left: 20px;
 }
 
-.photo {
+#PhotoWall .photo {
   width: 100%;
   height: 100%;
   object-fit: cover;

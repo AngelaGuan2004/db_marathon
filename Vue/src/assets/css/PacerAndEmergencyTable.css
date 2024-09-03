@@ -15,6 +15,19 @@
   padding: 10px;
 }
 
+.Button .el-button {
+  background-color: #c63939;
+  /*important是为了覆盖原有的Element UI 的按钮组件有默认的样式优先级*/
+  color: white;
+  border: none !important;
+  /* 去掉按钮边框 */
+}
+
+.Button .el-button:hover {
+  background-color: #a62828 !important;
+  /* 悬停时的深红色背景 */
+}
+
 .Table {
   width: 100%;
   table-layout: fixed;
@@ -85,4 +98,15 @@
 
 #VolunManagement .el-table .el-table__cell {
   padding: 3px 0;
+}
+
+.ManagementDialog .el-button--primary {
+  background-color: transparent;
+  /*important是为了覆盖原有的Element UI 的按钮组件有默认的样式优先级*/
+  color: rgb(64, 158, 255);
+  border: none !important;
+}
+
+.ManagementDialog button:hover {
+  background-color: transparent;
 }

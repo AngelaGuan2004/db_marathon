@@ -20,15 +20,16 @@ import EventDetail from '@/view/EventDetail/EventDetail.vue'
 import VolunteerSignup from '@/view/EventDetail/VolunteerSignup.vue';
 import EventRegistration from '@/view/EventDetail/EventRegistration.vue'
 
+import ParticipantLottery from '@/view/EventManagement/ParticipantLottery.vue'
+import PacerSelection from '@/view/EventManagement/PacerSelection.vue'
+import EmergencyRunnerSelection from '@/view/EventManagement/EmergencyRunnerSelection.vue'
+
 import ItemManagement from '@/view/EventManagement/ItemManagement.vue'
 import PackageManagement from '@/view/EventManagement/PackageManagement.vue'
 import SupplypointManagement from '@/view/EventManagement/SupplypointManagement.vue'
-
-import ParticipantLottery from '@/view/EventManagement/ParticipantLottery.vue'
-import PacerSelection from '@/view/EventManagement/PacerSelection.vue'
-import PacerSubmission from '@/view/EventManagement/PacerSubmission.vue'
-import EmergencyRunnerSelection from '@/view/EventManagement/EmergencyRunnerSelection.vue'
-import EmergencyRunnerSubmission from '@/view/EventManagement/EmergencyRunnerSubmission.vue'
+import MedicalPointManagement from '@/view/EventManagement/MedicalPointManagement.vue'
+import SupplyPointDeleteManagement from '@/view/EventManagement/SupplyPointDeleteManagement.vue'
+import ShuttleManagement from '@/view/EventManagement/ShuttleManagement.vue'
 
 import CarManagement from '@/view/EventVolunteer/CarManagement.vue'
 import MedicalManagement from '@/view/EventVolunteer/MedicalManagement.vue'
@@ -46,11 +47,11 @@ export default new VueRouter({
   mode: 'history',
   routes: [
     {
-      path: '/Home/:events',
+      path: '/Home',
       name: 'Home',
       component: Home
     }, {
-      path: '/EventList/:events',
+      path: '/EventList',
       name: 'EventList',
       component: EventList
     }, {
@@ -85,19 +86,9 @@ export default new VueRouter({
           name: 'PacerSelection',
           component: PacerSelection
         }, {
-          path: 'PacerSubmission',
-          name: 'PacerSubmission',
-          component: PacerSubmission
-        },
-        {
           path: 'EmergencyRunnerSelection',
           name: 'EmergencyRunnerSelection',
           component: EmergencyRunnerSelection
-        },
-        {
-          path: 'EmergencyRunnerSubmission',
-          name: 'EmergencyRunnerSubmission',
-          component: EmergencyRunnerSubmission
         }, {
           path: '/ItemManagement',
           name: 'ItemManagement',
@@ -110,6 +101,18 @@ export default new VueRouter({
           path: '/SupplypointManagement:event_id:name',
           name: 'SupplypointManagement',
           component: SupplypointManagement,
+        }, {
+          path: '/MedicalPointManagement:event_id:name',
+          name: 'MedicalPointManagement',
+          component: MedicalPointManagement,
+        }, {
+          path: '/SupplyPointDeleteManagement:event_id:name',
+          name: 'SupplyPointDeleteManagement',
+          component: SupplyPointDeleteManagement,
+        }, {
+          path: '/ShuttleManagement:event_id:name',
+          name: 'ShuttleManagement',
+          component: ShuttleManagement,
         },
       ]
     }, {

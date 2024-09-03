@@ -73,7 +73,8 @@ export default {
   },
   methods: {
     handleRowClick(row) {
-      window.alert(row.event_id);
+      this.$router.push({ name: 'EventDetail', params: { event_id: (row.id).toString() } });
+      this.$bus.$emit('updateActiveIndex', '2');
     },
     handlePageChange(page) {
       this.currentPage = page;

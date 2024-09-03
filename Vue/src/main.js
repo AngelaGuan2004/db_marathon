@@ -3,8 +3,6 @@ import App from './App.vue'
 //引入elm组件
 import ElementUI from 'element-ui';
 Vue.use(ElementUI);
-//引入store
-import store from './store'
 //引入路由器
 import router from './router'
 //引入VueRouter
@@ -23,7 +21,6 @@ Vue.use(VueRouter)
 Vue.config.productionTip = false
 new Vue({
   render: h => h(App),
-  store,
   router,
   beforeCreate() {
     Vue.prototype.$bus = this

@@ -114,6 +114,7 @@
 </template>
 
 <script>
+import { fetchAllEvents } from '@/api/Event'
 export default {
   name: 'Home',
   data() {
@@ -143,12 +144,39 @@ export default {
       events: [],
     }
   },
-  mounted() {
-    this.events = this.$route.params.events
+  created() {
+    this.loadAllEvents()
   },
   methods: {
+    formatDate(dateString) {
+      const date = new Date(dateString); // 创建一个Date对象
+      const year = date.getFullYear(); // 获取年份
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 获取月份，月份从0开始计数，所以加1
+      const day = date.getDate().toString().padStart(2, '0'); // 获取日期
+
+      return `${year}-${month}-${day}`; // 返回格式化的日期字符串
+    },
+    loadAllEvents() {
+      fetchAllEvents().then(response => {
+        console.log(response);
+        // 映射 eventList 数组
+        this.events = response.map(Event => ({
+          id: Event.id,
+          date: this.formatDate(Event.event_Date),
+          name: Event.name,
+          type: Event.category,
+          scale: Event.scale
+        }))
+        this.$router.push({ name: 'Home', params: { events: this.events } });
+      }).catch(error => {
+        // 错误处理
+        this.$message.error('加载赛事失败，请稍后重试。');
+        console.error('Failed to load events:', error);
+      });
+    },
     GoToEvent() {
       this.$router.push({ name: "EventList", params: { events: this.events } })
+      this.$bus.$emit('updateActiveIndex', '2');
     },
   },
   computed: {

@@ -1,8 +1,10 @@
 <template>
   <div id="CarManagement">
     <div style="display: flex;  width: 100%;">
-      <el-main class="Content">
-        <div v-if="paginatedCarPoint.length > 0">
+      <el-main class="Content" v-if="paginatedCarPoint.length > 0">
+        <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
+          this.$route.params.name }}</div>
+        <div>
           <el-table :data="paginatedCarPoint" class="Table">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="departureTime" label="出发时间" width="150" align="center"
@@ -23,16 +25,15 @@
           <el-pagination class="Pagination" background layout="prev, pager, next" :total="totalCarCount"
             :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
         </div>
-        <div v-else class="Empty">
-          暂无数据
-        </div>
       </el-main>
-      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedCarPoint?.id || ''}号摆渡车志愿者名单`" width="50%">
+      <div v-else class="Empty">暂无数据</div>
+      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedCarPoint?.id || ''}号摆渡车志愿者名单`" width="50%"
+        class="ManagementDialog">
         <div v-if="selectedCarVolun.length > 0">
-          <el-table :data="selectedCarVolun" class="Table">
-            <el-table-column prop="id" label="ID" width="100" align="center" header-align="center"></el-table-column>
-            <el-table-column prop="name" label="姓名" width="100" align="center" header-align="center"></el-table-column>
-            <el-table-column prop="telenumber" label="电话" width="200" align="center"
+          <el-table :data="selectedCarVolun" class="Table" max-height="300">
+            <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
+            <el-table-column prop="name" label="姓名" width="150" align="center" header-align="center"></el-table-column>
+            <el-table-column prop="telenumber" label="电话" width="250" align="center"
               header-align="center"></el-table-column>
           </el-table>
         </div>
@@ -43,14 +44,14 @@
           <el-button @click="SelectedVolunVisible = false">关闭</el-button>
         </span>
       </el-dialog>
-      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="50%">
+      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="50%" class="ManagementDialog">
         <div v-if="selectionCarVolun.length > 0">
-          <el-table :data="selectionCarVolun" class="Table">
-            <el-table-column prop="id" label="ID" width="100" align="center" header-align="center"></el-table-column>
-            <el-table-column prop="name" label="姓名" width="100" align="center" header-align="center"></el-table-column>
-            <el-table-column prop="telenumber" label="电话" width="200" align="center"
+          <el-table :data="selectionCarVolun" class="Table" max-height="300">
+            <el-table-column prop="id" label="ID" width="175" align="center" header-align="center"></el-table-column>
+            <el-table-column prop="name" label="姓名" width="125" align="center" header-align="center"></el-table-column>
+            <el-table-column prop="telenumber" label="电话" width="250" align="center"
               header-align="center"></el-table-column>
-            <el-table-column label="选择" width="100" align="center" header-align="center">
+            <el-table-column label="选择" width="125" align="center" header-align="center">
               <template slot-scope="scope">
                 <el-button type="primary" @click="submitCarVolun(scope.row)">提交</el-button>
               </template>
@@ -69,6 +70,7 @@
 </template>
 
 <script>
+import { getAllCarPoints, getVolunteersByEventId, acquireVolunteerInformation, getCarVolunteers, addVolunteerToCarPoint } from '@/api/volunteer';
 export default {
   name: 'CarManagement',
   data() {
@@ -79,6 +81,8 @@ export default {
       selectedCarPoint: null,
       SelectedVolunVisible: false,
       SelectionVolunVisible: false,
+      selectedCarVolun: [],
+      selectionCarVolun: [],
       totalCarCount: 0
     };
   },
@@ -88,48 +92,88 @@ export default {
       const end = this.currentPage * this.pageSize;
       return this.carPoint.slice(start, end);
     },
-    selectedCarVolun() {
-      return this.$store.getters.getCarPointVolunteers(this.selectedCarPoint?.id || "");
-    },
-    selectionCarVolun() {
-      return this.$store.getters.getCarVolunteers;
-    }
   },
   methods: {
     handlePageChange(page) {
       this.currentPage = page;
     },
-    showSelectedCar(row) {
-      this.selectedCarPoint = row;
-      this.SelectedVolunVisible = true;
+    async loadCarPoints() {
+      try {
+        const eventId = "10001";
+        const response = await getAllCarPoints(eventId);
+        this.carPoint = response.map(point => ({
+          ...point,
+          departureTime: point.departure_Time,
+          arrivalTime: point.arrival_Time,
+        }));
+        this.totalCarCount = response.length;
+      } catch (error) {
+        console.error('Failed to load car points:', error);
+        this.$message.error('加载接驳车信息失败，请稍后重试。');
+      }
     },
-    showSelectionCar(row) {
-      this.selectedCarPoint = row;
-      this.SelectionVolunVisible = true;
-    },
-    submitCarVolun(volunteer) {
-      // 将志愿者从待排班志愿者中移除，并添加到对应补给点的已排班志愿者列表中
-      const newCarVolunteers = this.selectionCarVolun.filter(v => v.id !== volunteer.id);
-      const updatedVolunteers = [...this.selectedCarVolun, volunteer];
+    async showSelectionCar(row) {
+      try {
+        const eventId = this.$route.params.event_id;
+        this.selectedCarPoint = row;
+        this.SelectionVolunVisible = true;
 
-      // 更新 Vuex Store 中的志愿者数据
-      this.$store.dispatch('saveSelectedVolun', {
-        pointId: this.selectedCarPoint.id,
-        supply: [],
-        medical: [],
-        car: updatedVolunteers
-      });
-      this.$store.commit('SET_CAR_VOLUNTEERS', newCarVolunteers);
+        const volunteers = await getVolunteersByEventId(eventId);
+        const selectionVolunteers = [];
+
+        for (const volunteer of volunteers) {
+          const info = await acquireVolunteerInformation(volunteer.id, eventId);
+          if (info.job_category === '接驳车' && !info.is_scheduled) {
+            selectionVolunteers.push(volunteer);
+          }
+        }
+
+        this.selectionCarVolun = selectionVolunteers.map(volunteer => ({
+          id: volunteer.id,
+          name: volunteer.name,
+          telenumber: volunteer.telephone_Number,
+        }));
+      } catch (error) {
+        console.error('Failed to load selected volunteers:', error);
+        this.$message.error('加载待排班志愿者失败，请稍后重试。');
+      }
+    },
+    async showSelectedCar(row) {
+      try {
+        const eventId = this.$route.params.event_id;
+        const carPointId = row.id;
+        const response = await getCarVolunteers(eventId, carPointId);
+
+        this.selectedCarVolun = response.map(volunteer => ({
+          id: volunteer.id,
+          name: volunteer.name,
+          telenumber: volunteer.telephone_Number,
+        }));
+
+        this.selectedCarPoint = row;
+        this.SelectedVolunVisible = true;
+      } catch (error) {
+        console.error('Failed to load selected volunteers:', error);
+        this.$message.error('加载已排班志愿者失败，请稍后重试。');
+      }
+    },
+    async submitCarVolun(volunteer) {
+      try {
+        const data = {
+          volunteer_id: volunteer.id,
+          shuttlecar_id: this.selectedCarPoint.id,
+        };
+        await addVolunteerToCarPoint(data);
+        this.$message.success('志愿者已成功添加到接驳车');
+        this.selectionCarVolun = this.selectionCarVolun.filter(v => v.id !== volunteer.id);
+      } catch (error) {
+        console.error('Failed to add volunteer to shuttlecar:', error);
+        this.$message.error('添加志愿者到接驳车失败，请稍后重试。');
+      }
     }
   },
   created() {
-    // 补给点数据从服务器获取（这里简化为从store中取）
-    this.carPoint = [
-      { id: "1", departureTime: "6:00", arrivalTime: "6:25" },
-      { id: "2", departureTime: "6:10", arrivalTime: "6:35" },
-      { id: "3", departureTime: "6:20", arrivalTime: "6:45" }
-    ];
-    this.totalCarCount = this.carPoint.length; // 设置总数量
+    this.loadCarPoints();
   }
 };
 </script>
@@ -143,12 +187,13 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-right: 3%;
-  width: 67%;
+  width: 105vh;
+  height: 65vh;
+  margin-right: 50px;
+  margin-bottom: 75px;
   font-size: 15px;
-  padding-top: 20px;
 }
 </style>

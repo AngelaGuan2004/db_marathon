@@ -1,8 +1,10 @@
 <template>
   <div id="MedicalManagement">
     <div style="display: flex;  width: 100%;">
-      <el-main class="Content">
-        <div v-if="paginatedMedicalPoint.length > 0">
+      <el-main class="Content" v-if="paginatedMedicalPoint.length > 0">
+        <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
+          this.$route.params.name }}</div>
+        <div>
           <el-table :data="paginatedMedicalPoint" class="Table">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="place" label="地点" width="150" align="center" header-align="center"></el-table-column>
@@ -20,43 +22,38 @@
           <el-pagination class="pagination" background layout="prev, pager, next" :total="totalMedicalCount"
             :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
         </div>
-        <div v-else class="Empty">
-          暂无数据
-        </div>
       </el-main>
-      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedMedicalPoint?.id || ''}号医疗点志愿者名单`" width="50%">
+      <div v-else class="Empty">暂无数据</div>
+      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedMedicalPoint?.id || ''}号医疗点志愿者名单`" width="50%"
+        class="ManagementDialog">
         <div v-if="selectedMedicalVolun.length > 0">
-          <el-table :data="selectedMedicalVolun" class="Table">
-            <el-table-column prop="id" label="ID" width="100" align="center" header-align="center"></el-table-column>
-            <el-table-column prop="name" label="姓名" width="100" align="center" header-align="center"></el-table-column>
-            <el-table-column prop="telenumber" label="电话" width="200" align="center"
+          <el-table :data="selectedMedicalVolun" class="Table" max-height="300">
+            <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
+            <el-table-column prop="name" label="姓名" width="150" align="center" header-align="center"></el-table-column>
+            <el-table-column prop="telenumber" label="电话" width="250" align="center"
               header-align="center"></el-table-column>
           </el-table>
         </div>
-        <div v-else class="Empty">
-          暂无数据
-        </div>
+        <div v-else class="Empty">暂无数据</div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="SelectedVolunVisible = false">关闭</el-button>
         </span>
       </el-dialog>
-      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="50%">
+      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="50%" class="ManagementDialog">
         <div v-if="selectionMedicalVolun.length > 0">
-          <el-table :data="selectionMedicalVolun" class="Table">
-            <el-table-column prop="id" label="ID" width="100" align="center" header-align="center"></el-table-column>
-            <el-table-column prop="name" label="姓名" width="100" align="center" header-align="center"></el-table-column>
-            <el-table-column prop="telenumber" label="电话" width="200" align="center"
+          <el-table :data="selectionMedicalVolun" class="Table" max-height="300">
+            <el-table-column prop="id" label="ID" width="175" align="center" header-align="center"></el-table-column>
+            <el-table-column prop="name" label="姓名" width="125" align="center" header-align="center"></el-table-column>
+            <el-table-column prop="telenumber" label="电话" width="250" align="center"
               header-align="center"></el-table-column>
-            <el-table-column label="选择" width="100" align="center" header-align="center">
+            <el-table-column label="选择" width="125" align="center" header-align="center">
               <template slot-scope="scope">
                 <el-button type="primary" @click="submitMedicalVolun(scope.row)">提交</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
-        <div v-else class="Empty">
-          暂无数据
-        </div>
+        <div v-else class="Empty">暂无数据</div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="SelectionVolunVisible = false">关闭</el-button>
         </span>
@@ -66,6 +63,7 @@
 </template>
 
 <script>
+import { getAllMedicalPoints, getVolunteersByEventId, acquireVolunteerInformation, addVolunteerToMedicalPoint, getMedicalVolunteers } from '@/api/volunteer';
 export default {
   name: 'MedicalManagement',
   data() {
@@ -76,6 +74,8 @@ export default {
       selectedMedicalPoint: null,
       SelectedVolunVisible: false,
       SelectionVolunVisible: false,
+      selectedMedicalVolun: [],
+      selectionMedicalVolun: [],
       totalMedicalCount: 0
     };
   },
@@ -85,48 +85,88 @@ export default {
       const end = this.currentPage * this.pageSize;
       return this.medicalPoint.slice(start, end);
     },
-    selectedMedicalVolun() {
-      return this.$store.getters.getMedicalPointVolunteers(this.selectedMedicalPoint?.id || "");
-    },
-    selectionMedicalVolun() {
-      return this.$store.getters.getMedicalVolunteers;
-    }
   },
   methods: {
     handlePageChange(page) {
       this.currentPage = page;
     },
-    showSelectedMedical(row) {
-      this.selectedMedicalPoint = row;
-      this.SelectedVolunVisible = true;
+    async loadMedicalPoints() {
+      try {
+        const eventId = this.$route.params.event_id; // Replace with your Event ID
+        const response = await getAllMedicalPoints(eventId);
+        console.log(response);
+        this.medicalPoint = Array.isArray(response.data) ? response.data : [];
+        this.totalMedicalCount = this.medicalPoint.length;
+      } catch (error) {
+        console.error('Failed to load medical points:', error);
+        this.$message.error('加载医疗点信息失败，请稍后重试。');
+      }
     },
-    showSelectionMedical(row) {
-      this.selectedMedicalPoint = row;
-      this.SelectionVolunVisible = true;
-    },
-    submitMedicalVolun(volunteer) {
-      // 将志愿者从待排班志愿者中移除，并添加到对应补给点的已排班志愿者列表中
-      const newMedicalVolunteers = this.selectionMedicalVolun.filter(v => v.id !== volunteer.id);
-      const updatedVolunteers = [...this.selectedMedicalVolun, volunteer];
+    async showSelectionMedical(row) {
+      try {
+        const eventId = this.$route.params.event_id; // Replace with your Event ID
+        this.selectedMedicalPoint = row;
+        this.SelectionVolunVisible = true;
 
-      // 更新 Vuex Store 中的志愿者数据
-      this.$store.dispatch('saveSelectedVolun', {
-        pointId: this.selectedMedicalPoint.id,
-        supply: [],
-        medical: updatedVolunteers,
-        car: []
-      });
-      this.$store.commit('SET_MEDICAL_VOLUNTEERS', newMedicalVolunteers);
+        // Get all volunteers
+        const volunteers = await getVolunteersByEventId(eventId);
+        const selectionVolunteers = [];
+
+        // Filter out volunteers already assigned to medical points
+        for (const volunteer of volunteers) {
+          const info = await acquireVolunteerInformation(volunteer.id, eventId);
+          if (info.job_category === '医疗点' && !info.is_scheduled) {
+            selectionVolunteers.push(volunteer);
+          }
+        }
+        this.selectionMedicalVolun = selectionVolunteers.map(volunteer => ({
+          ...volunteer,
+          telenumber: volunteer.telephone_Number,
+        }));
+      } catch (error) {
+        console.error('Failed to load selected volunteers:', error);
+        this.$message.error('加载待排班志愿者失败，请稍后重试。');
+      }
+    },
+    async showSelectedMedical(row) {
+      try {
+        const eventId = this.$route.params.event_id;
+        const medicalPointId = row.id;
+        const response = await getMedicalVolunteers(eventId, medicalPointId);
+
+        this.selectedMedicalVolun = response.map(volunteer => ({
+          id: volunteer.id,
+          name: volunteer.name,
+          telenumber: volunteer.telephone_Number
+        }));
+
+        this.selectedMedicalPoint = row;
+        this.SelectedVolunVisible = true;
+      } catch (error) {
+        console.error('Failed to load selected volunteers:', error);
+        this.$message.error('加载已排班志愿者失败，请稍后重试。');
+      }
+    },
+    async submitMedicalVolun(volunteer) {
+      try {
+        const data = {
+          volunteer_id: volunteer.id,
+          medicalpoint_id: this.selectedMedicalPoint.id
+        };
+        console.log(data);
+        await addVolunteerToMedicalPoint(data);
+        this.$message.success('志愿者已成功添加到医疗点');
+
+        // Remove the volunteer from the available list
+        this.selectionMedicalVolun = this.selectionMedicalVolun.filter(v => v.id !== volunteer.id);
+      } catch (error) {
+        console.error('Failed to add volunteer to medical point:', error);
+        this.$message.error('添加志愿者到医疗点失败，请稍后重试。');
+      }
     }
   },
   created() {
-    // 补给点数据从服务器获取（这里简化为从store中取）
-    this.medicalPoint = [
-      { id: "1", place: "赛道起始处" },
-      { id: "2", place: "赛道5公里处前100米" },
-      { id: "3", place: "赛道终点处" }
-    ];
-    this.totalMedicalCount = this.medicalPoint.length; // 设置总数量
+    this.loadMedicalPoints();
   }
 };
 </script>
@@ -140,12 +180,13 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-right: 3%;
-  width: 67%;
+  width: 105vh;
+  height: 65vh;
+  margin-right: 50px;
+  margin-bottom: 75px;
   font-size: 15px;
-  padding-top: 20px;
 }
 </style>

@@ -13,7 +13,7 @@
           </div>
           <div class="a-button">
             <p class="down-notice">ID</p>
-            <p class="down-notice2">{{ ID }}</p>
+            <p class="down-notice2">{{ photographer_Id }}</p>
           </div>
         </div>
       </div>
@@ -22,7 +22,7 @@
           <h2 style="font-size: 24px;margin-left: 10px;">我的摄影作品</h2>
           <div class="photo-bar">
             <div class="photo-frame" v-for="(photo, index) in photos" :key="index">
-              <img :src="photo.src" alt="Photo" class="photo" />
+              <img :src="photo.address" alt="Photo" class="photo" />
             </div>
           </div>
           <button @click="navigateTo('/UserTab/myPhotographyWorks')"
@@ -42,7 +42,7 @@
                 </el-form-item>
                 <el-form-item label="赛事" prop="event">
                   <el-select v-model="form.event" placeholder="请选择赛事">
-                    <el-option v-for="event in events" :key="event.value" :label="event.label" :value="event.value">
+                    <el-option v-for="event in events" :key="event.value" :label="event.name" :value="event.id">
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -50,7 +50,7 @@
                   <el-input v-model="form.location"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-upload action="#" list-type="picture-card" limit="1" :on-success="handleSuccess"
+                  <el-upload action="#" list-type="picture-card" :limit="1" :on-success="handleSuccess"
                     :file-list="fileList" :on-change="handleChange" :auto-upload="false">
                     <i slot="default" class="el-icon-plus"></i>
                     <div slot="file" slot-scope="{file}">
@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { getPhotographerInfor } from '@/api/UserCenter.js'
+import { getAllEvents, inquiryPhotoByPhotographer, inquiryPhotographerNameById } from '@/api/Photo';
 
 export default {
   name: 'PhotographerCenter',
@@ -91,17 +91,8 @@ export default {
   data() {
     return {
       name: '',
-      ID: '',
-      subWeb: 'PhotoWall',
-      photos: [
-        { src: require('@/assets/images/1.jpg') },
-        { src: require('@/assets/images/2.jpg') },
-        { src: require('@/assets/images/3.jpg') },
-        { src: require('@/assets/images/4.jpg') },
-        { src: require('@/assets/images/5.jpg') },
-        { src: require('@/assets/images/6.jpg') },
-      ],
-
+      photographer_Id: '',//暂时把摄影师用户信息写死
+      photos: [],
       dialogImageUrl: '',
       dialogVisible: false,
       formVisible: false,
@@ -114,7 +105,6 @@ export default {
         time: '',
         event: '',
         location: '',
-        desc: ''
       },
       rules: {
         time: [
@@ -200,17 +190,34 @@ export default {
       this.resetForm();
     }
   },
-  mounted() {
-    this.ID = localStorage.getItem('UserId')
-    getPhotographerInfor(this.ID)
-      .then((res) => {
-        this.name = res.Name;
-      })
-      .catch(error => {
-        console.error('查询失败:', error);
-        alert('查询失败');
-      });
-  }
+  async mounted() {
+    this.photographer_Id = localStorage.getItem('UserId')
+    this.name = await inquiryPhotographerNameById(this.photographer_Id);
+
+    try {
+      // 获取所有赛事
+      const eventsResponse = await getAllEvents();
+      this.events = eventsResponse.map(event => ({
+        id: event.id,
+        name: event.name
+      }));
+      console.log('赛事信息：', this.events);
+    } catch (error) {
+      console.error('获取赛事失败:', error);
+    }
+
+    //获取当前摄影师照片
+    const photoResponse = await inquiryPhotoByPhotographer(this.photographer_Id, this.name);
+
+    this.photos = photoResponse.map(photo => {
+      return {
+        ...photo,
+        time: photo.time.split(' ')[0],  // 只保留年月日部分
+        address: 'http://' + photo.address
+      };
+    });
+    console.log('收到的照片', this.photos);
+  },
 }
 </script>
 

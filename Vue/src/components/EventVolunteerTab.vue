@@ -8,7 +8,7 @@
           <el-breadcrumb-item>志愿管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <div class="TabRight" style="margin-right: 15%;margin-top: 10%;">
+      <div class="TabRight" style="margin-right: 15%;">
         <div class="TabFlex">
           <div class="Tab" style="margin-top: 0;">
             <el-menu ref="EventVolunteerTab" :default-active="ActiveIndexForVolunteerTab" class="el-menu-vertical-demo"
@@ -16,15 +16,20 @@
               <el-menu-item index="1">
                 <span>志愿者分工</span>
               </el-menu-item>
-              <el-menu-item index="2">
-                <span>补给点排班</span>
-              </el-menu-item>
-              <el-menu-item index="3">
-                <span>医疗点排班</span>
-              </el-menu-item>
-              <el-menu-item index="4">
-                <span>摆渡车排班</span>
-              </el-menu-item>
+              <el-submenu index="222" menu-trigger="hover">
+                <template slot="title">
+                  <span>志愿者排班</span>
+                </template>
+                <el-menu-item index="2">
+                  <span>补给点排班</span>
+                </el-menu-item>
+                <el-menu-item index="3">
+                  <span>医疗点排班</span>
+                </el-menu-item>
+                <el-menu-item index="4">
+                  <span>摆渡车排班</span>
+                </el-menu-item>
+              </el-submenu>
               <el-menu-item index="5">
                 <span>伤员管理</span>
               </el-menu-item>
@@ -52,15 +57,10 @@ export default {
       this.$router.push({ name: this.EventTabTitle[index - 1], params: { event_id: this.$route.params.event_id, name: this.$route.params.name } });
     },
   },
-  created() {
-    this.$store.dispatch('loadInitialData');
-  },
   mounted() {
-    // this.$router.push({ name: 'ParticipantLottery' })
     this.$bus.$on('IsLottery', this.LotteryPermission);
     // 全局总线备用
     this.$bus.$on('ActiveIndexForVolunteerTab', this.ActiveIndex);
-    this.$bus.$emit('ActiveIndexForVolunteerTab', '1')
   },
   beforeDestroy() {
     this.$bus.$off('ActiveIndexForVolunteerTab', this.ActiveIndex);

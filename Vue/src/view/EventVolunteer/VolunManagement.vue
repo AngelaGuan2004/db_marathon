@@ -1,31 +1,33 @@
 <template>
   <div id="VolunManagement">
     <div style="display: flex;  width: 100%;">
-      <el-main class="Content">
+      <el-main class="Content" v-if="paginatedVolunteers.length > 0">
+        <div style="margin-bottom: 25px;margin-left: 25px;;font-weight: bold;font-size: 26px;">{{
+          this.$route.params.name }}</div>
         <div class="Button">
-          <div style="margin-left: 55%;margin-top: 10px;">
+          <div style="margin-left: 65%;margin-top: 10px;">
             <el-button type="primary" @click="save" style="margin: 0 10px;">保存</el-button>
             <el-button type="primary" @click="cancel">取消</el-button>
           </div>
         </div>
-        <div v-if="paginatedVolunteers.length > 0">
+        <div>
           <el-table :data="paginatedVolunteers" class="Table" style="width: 100%">
-            <el-table-column prop="id" label="ID" width="100"></el-table-column>
-            <el-table-column prop="name" label="姓名" width="100"></el-table-column>
-            <el-table-column prop="telenumber" label="电话" width="200"></el-table-column>
-            <el-table-column label="补给点" width="100">
+            <el-table-column prop="id" label="ID" width="125"></el-table-column>
+            <el-table-column prop="name" label="姓名" width="150"></el-table-column>
+            <el-table-column prop="telephone_Number" label="电话" width="200"></el-table-column>
+            <el-table-column label="补给点" width="125">
               <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.tosupply"
                   @change="handleCheckboxChange(scope.row, 'tosupply')"></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column label="医疗点" width="100">
+            <el-table-column label="医疗点" width="125">
               <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.tomedical"
                   @change="handleCheckboxChange(scope.row, 'tomedical')"></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column label="摆渡车" width="100">
+            <el-table-column label="接驳车" width="125">
               <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.tocar" @change="handleCheckboxChange(scope.row, 'tocar')"></el-checkbox>
               </template>
@@ -34,15 +36,16 @@
           <el-pagination class="Pagination" background layout="prev, pager, next" :total="totalVolunteersCount"
             :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
         </div>
-        <div v-else class="Empty">
-          暂无数据
-        </div>
       </el-main>
+      <div v-else class="Empty">
+        暂无数据
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getVolunteersByEventId, scheduleVolunteer, acquireVolunteerInformation } from '@/api/volunteer'; // 假设你的 API 请求方法在这个路径下
 export default {
   name: 'VolunManagement',
   data() {
@@ -78,31 +81,86 @@ export default {
         row.tomedical = false;
       }
     },
-    save() {
-      const selectedSupplyVolun = this.volunteers.filter(p => p.tosupply);
-      const selectedMedicalVolun = this.volunteers.filter(p => p.tomedical);
-      const selectedCarVolun = this.volunteers.filter(p => p.tocar);
-      this.$store.dispatch('saveSelectedVolun', {
-        supply: selectedSupplyVolun,
-        medical: selectedMedicalVolun,
-        car: selectedCarVolun
-      }).then(() => {
-        // 保存成功后，从页面上移除已选择的志愿者
-        this.volunteers = this.$store.getters.getAvailableVoluns;
+    async save() {
+      try {
+        const eventId = this.$route.params.event_id; // 固定的赛事ID
+        const savePromises = this.volunteers.map(volunteer => {
+          let jobCategory = '';
+
+          if (volunteer.tosupply) {
+            jobCategory = '补给点';
+          } else if (volunteer.tomedical) {
+            jobCategory = '医疗点';
+          } else if (volunteer.tocar) {
+            jobCategory = '接驳车';
+          }
+
+          if (jobCategory) {
+            return scheduleVolunteer({
+              Event_Id: eventId,
+              Volunteer_Id: volunteer.id,
+              Job_category: jobCategory
+            });
+          } else {
+            return Promise.resolve(); // 如果没有选择任务，直接返回 resolved 的 Promise
+          }
+        });
+
+        await Promise.all(savePromises);
         this.$message.success('保存成功');
-      }).catch(() => {
-        this.$message.error('保存失败');
-      });
+        this.loadVolunteers();
+      } catch (error) {
+        console.error('Failed to save volunteer assignments:', error);
+        this.$message.error('保存失败，请稍后重试。');
+      }
     },
     cancel() {
-      this.volunteers.forEach(p => p.tosupply = false);
-      this.volunteers.forEach(p => p.tomedical = false);
-      this.volunteers.forEach(p => p.tocar = false);
+      this.volunteers.forEach(p => {
+        p.tosupply = false;
+        p.tomedical = false;
+        p.tocar = false;
+      });
       this.$message.info('已取消所有勾选');
+    },
+
+    async loadVolunteers() {
+      try {
+        const eventId = this.$route.params.event_id; // 固定的赛事ID
+        const response = await getVolunteersByEventId(eventId);
+        const volunteersWithNoJobCategory = [];
+
+        // 遍历所有志愿者，查询他们的 job_category
+        for (const volunteer of response) {
+
+          const volunteerInfo = await acquireVolunteerInformation(volunteer.id, eventId);
+          console.log(volunteerInfo)
+          if (volunteerInfo && volunteerInfo.job_category === "未排班") {
+            // 只有未排班的志愿者才加入列表
+            volunteersWithNoJobCategory.push({
+              id: volunteer.id,
+              name: volunteer.name,
+              telephone_Number: volunteer.telephone_Number,
+              tosupply: false,
+              tomedical: false,
+              tocar: false
+            });
+          }
+        }
+
+        this.volunteers = volunteersWithNoJobCategory;
+
+        if (this.volunteers.length === 0) {
+          this.$message.success('所有志愿者均已分配任务。');
+        }
+
+      } catch (error) {
+        console.error('Failed to load volunteers:', error);
+        this.$message.error('加载志愿者信息失败，请稍后重试。');
+      }
     }
   },
   created() {
-    this.volunteers = this.$store.getters.getAvailableVoluns;
+    this.loadVolunteers(); // 加载志愿者信息
   }
 };
 </script>
@@ -116,12 +174,14 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 80px;
   margin-right: 3%;
-  width: 67%;
+  width: 105vh;
+  height: 73vh;
+  margin-bottom: 75px;
   font-size: 15px;
+  padding-top: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 </style>

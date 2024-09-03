@@ -40,13 +40,19 @@ export default {
   data() {
     return {
       UserTabTitle: ['UserInfo', 'UserResults', 'UserRegistrations', 'UserVolunteering', 'PhotographerCenter'],
-      ActiveIndexForUserTab: "1"
+      ActiveIndexForUserTab: ""
     }
   },
   methods: {
     ActiveIndex(index) {
       this.ActiveIndexForUserTab = index; // 设置当前激活的菜单项
       this.$refs.UserMenu.activeIndex = index;
+      if (index === '1') {
+        if (localStorage.getItem('UserRole') === 'Athlete')
+          this.$router.push({ name: 'UserInfo' })
+        else
+          this.$router.push({ name: 'PhotographerCenter' })
+      }
       this.$router.push({ name: this.UserTabTitle[index - 1] });
     },
     GetRole() {
@@ -54,10 +60,9 @@ export default {
     }
   },
   mounted() {
-    if (localStorage.getItem('UserRole') === 'Athlete')
-      this.$router.push({ name: 'UserInfo' })
-    else
+    if (localStorage.getItem('UserRole') === 'Photographer') {
       this.$router.push({ name: 'PhotographerCenter' })
+    }
     this.$bus.$on('ActiveIndexForUserTab', this.ActiveIndex);
   },
   beforeDestroy() {
@@ -94,7 +99,7 @@ export default {
 
 .User {
   width: 100%;
-  height: 100%;
+  height: max(100%, 750px);
   background-color: rgb(244, 244, 244);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 0 100px;

@@ -16,7 +16,7 @@
       <div class="HeaderLogin">
         <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelectLogin" background-color="transparent"
           text-color="white" active-text-color="white" v-if="GetRole() === 'Visitor'">
-          <el-menu-item index="1">登录</el-menu-item>
+          <el-menu-item index="5">登录</el-menu-item>
         </el-menu>
         <div v-else>
           <div
@@ -39,53 +39,35 @@
 
 
 <script>
-import { fetchAllEvents } from '@/api/Event'
 export default {
   name: 'Header',
   data() {
     return {
       TabHerf: ['Home', 'EventList', 'PhotoWall', 'UserTab'],
       Role: '',
-      events: [],
       ActiveIndexForHeader: "1"
     };
   },
-  mounted() {
-    this.loadAllEvents();  // 在组件创建时加载所有赛事信息
-
+  created() {
+    this.$router.push({ name: 'Home' })
+    this.$bus.$on('updateActiveIndex', (index) => {
+      this.ActiveIndexForHeader = index;
+    });
+  },
+  beforeDestroy() {
+    this.$bus.$off('updateActiveIndex'); // 组件销毁时，取消事件监听
   },
   methods: {
-    loadAllEvents() {
-      fetchAllEvents().then(response => {
-        console.log(response);
-        // 映射 eventList 数组
-        this.events = response.map(Event => ({
-          id: Event.id,
-          date: this.formatDate(Event.event_Date),
-          name: Event.name,
-          type: Event.category,
-          scale: Event.scale
-        }))
-        this.$router.push({ name: 'Home', params: { events: this.events } });
-      }).catch(error => {
-        // 错误处理
-        this.$message.error('加载赛事失败，请稍后重试。');
-        console.error('Failed to load events:', error);
-      });
-    },
-    formatDate(dateString) {
-      const date = new Date(dateString); // 创建一个Date对象
-      const year = date.getFullYear(); // 获取年份
-      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 获取月份，月份从0开始计数，所以加1
-      const day = date.getDate().toString().padStart(2, '0'); // 获取日期
-
-      return `${year}-${month}-${day}`; // 返回格式化的日期字符串
-    },
     handleSelect(key) {
-      if (key === '1' || key === '2')
-        this.$router.push({ name: this.TabHerf[key - 1], params: { events: this.events } })
+      if (key === '4') {
+        if (localStorage.getItem('UserRole') === 'Photographer')
+          this.$router.push({ name: 'PhotographerCenter' })
+        else
+          this.$router.push({ name: this.TabHerf[key - 1] })
+      }
       else
-        this.$router.push({ name: this.TabHerf[key - 1], })
+        this.$router.push({ name: this.TabHerf[key - 1] })
+      this.ActiveIndexForHeader = key
     },
     handleSelectLogin() {
       this.$router.push({ name: 'Home' })

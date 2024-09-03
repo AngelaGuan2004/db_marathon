@@ -25,7 +25,7 @@
               <button @click="toggleLike(index)" class="like-button" :class="{ liked: photo.liked }">
                 {{ photo.liked ? '❤️' + photo.likes : '🤍' + photo.likes }}
               </button>
-              <img :src="photo.src" alt="Photo" class="photo" @click="openPreview(photo)" />
+              <img :src="photo.address" alt="Photo" class="photo" @click="openPreview(photo)" />
 
             </span>
 
@@ -46,7 +46,7 @@
     </el-pagination>
     <!-- 图片预览框 -->
     <el-dialog :visible.sync="dialogVisible" width="60%" center>
-      <img :src="currentPhoto.src" alt="Preview" style="width: 100%;" />
+      <img :src="currentPhoto.address" alt="Preview" style="width: 100%;" />
     </el-dialog>
   </div>
 </template>
@@ -54,7 +54,6 @@
 <script>
 import { getAllPhotos } from '@/api/Photo';
 import { likePhoto } from '@/api/Photo';
-import { getPhotoById } from '@/api/Photo';
 
 export default {
   name: 'PhotoWall',
@@ -101,27 +100,17 @@ export default {
   methods: {
     async getPhotos() {
       try {
-
-        //第一步：拿到照片基本数据
         const response = await getAllPhotos();
-        this.photos = response;
-        console.log("收到照片基本数据:", this.photos);
-
-        // 第二步：遍历每张照片，获取它的图片 URL
-        for (const photo of this.photos) {
-          try {
-            // 通过照片的 ID 获取照片的 URL
-            const photoBlob = await getPhotoById(photo.id);
-            const blob = new Blob([photoBlob], { type: 'image/jpeg' });
-            const photoUrl = URL.createObjectURL(blob);
-
-            // 将获取的 URL 存入照片对象中
-            photo.src = photoUrl;
-          } catch (error) {
-            console.error(`获取照片ID ${photo.id} 的图片时发生错误:`, error);
-          }
-        }
-        console.log("最终带有图片URL的数据:", this.photos);
+        // 处理时间数据，去掉具体时刻，只保留年月日
+        this.photos = response.map(photo => {
+          return {
+            ...photo,
+            time: photo.time.split(' ')[0],  // 只保留年月日部分
+            address: 'http://' + photo.address
+          };
+        });
+        console.log("收到的数据:", this.photos);
+        this.loading = false
       } catch (error) {
         console.error('获所有照片时发生错误:', error);
       }
@@ -142,7 +131,7 @@ export default {
       try {
         // 发送请求到后端，传递照片的ID和当前的点赞状态
         await likePhoto(photo.id);
-        this.$message.log("点赞状态更新成功");
+        this.$message.success("点赞状态更新成功");
       } catch (error) {
         // 如果请求失败，回滚本地状态
         this.$message.error("点赞状态更新失败", error);

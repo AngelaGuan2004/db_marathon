@@ -1,12 +1,10 @@
 <template>
   <div id="ParticipantLottery">
     <el-main class="ParticipantLotteryContent">
-      <!-- <div class="right-menu">
-              <el-button class="custom-button" icon="el-icon-arrow-left" @click="goBack">返回</el-button>
-            </div> -->
       <div class="ParticipantLotteryInput">
-        <el-input v-model="totalParticipants" placeholder="请输入总人数" class="InputTotalParticipants"></el-input>
-        <el-button type="primary" @click="drawLots">抽签</el-button>
+        <el-input v-model="totalParticipants" placeholder="请输入总人数" class="InputTotalParticipants"
+          :disabled="isDrawn === '是'"></el-input>
+        <el-button type="primary" @click="drawLots" :disabled="isDrawn === '是'">抽签</el-button>
       </div>
       <div v-if="paginatedParticipants.length > 0">
         <el-table :data="paginatedParticipants" class="ParticipantLotteryTable">
@@ -29,31 +27,17 @@
 </template>
 
 <script>
+import { fetchEventById } from '@/api/Event.js';
+import { fetchPlayersByEvent, fetchPlayerDetails, updateEvent, uploadBallotResults, getNumberByEventIdAndPlayerId } from '@/api/EventManagement.js';
 export default {
   name: 'ParticipantLottery',
   data() {
     return {
       totalParticipants: '',
-      participants: [{ "id": 1, "name": "张三", "sex": "男", "age": 28, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 2, "name": "李四", "sex": "女", "age": 32, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 3, "name": "王五", "sex": "男", "age": 45, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 4, "name": "赵六", "sex": "女", "age": 22, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 5, "name": "孙七", "sex": "男", "age": 31, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 6, "name": "周八", "sex": "女", "age": 29, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 7, "name": "吴九", "sex": "男", "age": 37, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 8, "name": "郑十", "sex": "女", "age": 26, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 9, "name": "王十一", "sex": "男", "age": 34, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 10, "name": "陈十二", "sex": "女", "age": 30, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 11, "name": "蒋十三", "sex": "男", "age": 40, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 12, "name": "沈十四", "sex": "女", "age": 27, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 13, "name": "韩十五", "sex": "男", "age": 33, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 14, "name": "杨十六", "sex": "女", "age": 38, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 15, "name": "朱十七", "sex": "男", "age": 25, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 16, "name": "秦十八", "sex": "女", "age": 42, "role": "普通跑者", "state": "待抽签", "number": "-" },
-      { "id": 17, "name": "尤十九", "sex": "男", "age": 29, "role": "慈善跑者", "state": "-", "number": "-" },
-      { "id": 18, "name": "许二十", "sex": "女", "age": 36, "role": "慈善跑者", "state": "-", "number": "-" }],
+      participants: [],
       currentPage: 1,
       pageSize: 8,
+      isDrawn: '否'
     }
   },
   computed: {
@@ -65,92 +49,229 @@ export default {
       const end = this.currentPage * this.pageSize;
       return this.participants.slice(start, end);
     },
-    allParticipantsDrawn() {
-      return this.participants.every(p => p.state !== '待抽签');
-    }
   },
   methods: {
-    drawLots() {
-      const total = parseInt(this.totalParticipants);
-      if (isNaN(total) || total <= 0) {
-        this.$message.error('请输入有效的总人数');
-        return;
-      }
+    formatDate(dateString) {
+      const date = new Date(dateString);
 
-      const lotteryParticipants = this.participants.filter(p => p.role !== '慈善跑者' && p.state === '待抽签');
-      const charityParticipants = this.participants.filter(p => p.role === '慈善跑者');
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString(); // 月份从0开始
+      const year = date.getFullYear().toString().slice(2); // 只取年份的后两位
 
-      if (total > lotteryParticipants.length) {
-        this.$message.error('输入的总人数超过了待抽签的选手数量');
-        return;
-      }
-
-      // Randomly shuffle the array
-      for (let i = lotteryParticipants.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [lotteryParticipants[i], lotteryParticipants[j]] = [lotteryParticipants[j], lotteryParticipants[i]];
-      }
-
-      const selectedParticipants = lotteryParticipants.slice(0, total);
-      const unselectedParticipants = lotteryParticipants.slice(total);
-      const totalParticipants = selectedParticipants.length + charityParticipants.length;
-
-      // Generate unique race numbers and distribute them evenly among letters
-      const letters = ['A', 'B', 'C', 'D', 'E'];
-      const letterCounts = { 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0 };
-      const totalLetters = letters.length;
-      const maxPerLetter = Math.floor(totalParticipants / totalLetters);
-      const usedNumbers = new Set();
-
-      const generateUniqueNumber = (letter) => {
-        let uniqueNumber;
-        do {
-          const randomNumber = Math.floor(1000 + Math.random() * 9000);
-          uniqueNumber = `${letter}${randomNumber}`;
-        } while (usedNumbers.has(uniqueNumber));
-        usedNumbers.add(uniqueNumber);
-        return uniqueNumber;
-      };
-
-      const assignNumberToParticipant = (participant) => {
-        let assigned = false;
-        // Try to assign letters evenly
-        for (const letter of letters) {
-          if (letterCounts[letter] < maxPerLetter) {
-            participant.number = generateUniqueNumber(letter);
-            letterCounts[letter]++;
-            assigned = true;
-            break;
+      return `${day}-${month}月-${year}`;
+    },
+    loadEvent() {
+      const eventId = this.$route.params.event_id;
+      return fetchEventById(eventId)
+        .then(event => {
+          console.log('Event fetched:', event);
+          this.isDrawn = event.Event.Is_Drawn;
+          if (this.isDrawn === '是') {
+            this.participants.forEach(p => {
+              p.state = '已抽签';
+            });
+            this.$message.warning('该赛事已经进行过选手抽签')
           }
+        })
+        .catch(error => {
+          console.error('Failed to load event:', error);
+          this.$message.error('加载赛事信息失败，请稍后重试。');
+        });
+    },
+    loadParticipants() {
+      const eventId = this.$route.params.event_id;
+      fetchPlayersByEvent(eventId)
+        .then(response => {
+          if (Array.isArray(response) && response.length > 0) {
+            const playerPromises = response.map(player =>
+              fetchPlayerDetails(player.player_Id).then(detail => {
+                let numberPromise;
+                if (this.isDrawn === '是') {
+                  console.log(`Fetching number with Player_Id=${player.player_Id}, Event_Id=${eventId}`);
+                  numberPromise = getNumberByEventIdAndPlayerId(player.player_Id, eventId)
+                    .then(res => {
+                      console.log('Player number:', res);
+                      return res;
+                    })
+                    .catch(err => {
+                      if (err.response) {
+                        console.error('Server response error:', err.response.data);
+                      } else {
+                        console.error('Failed to get number:', err.message);
+                      }
+                      return null; // 如果获取失败，返回 null
+                    });
+                } else {
+                  numberPromise = Promise.resolve(null); // 如果未抽签，直接返回 null
+                }
+
+                return numberPromise.then(number => {
+                  const state = number != '-' ? '已中签' : '未中签'; // 根据是否有号码决定报名状态
+                  return {
+                    id: detail.Id,
+                    name: detail.Name,
+                    sex: detail.Gender,
+                    age: detail.Age,
+                    role: player.role_ === 'charity' ? '慈善跑者' : '普通跑者', // 根据 role_ 字段显示身份
+                    originalRole: player.role_,
+                    state: this.isDrawn === '是' ? state : '待抽签',
+                    number: number || '-' // 如果有号码显示号码，否则显示 "-"
+                  };
+                });
+              })
+            );
+            return Promise.all(playerPromises);
+          } else {
+            throw new Error('Invalid response format or no participants found');
+          }
+        })
+        .then(players => {
+          this.participants = players;
+        })
+        .catch(error => {
+          console.error('Failed to load participants:', error);
+          this.$message.error('加载选手信息失败，请稍后重试。');
+        });
+    },
+    async drawLots() {  // 将这里标记为 async
+      try {
+        const total = parseInt(this.totalParticipants);
+        if (isNaN(total) || total <= 0) {
+          this.$message.error('请输入有效的总人数');
+          return;
         }
-        // If no letter is available, assign the least used letter
-        if (!assigned) {
-          const minUsedLetter = letters.reduce((prev, curr) => letterCounts[prev] < letterCounts[curr] ? prev : curr);
-          participant.number = generateUniqueNumber(minUsedLetter);
-          letterCounts[minUsedLetter]++;
+
+        const lotteryParticipants = this.participants.filter(p => p.role !== '慈善跑者' && p.state === '待抽签');
+        const charityParticipants = this.participants.filter(p => p.role === '慈善跑者');
+
+        if (total > lotteryParticipants.length) {
+          this.$message.error('输入的总人数超过了待抽签的选手数量');
+          return;
         }
-      };
 
-      selectedParticipants.forEach((p) => {
-        p.state = '已中签';
-        assignNumberToParticipant(p);
-      });
+        // 随机打乱数组
+        for (let i = lotteryParticipants.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [lotteryParticipants[i], lotteryParticipants[j]] = [lotteryParticipants[j], lotteryParticipants[i]];
+        }
 
-      unselectedParticipants.forEach((p) => {
-        p.state = '未中签';
-        p.number = '-';
-      });
+        const selectedParticipants = lotteryParticipants.slice(0, total);
+        const unselectedParticipants = lotteryParticipants.slice(total);
+        const totalParticipants = selectedParticipants.length + charityParticipants.length;
 
-      charityParticipants.forEach(p => {
-        assignNumberToParticipant(p);
-      });
+        // 生成唯一的比赛号码并平均分配给字母
+        const letters = ['A', 'B', 'C', 'D', 'E'];
+        const letterCounts = { 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0 };
+        const totalLetters = letters.length;
+        const maxPerLetter = Math.floor(totalParticipants / totalLetters);
+        const usedNumbers = new Set();
 
-      this.$message.success('抽签完成');
-      this.$bus.$emit('IsLottery')
+        const generateUniqueNumber = (letter) => {
+          let uniqueNumber;
+          do {
+            const randomNumber = Math.floor(1000 + Math.random() * 9000);
+            uniqueNumber = `${letter}${randomNumber}`;
+          } while (usedNumbers.has(uniqueNumber));
+          usedNumbers.add(uniqueNumber);
+          return uniqueNumber;
+        };
+
+        const assignNumberToParticipant = (participant) => {
+          let assigned = false;
+          for (const letter of letters) {
+            if (letterCounts[letter] < maxPerLetter) {
+              participant.number = generateUniqueNumber(letter);
+              letterCounts[letter]++;
+              assigned = true;
+              break;
+            }
+          }
+          if (!assigned) {
+            const minUsedLetter = letters.reduce((prev, curr) => letterCounts[prev] < letterCounts[curr] ? prev : curr);
+            participant.number = generateUniqueNumber(minUsedLetter);
+            letterCounts[minUsedLetter]++;
+          }
+        };
+
+        selectedParticipants.forEach((p) => {
+          p.state = '已中签';
+          assignNumberToParticipant(p);
+        });
+
+        unselectedParticipants.forEach((p) => {
+          p.state = '未中签';
+          p.number = '-';
+        });
+
+        charityParticipants.forEach(p => {
+          assignNumberToParticipant(p);
+        });
+        this.$message.success('抽签完成');
+
+        // 构建 ballotData 数据
+        const ballotData = [
+          ...selectedParticipants,
+          ...unselectedParticipants,
+          ...charityParticipants
+        ].map(p => ({
+          number_: p.number,
+          role_: p.originalRole,
+          player_Id: p.id,
+          event_Id: this.$route.params.event_id  // 固定的 event_Id
+        }));
+        console.log('Ballot data being sent:', ballotData);
+
+        // 调用 API 上传抽签结果
+        await uploadBallotResults(ballotData)
+        this.$message.success('中签结果上传成功');
+
+        // 获取当前赛事信息
+        const event = await fetchEventById(this.$route.params.event_id);
+
+        if (event && event.Event) {
+          console.log('Event fetched:', event);
+          console.log('Event fetched:', event.Event.Name);
+          const updatedEvent = {
+            id: event.Event.Id,
+            category: event.Event.Category,
+            name: event.Event.Name,
+            start_Date: this.formatDate(event.Event.Start_Date),
+            end_Date: this.formatDate(event.Event.End_Date),
+            event_Date: this.formatDate(event.Event.Event_Date),
+            is_Drawn: "是",
+            scale: event.Event.Scale
+          };
+
+          // 更新赛事信息
+          const response = await updateEvent(updatedEvent);
+
+          if (response === true) {
+            this.$message.success('赛事信息更新成功');
+          } else {
+            this.$message.error('赛事信息更新失败');
+          }
+        } else {
+          throw new Error('无法获取赛事信息');
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error('Failed to update event:', error.response.data);
+        } else {
+          console.error('Failed to update event:', error.message);
+        }
+        this.$message.error('更新赛事信息时出错，请稍后重试。');
+      }
+
+      this.$bus.$emit('IsLottery');
     },
     handlePageChange(page) {
       this.currentPage = page;
     },
+  },
+  created() {
+    this.loadEvent().then(() => {
+      this.loadParticipants();
+    });
   }
 }
 </script>

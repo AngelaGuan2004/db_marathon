@@ -10,7 +10,7 @@
         </el-form-item>
       </el-form>
       <!-- 使用 v-if 确保 existingItems 和 newItems 有数据时才渲染表格 -->
-      <el-table v-if="items.length" :data="items" height="40vh">
+      <el-table v-if="items.length" :data="items" max-height="40vh">
         <el-table-column prop="id" label="物品ID"></el-table-column>
         <el-table-column prop="name" label="物品名"></el-table-column>
         <el-table-column prop="amount" label="物品数量"></el-table-column>
@@ -148,7 +148,10 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+@import "@/assets/css/Base.css";
+@import 'element-ui/lib/theme-chalk/index.css';
+
 #SupplypointManagement {
   display: flex;
   flex-direction: row;

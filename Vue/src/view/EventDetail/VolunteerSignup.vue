@@ -50,14 +50,14 @@ export default {
             this.volunteer.playerName = response.Name;
             this.volunteer.playerPhone = response.Telephone_Number;
           } else {
-            this.$message.error('未找到该玩家的信息');
+            this.$message.error('未找到该跑者的信息');
           }
         } else {
           this.$message.error('用户ID未找到');
         }
       } catch (error) {
         console.error('Error fetching player data:', error);
-        this.$message.error('加载玩家信息失败');
+        this.$message.error('加载跑者信息失败');
       }
     },
     async submitRegistration() {
@@ -83,6 +83,7 @@ export default {
       }
     },
     modifyInfo() {
+      this.$bus.$emit('updateActiveIndex', '4');
       this.$router.push({ name: 'UserTab' });
     }
   }

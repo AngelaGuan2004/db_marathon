@@ -9,16 +9,24 @@ export function getAllMedicalPoints(Event_Id) {
     })
 }
 
+// 获取某场赛事所有伤员
+export function getInjury(Event_Id) {
+    return request({
+        url: '/Medical/get_injury',
+        method: 'get',
+        params: { Event_Id }
+    })
+}
+
 // 添加伤员数据
 export function addInjury(data) {
     return request({
         url: '/Medical/add_injury',
         method: 'post',
-        data: { 
-          name: data.name,
-          ID: data.ID,
-          medicalPoint: data.medicalPoint
+        data: {
+            // name: data.name,
+            player_Id: data.player_Id,
+            medicalpoint_Id: data.medicalPoint_Id
         }
     })
 }
-

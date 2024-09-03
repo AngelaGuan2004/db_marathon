@@ -6,7 +6,7 @@
           <h2 style=" color: black;">近期作品</h2>
           <el-carousel :interval="4000" type="card" height="260px" style="width: 90%;margin-left: 40px;">
             <el-carousel-item v-for="(photo, index) in recentPhotos" :key="index">
-              <img :src="photo.src" alt="Photo" class="carousel-image" />
+              <img :src="photo.address" alt="Photo" class="carousel-image" />
             </el-carousel-item>
           </el-carousel>
         </div>
@@ -29,7 +29,7 @@
               padding: 10px;
               width: 1200px;">
             <div class="photo-frame" v-for="(photo, index) in myphotos" :key="index">
-              <img :src="photo.src" alt="Photo" class="photo" @click="openPreview(photo)" />
+              <img :src="photo.address" alt="Photo" class="photo" @click="openPreview(photo)" />
               <div class="info-box">
                 <div style="text-align: left; font-size: 14px; padding-left: 15px; padding-top: 2px;line-height: 10px;">
                   <p>日期：{{ photo.date }}</p>
@@ -42,7 +42,7 @@
           </div>
           <!-- 图片预览框 -->
           <el-dialog :visible.sync="dialogVisible" width="60%" center>
-            <img :src="currentPhoto.src" alt="Preview" style="width: 100%;" />
+            <img :src="currentPhoto.address" alt="Preview" style="width: 100%;" />
           </el-dialog>
           <!-- 翻页 -->
           <div style="display: flex; justify-content: center; margin-top: 10px;">
@@ -56,20 +56,14 @@
   </div>
 </template>
 <script>
-
+import { inquiryPhotoByPhotographer, inquiryPhotographerNameById } from '@/api/Photo';
 export default {
   name: 'MyPhotographyWorks',
   data() {
     return {
-      myphotos: [
-        { src: require('@/assets/images/1.jpg'), date: '2023-07-10', location: '地点1', likes: 1000 },
-        { src: require('@/assets/images/3.jpg'), date: '2023-07-12', location: '地点3', likes: 800 },
-        { src: require('@/assets/images/5.jpg'), date: '2023-07-14', location: '地点5', likes: 600 },
-        { src: require('@/assets/images/7.jpg'), date: '2023-07-15', location: '地点7', likes: 499 },
-        { src: require('@/assets/images/9.jpg'), date: '2023-07-17', location: '地点9', likes: 50 },
-        { src: require('@/assets/images/10.jpg'), date: '2023-06-10', location: '地点3', likes: 666 },
-        { src: require('@/assets/images/11.jpg'), date: '2023-05-22', location: '地点1', likes: 888 },
-      ],
+      name: '',
+      photographer_Id: '',
+      myphotos: [],
       select: '2', // 默认排序为最热
       dialogVisible: false,
       currentPhoto: {}
@@ -82,6 +76,25 @@ export default {
         .slice() // 创建 myphotos 的浅拷贝
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .slice(0, 6);
+    }
+  },
+  async mounted() {
+    this.photographer_Id = localStorage.getItem('UserId')
+    this.name = await inquiryPhotographerNameById(this.photographer_Id);
+    try {
+      const response = await inquiryPhotoByPhotographer(this.photographer_Id, this.name);
+
+      this.myphotos = response.map(photo => {
+        return {
+          ...photo,
+          time: photo.time.split(' ')[0],  // 只保留年月日部分
+          address: 'http://' + photo.address
+        };
+      });
+      console.log("收到的照片数据:", this.myphotos);
+    } catch (error) {
+      console.error('获取摄影作品时发生错误:', error);
+      this.$message.error('获取摄影作品失败');
     }
   },
   methods: {

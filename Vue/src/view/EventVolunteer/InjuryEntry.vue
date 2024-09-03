@@ -1,93 +1,64 @@
 <template>
   <div id="InjuryEntry">
     <div class="injury-list">
-      <div style="margin-left: 45px;height: 30%;display: flex;justify-content: space-between;">
+      <div style="margin-left: 45px;display: flex;justify-content: space-between;">
         <div style="display: inline-block;">
           <h2 style="font-size: 24px; color: black;">{{ this.$route.params.name }}</h2>
           <h2 style="font-size: 24px; color: black;">伤员名单</h2>
         </div>
-        <div style="display: inline-block;">
-          <div style="margin-right: 25px;margin-top: 100%;">
-            <el-button type="primary" @click="handleAddRow"
-              style="font-size: 26px; font-weight: bold; background-color: #409effc7;">
-              +
-            </el-button>
-          </div>
-        </div>
       </div>
       <div class="table-container">
-        <el-table :data="injuredPlayers" stripe height="400">
-          <el-table-column prop="name" label="姓名" width="150">
-            <template slot-scope="scope">
-              <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.name }}</el-tag>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="ID" label="编号" sortable width="160">
-          </el-table-column>
-          <el-table-column prop="medicalPoint" label="医疗点">
-          </el-table-column>
-          <el-table-column label="操作" width="180">
+        <el-table :data="injuredPlayers" stripe max-height="415">
+          <el-table-column prop="name" label="姓名" width="150"></el-table-column>
+          <el-table-column prop="ID" label="编号" width="250"></el-table-column>
+          <el-table-column prop="medicalPoint" label="医疗点" width="150"></el-table-column>
+          <el-table-column label="操作" width="250">
             <template slot-scope="scope">
               <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
-                style=" font-size: 14px;" icon="el-icon-edit" plain></el-button>
+                style="color: rgb(64, 158, 255);" plain>编辑</el-button>
               <el-button size="small" type="primary" @click.native.prevent="handleDelete(scope.$index, scope.row)"
-                style="font-size: 14px;" icon="el-icon-delete" plain></el-button>
+                style="color: rgb(207, 34, 46);" plain>删除</el-button>
             </template>
           </el-table-column>
         </el-table>
-
-        <el-dialog :visible.sync="formVisible" width="40%" title="添加伤员" class="InjuryEntryDialog">
-          <el-form ref="form" :model="form" :rules="rules" label-width="25%" :row-key="getRowKey">
-            <el-form-item label="伤员姓名" prop="name">
-              <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item label="伤员编号" prop="ID">
-              <el-input v-model="form.ID"></el-input>
-            </el-form-item>
-            <el-form-item label="医疗点" prop="medicalPoint">
-              <el-select v-model="form.medicalPoint" placeholder="请选择医疗点">
-                <el-option v-for="point in medicalPoints" :key="point.value" :label="point.id" :value="point.label">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit" plain>上传<i
-                  class="el-icon-upload el-icon--right"></i></el-button>
-              <el-button type="danger" @click="handleCancel" plain>取消</el-button>
-            </el-form-item>
-          </el-form>
-        </el-dialog>
-
       </div>
+
+      <div style="text-align: right;margin-right: 50px;margin-top: 25px;">
+        <el-button type="primary" @click="handleAddRow">添加</el-button>
+      </div>
+
+      <el-dialog :visible.sync="formVisible" width="40%" title="添加伤员" class="InjuryEntryDialog">
+        <el-form ref="form" :model="form" :rules="rules" label-width="25%" :row-key="getRowKey">
+          <el-form-item label="伤员姓名" prop="name">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="伤员编号" prop="ID">
+            <el-input v-model="form.ID"></el-input>
+          </el-form-item>
+          <el-form-item label="医疗点" prop="medicalPoint">
+            <el-select v-model="form.medicalPoint" placeholder="请选择医疗点">
+              <el-option v-for="point in medicalPoints" :key="point.id" :label="point.place" :value="point.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <div style="text-align: right;margin-right: 50px;margin-top: 15px;">
+            <el-button type="primary" style="margin-right: 10px;" @click="onSubmit" plain>上传</el-button>
+            <el-button type="danger" @click="handleCancel" plain>取消</el-button>
+          </div>
+        </el-form>
+      </el-dialog>
     </div>
   </div>
 </template>
 
-
 <script>
-import { getAllMedicalPoints } from '@/api/Services';
-import { addInjury } from '@/api/Services';
+import { getAllMedicalPoints, addInjury, getInjury } from '@/api/Services';
 
 export default {
   name: 'InjuryEntry',
   data() {
     return {
-      // injuredPlayers: [
-      // { name: '周一', ID: '1234561', medicalPoint: '上海市普陀区金沙江路 1518 弄' }, 
-      // { name: '钱二', ID: '1234562', medicalPoint: '上海市普陀区金沙江路 1500 弄' }, 
-      // { name: '张三', ID: '1234563', medicalPoint: '上海市普陀区金沙江路 1522 弄' }, 
-      // { name: '李四', ID: '1234564', medicalPoint: '上海市普陀区金沙江路 1517 弄' }, 
-      // { name: '王五', ID: '1234565', medicalPoint: '上海市普陀区金沙江路 1519 弄' }, 
-      // { name: '赵六', ID: '1234566', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
-      // { name: '何七', ID: '1234567', medicalPoint: '上海市普陀区金沙江路 1516 弄' }, 
-      // { name: '郑八', ID: '1234568', medicalPoint: '上海市普陀区金沙江路 1547 弄' }, 
-      // { name: '郭九', ID: '1234569', medicalPoint: '上海市普陀区金沙江路 1538 弄' }
-      // ],
-
       injuredPlayers: [],
-
       medicalPoints: [],
       eventID: 10001,//需要一个函数来get
 
@@ -115,16 +86,28 @@ export default {
     }
   },
   async mounted() {
-    this.eventID = this.$route.params.event_id
+    console.log(getInjury); // 确保这不是 undefined 或 null
+
     try {
+      //获取医疗点
       const response = await getAllMedicalPoints(this.eventID);
-      console.log(response)
       this.medicalPoints = response.data.map(point => ({
-        value: point.id,
-        label: point.place // 使用 place 作为显示内容
+        id: point.id,
+        place: point.place
       }));
+      console.log('医疗点', this.medicalPoints);
+
+
+      // 获取伤员名单
+      const injuryResponse = await getInjury(this.eventID);
+      this.injuredPlayers = injuryResponse.map(injuredPlayer => ({
+        name: injuredPlayer.injury.name,
+        ID: injuredPlayer.injury.id_Number,
+        medicalPoint: injuredPlayer.medicalpoint.place
+      }));
+      console.log('伤员', this.injuredPlayers);
     } catch (error) {
-      console.error('获取医疗点失败:', error);
+      console.error('获取失败:', error);
     }
   },
   methods: {
@@ -138,7 +121,6 @@ export default {
       this.editingId = row.ID;  // 记录当前正在编辑的行的唯一 ID
       this.editingIndex = index;
       this.form = {
-        date: row.date,
         name: row.name,
         ID: row.ID,
         medicalPoint: row.medicalPoint
@@ -163,50 +145,40 @@ export default {
     },
     handleAddRow() {
       this.formVisible = true;
-      this.resetForm();
     },
     async onSubmit() {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
-          if (this.editingMode && this.editingIndex !== null) {
-            // 编辑模式：更新已有数据
-            const index = this.injuredPlayers.findIndex(player => player.ID === this.editingId);
-            if (index !== -1) {
-              this.$set(this.injuredPlayers, index, {
-                date: this.form.date,
-                name: this.form.name,
-                ID: this.form.ID,
-                medicalPoint: this.form.medicalPoint
-              });
-              this.$message.success('编辑成功');
-            }
-          } else {
-            // 非编辑模式：通过 API 提交新增数据
+          try {
+            // 使用表单中的数据调用 addInjury 函数
+            console.log(123, this.form.medicalPoint)
             const response = await addInjury({
-              name: this.form.name,
-              ID: this.form.ID,
-              medicalPoint: this.form.medicalPoint
+              player_Id: this.form.ID, // 传递选手身份证号
+              medicalPoint_Id: this.form.medicalPoint, // 传递医疗点ID
             });
-
             if (response.data.success) {
-              // 如果请求成功，添加到前端的表格中
+              // 成功后，将新数据添加到表格中
               this.injuredPlayers.push({
-                date: this.form.date,
-                name: this.form.name,
-                ID: this.form.ID,
-                medicalPoint: this.form.medicalPoint
+                name: this.form.name, // 伤员姓名
+                ID: this.form.id_Number, // 伤员身份证号
+                medicalPoint: this.medicalPoints.find(point => point.id === this.form.medicalPoint).place // 查找对应的医疗点名称
               });
               this.$message.success('上传成功');
             } else {
-              // 处理请求失败的情况
+              // 如果后端返回错误，显示错误信息
               this.$message.error(`上传失败: ${response.data.message}`);
             }
+
+            // 重置表单并关闭弹窗
+            this.formVisible = false;
+            this.resetForm();
+          } catch (error) {
+            // 捕获异常并显示错误信息
+            this.$message.error('上传失败，请稍后再试');
+            console.error('Error submitting data:', error);
           }
-          this.formVisible = false;
-          this.resetForm();
         } else {
           this.$message.error('表单验证失败');
-          return false;
         }
       });
     },

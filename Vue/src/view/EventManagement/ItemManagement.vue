@@ -1,7 +1,7 @@
 <template>
   <div id="ItemManagement">
     <el-dialog title="物资管理" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
-      <el-table :data="items" height="50vh">
+      <el-table :data="items" max-height="50vh">
         <el-table-column prop="id" label="物品ID" width="125"></el-table-column>
         <el-table-column prop="name" label="物品名" width="300"></el-table-column>
         <el-table-column label="选择" width="325">
