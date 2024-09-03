@@ -83,7 +83,7 @@
 
 <script>
 //import { getPhotographerInfor } from '@/api/UserCenter.js'
-import { getAllEvents, inquiryPhotoByPhotographer } from '@/api/Photo';
+import { getAllEvents, inquiryPhotoByPhotographer,inquiryPhotographerNameById } from '@/api/Photo';
 
 export default {
   name: 'PhotographerCenter',
@@ -91,17 +91,8 @@ export default {
   data() {
     return {
       name: '',
-      photographer_Id: 73,//暂时把摄影师用户信息写死
+      photographer_Id: '',//暂时把摄影师用户信息写死
       photos:[],
-      // photos: [
-      //   { src: require('@/assets/images/1.jpg') },
-      //   { src: require('@/assets/images/2.jpg') },
-      //   { src: require('@/assets/images/3.jpg') },
-      //   { src: require('@/assets/images/4.jpg') },
-      //   { src: require('@/assets/images/5.jpg') },
-      //   { src: require('@/assets/images/6.jpg') },
-      // ],
-
       dialogImageUrl: '',
       dialogVisible: false,
       formVisible: false,
@@ -129,19 +120,13 @@ export default {
     }
   },
   async mounted(){
-    try { 
-      // //获取当前摄影师照片
-      // const photoResponse = await inquiryPhotoByPhotographer(this.photographer_Id);
-      // this.photos=photoResponse.map(photo=>{
-      //   return {
-      //       ...photo,
-      //       time: photo.time.split(' ')[0],  // 只保留年月日部分
-      //       address:'http://'+photo.address
-      //   };
-      // });
-      // console.log('收到的照片',this.photos);
+    this.photographer_Id = localStorage.getItem('UserId')
+    const photographerName = await inquiryPhotographerNameById(this.photographer_Id);
 
-    // 获取所有赛事
+    console.log('得到摄影师名',photographerName);
+
+    try { 
+      // 获取所有赛事
       const eventsResponse = await getAllEvents();
       this.events = eventsResponse.map(event => ({
         id: event.id,
@@ -151,6 +136,20 @@ export default {
     } catch (error) {
       console.error('获取赛事失败:', error);
     }
+    
+      //获取当前摄影师照片
+      const photoResponse = await inquiryPhotoByPhotographer(photographerName);
+
+      this.photos=photoResponse.map(photo=>{
+        return {
+            ...photo,
+            time: photo.time.split(' ')[0],  // 只保留年月日部分
+            address:'http://'+photo.address
+        };
+      });
+      console.log('收到的照片',this.photos);
+
+    
   },
   methods: {
     navigateTo(_path) {
