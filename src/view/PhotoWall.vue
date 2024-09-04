@@ -67,8 +67,6 @@ export default {
       //   { id: 2, src: require('@/assets/images/1.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师1', time: '2023-07-10', location: '地点1', likes: 1000 },
       //   { id: 3, src: require('@/assets/images/2.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师2', time: '2023-07-11', location: '地点2', likes: 900 },
       //   { id: 4, src: require('@/assets/images/3.jpg'), liked: false, event_name: '北京马拉松', photographer_name: '摄影师3', time: '2023-07-12', location: '地点3', likes: 800 },
-      //   { id: 5, src: require('@/assets/images/4.jpg'), liked: false, event_name: '上海国际马拉松', photographer_name: '摄影师4', time: '2023-07-13', location: '地点4', likes: 700 },
-      //   { id: 6, src: require('@/assets/images/5.jpg'), liked: false, event_name: '上海国际马拉松', photographer_name: '摄影师5', time: '2023-07-14', location: '地点5', likes: 600 },
       // ],
       photos: [],
       input3: '',  // 这是用于暂存输入内容的变量
@@ -170,4 +168,4 @@ export default {
 @import 'element-ui/lib/theme-chalk/index.css';
 @import "@/assets/css/Base.css";
 @import "@/assets/css/PhotoWall.css";
-</style>
+</style>  
