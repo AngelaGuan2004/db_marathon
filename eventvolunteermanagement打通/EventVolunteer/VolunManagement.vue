@@ -80,47 +80,63 @@ export default {
         row.tomedical = false;
       }
     },
-    async save() {
-      try {
-        const eventId = "10001"; // 固定的赛事ID
-        const savePromises = this.volunteers.map(volunteer => {
-          let jobCategory = '';
+        async save() {
+  try {
+    const selectedVolunteers = this.volunteers.filter(volunteer => 
+      volunteer.tosupply || volunteer.tomedical || volunteer.tocar
+    );
 
-          if (volunteer.tosupply) {
-            jobCategory = '补给点';
-          } else if (volunteer.tomedical) {
-            jobCategory = '医疗点';
-          } else if (volunteer.tocar) {
-            jobCategory = '接驳车';
-          }
+    if (selectedVolunteers.length === 0) {
+      this.$message.warning('没有可以保存的信息');
+      return; // 如果没有勾选任何志愿者，直接返回
+    }
 
-          if (jobCategory) {
-            return scheduleVolunteer({
-              Event_Id: eventId,
-              Volunteer_Id: volunteer.id,
-              Job_category: jobCategory
-            });
-          } else {
-            return Promise.resolve(); // 如果没有选择任务，直接返回 resolved 的 Promise
-          }
-        });
+    const eventId = "10001"; // 固定的赛事ID
+    const savePromises = selectedVolunteers.map(volunteer => {
+      let jobCategory = '';
 
-        await Promise.all(savePromises);
-        this.$message.success('保存成功');
-        this.loadVolunteers();
-      } catch (error) {
-        console.error('Failed to save volunteer assignments:', error);
-        this.$message.error('保存失败，请稍后重试。');
+      if (volunteer.tosupply) {
+        jobCategory = '补给点';
+      } else if (volunteer.tomedical) {
+        jobCategory = '医疗点';
+      } else if (volunteer.tocar) {
+        jobCategory = '接驳车';
       }
-    },
-    cancel() {
-      this.volunteers.forEach(p => {
-        p.tosupply = false;
-        p.tomedical = false;
-        p.tocar = false;
+
+      return scheduleVolunteer({
+        Event_Id: eventId,
+        Volunteer_Id: volunteer.id,
+        Job_category: jobCategory
       });
-      this.$message.info('已取消所有勾选');
-    },
+    });
+
+    await Promise.all(savePromises);
+    this.$message.success('保存成功');
+    this.loadVolunteers(); // 重新加载志愿者信息
+
+  } catch (error) {
+    console.error('Failed to save volunteer assignments:', error);
+    this.$message.error('保存失败，请稍后重试');
+  }
+},
+
+cancel() {
+  const anySelection = this.volunteers.some(volunteer =>
+    volunteer.tosupply || volunteer.tomedical || volunteer.tocar
+  );
+
+  if (!anySelection) {
+    this.$message.warning('没有任何勾选可以取消');
+    return; // 如果没有勾选任何志愿者，直接返回
+  }
+
+  this.volunteers.forEach(p => {
+    p.tosupply = false;
+    p.tomedical = false;
+    p.tocar = false;
+  });
+  this.$message.info('已取消所有勾选');
+},
 
     async loadVolunteers() {
   try {
