@@ -30,8 +30,6 @@
           </el-table-column>
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
-              <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
-                style=" font-size: 14px;" icon="el-icon-edit" plain></el-button>
               <el-button size="small" type="primary" @click.native.prevent="handleDelete(scope.$index, scope.row)"
                 style="font-size: 14px;" icon="el-icon-delete" plain></el-button>
             </template>
