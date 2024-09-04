@@ -29,6 +29,7 @@
               padding: 10px;
               width: 1200px;">
             <div class="photo-frame" v-for="(photo, index) in myphotos" :key="index">
+              <el-button type="danger" icon="el-icon-delete" @click="handleDelete(photo.id,index)"></el-button>
               <img :src="photo.address" alt="Photo" class="photo" @click="openPreview(photo)" />
               <div class="info-box">
                 <div style="text-align: left; font-size: 14px; padding-left: 15px; padding-top: 2px;line-height: 10px;">
@@ -60,6 +61,8 @@
 <script>
 import { inquiryPhotoByPhotographer } from '@/api/Photo';
 import { inquiryPhotographerNameById } from '@/api/Photo';
+import { deletePhoto } from '@/api/Photo';
+
 
 export default {
   name: 'MyPhotographyWorks',
@@ -119,6 +122,16 @@ export default {
     openPreview(photo) {
       this.currentPhoto = photo;
       this.dialogVisible = true;
+    },
+    async handleDelete(photoId, index) {
+      try {
+        await deletePhoto(photoId);  
+        this.myphotos.splice(index, 1);  
+        this.$message.success('照片删除成功');
+      } catch (error) {
+        console.error('删除照片时发生错误:', error);
+        this.$message.error('删除失败，请重试');
+      }
     }
   }
 }
