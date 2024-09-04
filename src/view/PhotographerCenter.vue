@@ -82,8 +82,7 @@
 </template>
 
 <script>
-//import { getPhotographerInfor } from '@/api/UserCenter.js'
-import { getAllEvents, inquiryPhotoByPhotographer,inquiryPhotographerNameById } from '@/api/Photo';
+import { getAllEvents, inquiryPhotoByPhotographer,inquiryPhotographerNameById,uploadPhoto } from '@/api/Photo';
 
 export default {
   name: 'PhotographerCenter',
@@ -91,7 +90,7 @@ export default {
   data() {
     return {
       name: '',
-      photographer_Id: '',//暂时把摄影师用户信息写死
+      photographer_Id: '',
       photos:[],
       dialogImageUrl: '',
       dialogVisible: false,
@@ -119,39 +118,48 @@ export default {
       }
     }
   },
+
   async mounted(){
     this.photographer_Id = localStorage.getItem('UserId')
     const photographerName = await inquiryPhotographerNameById(this.photographer_Id);
 
     console.log('得到摄影师名',photographerName);
 
-    try { 
-      // 获取所有赛事
-      const eventsResponse = await getAllEvents();
-      this.events = eventsResponse.map(event => ({
-        id: event.id,
-        name: event.name
-      }));
-      console.log('赛事信息：',this.events);
-    } catch (error) {
-      console.error('获取赛事失败:', error);
-    }
-    
-      //获取当前摄影师照片
-      const photoResponse = await inquiryPhotoByPhotographer(photographerName);
+    await this.getPhotos(photographerName);
 
-      this.photos=photoResponse.map(photo=>{
-        return {
-            ...photo,
-            time: photo.time.split(' ')[0],  // 只保留年月日部分
-            address:'http://'+photo.address
-        };
-      });
-      console.log('收到的照片',this.photos);
-
-    
+    await this.getEvents();
   },
+
   methods: {
+    async getPhotos(photographerName){
+      try {
+        const response = await inquiryPhotoByPhotographer(photographerName);
+        // 处理时间数据，去掉具体时刻，只保留年月日
+        this.photos = response.map(photo => {
+          return {
+              ...photo,
+              time: photo.time.split(' ')[0],  // 只保留年月日部分
+              address:'http://'+photo.address
+          };
+        });        
+        console.log("收到的数据:", this.photos);
+      } catch (error) {
+        console.error('获所有照片时发生错误:', error);
+      }
+    },
+    async getEvents(){  
+      try { 
+        // 获取所有赛事
+        const eventsResponse = await getAllEvents();
+        this.events = eventsResponse.map(event => ({
+          id: event.id,
+          name: event.name
+        }));
+        console.log('赛事信息：',this.events);
+      } catch (error) {
+        console.error('获取赛事失败:', error);
+      }
+    },
     navigateTo(_path) {
       this.$router.push({ path: _path }, () => { })
     },
@@ -196,21 +204,44 @@ export default {
         this.fileList = this.fileList.filter(f => f.uid !== file.uid);
       }
     },
-    onSubmit() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          if (!this.fileSelected) {
-            this.$message.error('请上传摄影作品');
-            return false;
-          }
-          this.$message.success('上传成功');
-          this.formVisible = false;
-        } else {
-          this.$message.error('表单验证失败');
+    async onSubmit() {
+    this.$refs.form.validate(async (valid) => {
+      if (valid) {
+        if (!this.fileSelected) {
+          this.$message.error('请上传摄影作品');
           return false;
         }
-      });
-    },
+
+        try {
+          // 准备提交的数据
+          const Data = new FormData();
+          Data.append('time', this.form.time);
+          Data.append('event_Id', this.form.event);
+          Data.append('location', this.form.location);
+          Data.append('photographer_Id', this.photographer_Id);
+          Data.append('file', this.fileList[0].raw); // 上传的文件
+
+          // 调用上传 API
+          const response = await uploadPhoto(Data);
+
+          // 根据返回的结果处理
+          if (response.success) {
+            this.$message.success('上传成功');
+            this.formVisible = false;
+            this.resetForm(); // 上传成功后重置表单
+          } else {
+            this.$message.error('上传失败，请稍后再试');
+          }
+        } catch (error) {
+          console.error('上传过程中发生错误:', error);
+          this.$message.error('上传失败，请稍后再试');
+        }
+      } else {
+        this.$message.error('表单验证失败');
+        return false;
+      }
+    });
+  },
     resetForm() {
       this.$refs.form.resetFields();
       this.fileList = [];
