@@ -134,18 +134,18 @@ export default {
     navigateTo(_path) {
       this.$router.push({ path: _path }, () => { })
     },
-    handleEdit(index, row) {
-      this.editingId = row.ID;  // 记录当前正在编辑的行的唯一 ID
-      this.editingIndex = index;
-      this.form = {
-        date: row.date,
-        name: row.name,
-        ID: row.ID,
-        medicalPoint: row.medicalPoint
-      };
-      this.editingMode = true;
-      this.formVisible = true;
-    },
+    // handleEdit(index, row) {
+    //   this.editingId = row.ID;  // 记录当前正在编辑的行的唯一 ID
+    //   this.editingIndex = index;
+    //   this.form = {
+    //     date: row.date,
+    //     name: row.name,
+    //     ID: row.ID,
+    //     medicalPoint: row.medicalPoint
+    //   };
+    //   this.editingMode = true;
+    //   this.formVisible = true;
+    // },
     handleDelete(index, row) {
       this.$confirm(`确认删除选手 ${row.name} 吗？`, '提示', {
         confirmButtonText: '确定',
@@ -169,23 +169,24 @@ export default {
     this.$refs.form.validate(async (valid) => {
       if (valid) {
         try {
-          // 使用表单中的数据调用 addInjury 函数
-          const response = await addInjury({
-            medicalpoint_Id: this.form.medicalPoint, // 传递医疗点ID
-            player_Id: this.form.id_Number // 传递选手身份证号
-          });
+          // 准备提交的数据
+          const Data = new FormData();
+          Data.append('name', this.form.name);
+          Data.append('IdNumber', this.form.ID);
+          Data.append('medicalPoint_Id', this.form.medicalPoint);
+          const response = await addInjury(Data);
 
-          if (response.data.success) {
+          if (response.success) {
             // 成功后，将新数据添加到表格中
             this.injuredPlayers.push({
-              name: this.form.name, // 伤员姓名
-              ID: this.form.id_Number, // 伤员身份证号
+              name: this.form.name, 
+              ID: this.form.IdNumber, 
               medicalPoint: this.medicalPoints.find(point => point.id === this.form.medicalPoint).place // 查找对应的医疗点名称
             });
             this.$message.success('上传成功');
           } else {
             // 如果后端返回错误，显示错误信息
-            this.$message.error(`上传失败: ${response.data.message}`);
+            this.$message.error(`上传失败: ${response.message}`);
           }
 
           // 重置表单并关闭弹窗
