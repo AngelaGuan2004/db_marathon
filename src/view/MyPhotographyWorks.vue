@@ -34,6 +34,7 @@
                 <div style="text-align: left; font-size: 14px; padding-left: 15px; padding-top: 2px;line-height: 10px;">
                   <p>日期：{{ photo.time }}</p>
                   <p>地点：{{ photo.location }}</p>
+                  <p>赛事: {{ photo.event_name }}</p>
                   <p style="color:crimson">❤️：{{ photo.likes }}</p>
                 </div>
 
@@ -85,25 +86,27 @@ export default {
   async mounted(){
     this.photographer_Id = localStorage.getItem('UserId')
     const photographerName = await inquiryPhotographerNameById(this.photographer_Id);
-    try {
-          const response = await inquiryPhotoByPhotographer(photographerName);  
-            console.log('得到摄影师名',photographerName);
-
-          this.photos=response.map(photo=>{
-            return {
-              ...photo,
-              time: photo.time.split(' ')[0],  // 只保留年月日部分
-              address:'http://'+photo.address
-          };
-        });
-        console.log("收到的照片数据:", this.myphotos);
-        } catch (error) {
-          console.error('获取摄影作品时发生错误:', error);
-          this.$message.error('获取摄影作品失败');
-        }
+    console.log('得到摄影师名',photographerName);
+    await this.getMyPhotos(photographerName);
   },
 
   methods: {
+    async getMyPhotos(photographerName){
+      try {
+        const response = await inquiryPhotoByPhotographer(photographerName);
+        // 处理时间数据，去掉具体时刻，只保留年月日
+        this.photos = response.map(photo => {
+          return {
+            ...photo,
+            time: photo.time.split(' ')[0],  // 只保留年月日部分
+            address:'http://'+photo.address
+          };
+        });        
+        console.log("收到的数据:", this.photos);
+      } catch (error) {
+        console.error('获所有照片时发生错误:', error);
+      }
+    },
     sortPhotos() {
       if (this.select === '1') {
         // 按日期排序，最新的在前
