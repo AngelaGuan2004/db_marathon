@@ -68,6 +68,7 @@
 import { getAllMedicalPoints } from '@/api/Services';
 import { getInjury } from '@/api/Services';
 import { addInjury } from '@/api/Services';
+import { deleteInjury } from '@/api/Services';
 
 export default {
   name: 'InjuryEntry',
@@ -100,7 +101,7 @@ export default {
     }
   },
   async mounted() {
-    console.log(getInjury); // 确保这不是 undefined 或 null
+    console.log(getInjury); // 确保不是 undefined 或 null
 
     try {
       this.$message.success('获取医疗点');
@@ -149,12 +150,28 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-      }).then(() => {
-        const deleteIndex = this.injuredPlayers.findIndex(item => item.ID === row.ID);
-        if (deleteIndex !== -1) {
-          this.injuredPlayers.splice(deleteIndex, 1);
+      }).then(async () => {
+        try {
+          // 发送删除请求
+          const response = await deleteInjury({
+            IdNumber: row.ID,
+            medicalPoint: row.medicalPoint
+          });
+
+          // 根据后端返回的状态处理结果
+          if (response.status === true) {
+            const deleteIndex = this.injuredPlayers.findIndex(item => item.ID === row.ID);
+            if (deleteIndex !== -1) {
+              this.injuredPlayers.splice(deleteIndex, 1);
+            }
+            this.$message.success('删除成功!');
+          } else if (response.status === false) {
+            this.$message.error(`删除失败: ${response.message}`);
+          } 
+        } catch (error) {
+          this.$message.error('删除失败，请稍后再试');
+          console.error('Error deleting data:', error);
         }
-        this.$message.success('删除成功!');
       }).catch(() => {
         this.$message.info('已取消删除');
       });
