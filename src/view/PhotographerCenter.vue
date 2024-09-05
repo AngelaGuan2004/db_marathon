@@ -225,7 +225,7 @@ export default {
           const response = await uploadPhoto(Data);
 
           // 根据返回的结果处理
-          if (response.success) {
+          if (response.status===true) {
             this.$message.success('上传成功');
             this.formVisible = false;
             this.resetForm(); // 上传成功后重置表单
