@@ -27,20 +27,36 @@ namespace MarathonMaster.Controllers
 
         /*录入伤员数据*/
         [HttpPost]
-        public async Task<IActionResult> add_injury([FromBody] Medical_Service service)
+        public async Task<IActionResult> add_injury([FromBody] Service service)
         {// 伤员id 医疗点id
 
             _logger.LogInformation("收到伤员数据");
 
+            Medical_Service medical_Service = new Medical_Service();
+
             try
             {
-                await _db.Insertable(service).ExecuteCommandAsync();
+                var existingPlayer = await _db.Queryable<Player>()
+                    .Where(it => it.Name == service.name && it.Id_Number == service.IdNumber)
+                    .FirstAsync();
+
+                if (existingPlayer != null)
+                {
+                    medical_Service.Player_Id = existingPlayer.Id;
+                }
+                else
+                {
+                    _logger.LogWarning("查id失败: 无效的用户名或身份证号");
+                    return BadRequest(new { status = false, message = "插入数据失败:无效的用户名或身份证号" });
+                }
+                medical_Service.Medicalpoint_Id = service.medicalPoint_Id;
+                await _db.Insertable(medical_Service).ExecuteCommandAsync();
                 _logger.LogInformation("成功插入伤员数据");
                 return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入数据失败: {@Medical_Service}", service); // 记录错误信息
+                _logger.LogError(ex, "插入数据失败: {@Medical_Service}", medical_Service); // 记录错误信息
 
                 return Ok(new { status = false, message = $"插入数据失败: {ex.Message}" });
             }
@@ -113,7 +129,36 @@ namespace MarathonMaster.Controllers
                 return Ok(new {status = false,message= $"删除数据失败: {ex.Message}" });
             }
         }
+        /*删除伤员*/
+        [HttpGet]
+        public async Task<IActionResult> delete_injury([FromQuery] string IdNumber, [FromQuery] string medicalPoint_Id)
+        {
+            _logger.LogInformation("收到删伤员信息");
+            try
+            {
+                // 检查是否存在身份证号对应的选手
+                var existingPlayer = await _db.Queryable<Player>()
+                                              .Where(it => it.Id_Number == IdNumber)
+                                              .FirstAsync();
 
+                if (existingPlayer == null)
+                {
+                    _logger.LogWarning("无此选手"); 
+                    return BadRequest("无此选手");
+                }
+                int count = await _db.Deleteable<Medical_Service>().Where(it => it.Medicalpoint_Id == medicalPoint_Id && it.Player_Id == existingPlayer.Id).ExecuteCommandAsync();
+                if (count == 1)
+                    return Ok(new { status = true });
+                else
+                    return Ok(new { status = false, message = "后端不报错，但没有删除任何行" });
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "删除数据失败");
+                return BadRequest(new { status = false, message = $"删除数据失败: {ex.Message}" });
+            }
+
+        }
 
         /*查询某场赛事所有（某个医疗点）的伤员*/
         [HttpGet]

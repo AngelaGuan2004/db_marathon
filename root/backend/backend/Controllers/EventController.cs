@@ -126,7 +126,7 @@ namespace MarathonMaster.Controllers
             try
             {
                 // 从数据库中查询所有赛事
-                var eventList = await _db.Queryable<Event>().ToListAsync();
+                var eventList = await _db.Queryable<Event>().OrderBy(e => e.Id, OrderByType.Desc).ToListAsync();
 
                 // 检查是否有赛事
                 if (eventList != null && eventList.Count > 0)

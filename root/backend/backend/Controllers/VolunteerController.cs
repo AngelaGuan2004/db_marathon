@@ -44,13 +44,28 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_volunteer([FromBody] Schedule Schedulei) //收到一个schedule类的值schedulei，其job_category的值为null
         {
-            _logger.LogInformation("收到志愿者报名的Schedule数据: {@Schedulei}", Schedulei); // 记录收到的数据
+            _logger.LogInformation("收到志愿者报名的Schedule数据: {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录收到的数据
 
             try
             {
-                await _db.Insertable(Schedulei).ExecuteCommandAsync();
-                _logger.LogInformation("成功插入志愿者报名的Schedule数据: {@Schedulei}", Schedulei); // 记录插入成功
-                return Ok(true); //true表示成功
+                //先检查这个人是否是这个赛事的跑者
+                List<Participate> query = await _db.Queryable<Participate>()
+                                         .Where(p => p.Player_Id == Schedulei.Volunteer_Id  && p.Event_Id  == Schedulei.Event_Id )
+                                         .ToListAsync();
+
+                if (query.Count == 0) //不是跑者
+                {
+                    await _db.Insertable(Schedulei).ExecuteCommandAsync();
+                    _logger.LogInformation("成功插入志愿者报名的Schedule数据: {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录插入成功
+                    return Ok(true); //true表示成功
+                }
+                else
+                {
+                    _logger.LogWarning("报名失败，该用户已是该赛事的跑者:  {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录插入成功
+                    return Ok(2);
+                }
+
+               
             }
             catch (System.Exception ex)
             {
