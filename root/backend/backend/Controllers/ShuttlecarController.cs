@@ -116,7 +116,7 @@ namespace MarathonMaster.Controllers
                 await _db.Deleteable<Shuttlecar>().In(shuttlecar_id).ExecuteCommandAsync();
 
                 _logger.LogInformation("成功删除id的接驳车班次信息: {@shuttlecar_id}", shuttlecar_id); // 记录查询成功
-                return Ok(shuttlecar_id);
+                return Ok(1);
 
             }
 
