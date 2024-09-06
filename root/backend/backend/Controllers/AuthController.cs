@@ -194,7 +194,7 @@ namespace MarathonMaster.Controllers
                 else
                 {
                     _logger.LogWarning("登录失败: 无效的用户名或密码");
-                    return Unauthorized(false);
+                    return Ok(2);
                 }
             }
             catch (System.Exception ex)
