@@ -18,8 +18,8 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  margin-top: 25px;
   height: 20px;
+  margin-bottom: 10px;
 }
 
 .RegisterReturn {
@@ -45,5 +45,5 @@
 .ErrorMessage {
   color: rgb(219, 57, 56);
   font-size: 14px;
-  margin-top: 5px;
+  height: 10px;
 }

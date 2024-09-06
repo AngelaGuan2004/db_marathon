@@ -46,10 +46,7 @@ export default {
           location.href = 'index.html'; // 登录成功后跳转到首页
         }, 1000)
       } else {
-        this.errorMessage = '密钥错误，请重新输入'
-        setTimeout(() => {
-          this.errorMessage = ''
-        }, 1000)
+        this.$message.error('密钥错误，请重新输入')
       }
     }
   }

@@ -8,7 +8,6 @@ import UserRegistrations from '@/view/User/UserRegistrations.vue'
 import UserInfo from '@/view/User/UserInfo.vue'
 import UserVolunteering from '@/view/User/UserVolunteering.vue'
 import UserResults from '@/view/User/UserResults.vue'
-import VolunteerDetailForAddStation from '@/view/User/VolunteerDetailForAddStation.vue'
 
 import EventManagementTab from '@/components/EventManagementTab.vue'
 import EventVolunteerTab from '@/components/EventVolunteerTab.vue'
@@ -60,7 +59,7 @@ export default new VueRouter({
       component: EventDetail,
     },
     {
-      path: '/EventRegistration',
+      path: '/EventRegistration/:event_id',
       name: 'EventRegistration',
       component: EventRegistration
     }, {
@@ -162,10 +161,6 @@ export default new VueRouter({
           name: 'UserVolunteering',
           component: UserVolunteering,
         }, {
-          name: 'VolunteerDetailForAddStation',
-          component: VolunteerDetailForAddStation,
-          path: 'VolunteerDetailForAddStation/:event_id',
-        }, {
           path: 'UserResults',
           name: 'UserResults',
           component: UserResults
@@ -185,6 +180,15 @@ export default new VueRouter({
       component: PhotoWall
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    // 如果路由中保存了滚动位置，则返回该位置（例如浏览器前进、后退按钮）
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      // 否则，返回顶部
+      return { x: 0, y: 0 };
+    }
+  }
 })
 
 //全局前置路由守卫————初始化的时候被调用、每次路由切换之前被调用

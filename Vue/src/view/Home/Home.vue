@@ -23,7 +23,8 @@
       <div class="RecentlyStartedBody">
         <el-timeline :reverse="false">
           <el-timeline-item v-for="(RecentlyStartedEvent, index) in RecentlyStartEvents" :key="index"
-            :timestamp="RecentlyStartedEvent.date" :hide-timestamp="true">
+            :timestamp="RecentlyStartedEvent.date" :hide-timestamp="true"
+            @click.native="GoToOneEvent(RecentlyStartedEvent.id)">
             <div class="RecentlyStartedTimestamp">{{ RecentlyStartedEvent.date }}</div>
             <div style="display: inline-block;">{{ RecentlyStartedEvent.name }}</div>
             <div class="extra-info">
@@ -178,6 +179,10 @@ export default {
       this.$router.push({ name: "EventList", params: { events: this.events } })
       this.$bus.$emit('updateActiveIndex', '2');
     },
+    GoToOneEvent(id) {
+      console.log('Clicked event ID:', id);  // 调试用
+      this.$router.push({ name: "EventDetail", params: { event_id: id } });
+    }
   },
   computed: {
     RecentlyStartEvents() {

@@ -1,29 +1,32 @@
 <template>
   <div id="InjuryEntry">
     <div class="injury-list">
-      <div style="margin-left: 45px;display: flex;justify-content: space-between;">
-        <div style="display: inline-block;">
-          <h2 style="font-size: 24px; color: black;">{{ this.$route.params.name }}</h2>
-          <h2 style="font-size: 24px; color: black;">伤员名单</h2>
+      <el-main v-if="injuredPlayers.length > 0">
+        <div style="margin-left: 45px;display: flex;justify-content: space-between;">
+          <div style="display: inline-block;">
+            <h2 style="font-size: 24px; color: black;">{{ this.$route.params.name }}</h2>
+            <h2 style="font-size: 24px; color: black;">伤员名单</h2>
+          </div>
         </div>
-      </div>
-      <div class="table-container">
-        <el-table :data="injuredPlayers" stripe max-height="415">
-          <el-table-column prop="name" label="姓名" width="150"></el-table-column>
-          <el-table-column prop="ID" label="编号" width="250"></el-table-column>
-          <el-table-column prop="medicalPoint" label="医疗点" width="150"></el-table-column>
-          <el-table-column label="操作" width="250">
-            <template slot-scope="scope">
-              <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
-                style="color: rgb(64, 158, 255);" plain>编辑</el-button>
-              <el-button size="small" type="primary" @click.native.prevent="handleDelete(scope.$index, scope.row)"
-                style="color: rgb(207, 34, 46);" plain>删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+        <div class="table-container">
+          <el-table :data="injuredPlayers" stripe max-height="415">
+            <el-table-column prop="name" label="姓名" width="150"></el-table-column>
+            <el-table-column prop="ID" label="编号" width="300"></el-table-column>
+            <el-table-column prop="medicalPoint" label="医疗点" width="150"></el-table-column>
+            <el-table-column label="操作" width="150">
+              <template slot-scope="scope">
+                <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
+                  style="color: rgb(64, 158, 255);" plain>编辑</el-button>
+                <!-- <el-button size="small" type="primary" @click.native.prevent="handleDelete(scope.$index, scope.row)"
+                style="color: rgb(207, 34, 46);" plain>删除</el-button> -->
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-main>
+      <div v-else class="Empty">暂无数据</div>
 
-      <div style="text-align: right;margin-right: 50px;margin-top: 25px;">
+      <div style="text-align: right;margin-right: 50px;">
         <el-button type="primary" @click="handleAddRow">添加</el-button>
       </div>
 
@@ -60,7 +63,7 @@ export default {
     return {
       injuredPlayers: [],
       medicalPoints: [],
-      eventID: 10001,//需要一个函数来get
+      eventID: this.$route.params.event_id,//需要一个函数来get
 
       formVisible: false,
       editingIndex: null,
@@ -150,23 +153,23 @@ export default {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
           try {
+            console.log(111, this.form)
             // 使用表单中的数据调用 addInjury 函数
-            console.log(123, this.form.medicalPoint)
             const response = await addInjury({
-              player_Id: this.form.ID, // 传递选手身份证号
               medicalPoint_Id: this.form.medicalPoint, // 传递医疗点ID
+              IdNumber: this.form.ID, // 传递选手身份证号
+              name: this.form.name
             });
-            if (response.data.success) {
+            if (response.status) {
               // 成功后，将新数据添加到表格中
               this.injuredPlayers.push({
                 name: this.form.name, // 伤员姓名
-                ID: this.form.id_Number, // 伤员身份证号
+                ID: this.form.ID, // 伤员身份证号
                 medicalPoint: this.medicalPoints.find(point => point.id === this.form.medicalPoint).place // 查找对应的医疗点名称
               });
               this.$message.success('上传成功');
             } else {
-              // 如果后端返回错误，显示错误信息
-              this.$message.error(`上传失败: ${response.data.message}`);
+              this.$message.error(`上传失败，请重试`);
             }
 
             // 重置表单并关闭弹窗

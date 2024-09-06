@@ -12,14 +12,13 @@ export function get_medical_point(Event_id) {
 }
 
 /*增加医疗点*/
-export function add_medical_point(Event_id) {
+export function add_medical_point({ id, place }) {
     return request({
         url: '/Medical/add_medicalpoint',
-        method: 'patch',
+        method: 'post',
         data: {
-            Event_id: Event_id.Event_id,
-            Id: Event_id.medicalPointID,
-            medicalPointLocation: Event_id.place,
+            id,
+            place,
         }
     }
     )

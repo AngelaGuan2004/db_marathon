@@ -1,7 +1,7 @@
 <template>
   <div id="WeatherDetail">
     <el-dialog title="天气详情" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
-      <el-timeline>
+      <el-timeline v-if="weatherDetails.length">
         <el-timeline-item v-for="(weather, index) in weatherDetails" :key="index" :timestamp="`${weather.time}点`"
           placement="top" size="large">
           <el-card>
@@ -11,6 +11,10 @@
           </el-card>
         </el-timeline-item>
       </el-timeline>
+      <div v-else class="Empty">暂无数据</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -58,6 +62,9 @@ export default {
 </script>
 
 <style scoped>
+@import "@/assets/css/Base.css";
+@import 'element-ui/lib/theme-chalk/index.css';
+
 #WeatherDetail .el-timeline-item__timestamp {
   font-size: 16px;
   font-weight: bold;
@@ -75,5 +82,21 @@ export default {
 
 #WeatherDetail .el-card {
   width: 80%;
+}
+
+#WeatherDetail .Empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #999;
+  width: 100%;
+  text-align: center;
+}
+
+#WeatherDetail .el-button {
+  font-size: 14px;
 }
 </style>

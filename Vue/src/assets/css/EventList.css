@@ -1,7 +1,7 @@
 #EventList {
   text-align: center;
   color: #2c3e50;
-  height: 625px;
+  height: 90vh;
   margin-top: 125px;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .EventInfoTable {
-  width: 65%;
+  width: 75%;
   margin: 0 auto;
   table-layout: fixed;
   border: none;
@@ -102,4 +102,10 @@
   font-weight: bold;
   color: rgb(64, 158, 255);
   cursor: pointer;
+}
+
+.disabled-btn {
+  cursor: not-allowed !important;
+  opacity: 0.4;
+  /* 使禁用按钮看起来更明显 */
 }

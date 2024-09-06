@@ -27,7 +27,7 @@
                   <span>医疗点排班</span>
                 </el-menu-item>
                 <el-menu-item index="4">
-                  <span>摆渡车排班</span>
+                  <span>接驳车排班</span>
                 </el-menu-item>
               </el-submenu>
               <el-menu-item index="5">

@@ -1,10 +1,14 @@
 <template>
   <div id="SupplypointDetail">
     <el-dialog title="补给点详情" :visible.sync="dialogVisible" width="40%">
-      <el-table :data="supplypoints">
+      <el-table :data="supplypoints" v-if="supplypoints.length" max-height="300">
         <el-table-column prop="place" label="补给点地点"></el-table-column>
         <el-table-column prop="kind" label="补给点类型"></el-table-column>
       </el-table>
+      <div v-else class="Empty">暂无数据</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -49,5 +53,23 @@ export default {
   }
 };
 </script>
+<style scoped>
+@import "@/assets/css/Base.css";
+@import 'element-ui/lib/theme-chalk/index.css';
 
-<style></style>
+#SupplypointDetail .Empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #999;
+  width: 100%;
+  text-align: center;
+}
+
+#SupplypointDetail .el-button {
+  font-size: 14px;
+}
+</style>

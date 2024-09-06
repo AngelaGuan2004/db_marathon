@@ -114,6 +114,7 @@
   line-height: 80px;
   background-color: rgb(246, 232, 232);
   border-radius: 20px;
+  cursor: pointer;
 }
 
 #Home .el-timeline-item:hover .RecentlyStartedTimestamp {

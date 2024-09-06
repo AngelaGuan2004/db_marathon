@@ -2,7 +2,7 @@
   <div id="MedicalPointManagement">
     <div class="ManagementContainer">
       <div style="margin-bottom: 50px;font-weight: bold;font-size: 26px;">{{ this.$route.params.name }}</div>
-      <el-table v-if="medicalPoints.length" :data="medicalPoints" class='DeleteButton'>
+      <el-table v-if="medicalPoints.length" :data="medicalPoints" class='DeleteButton' max-height="350">
         <el-table-column prop="id" label="医疗点ID"></el-table-column>
         <el-table-column prop="place" label="位置"></el-table-column>
         <el-table-column label="操作">
@@ -56,7 +56,7 @@ export default {
     // 获取所有医疗点
     async fetchMedicalPoints() {
       try {
-        const Event_id = '10001'; // 假设 Event_id 为 1，可根据实际需求调整
+        const Event_id = this.$route.params.event_id; // 假设 Event_id 为 1，可根据实际需求调整
         const response = await get_medical_point(Event_id);
         this.medicalPoints = response.data; // 假设 API 返回的数据在 data 属性中
         console.log(this.medicalPoints)
@@ -74,16 +74,15 @@ export default {
     async addMedicalPoint() {
       if (this.newMedicalPoint.id && this.newMedicalPoint.place) {
         try {
-          const Event_id = '10001'; // 假设 Event_id 为 1，可根据实际需求调整
+          const Event_id = this.$route.params.event_id; // 假设 Event_id 为 1，可根据实际需求调整
           await add_medical_point({
-            Event_id,
-            medicalPointID: this.newMedicalPoint.id,
+            id: Event_id + this.newMedicalPoint.id,
             place: this.newMedicalPoint.place
           });
 
           // 将新医疗点添加到数组中
           this.medicalPoints.push({
-            id: this.newMedicalPoint.id,
+            id: Event_id + this.newMedicalPoint.id,
             place: this.newMedicalPoint.place
           });
 
@@ -101,13 +100,14 @@ export default {
 
     // 删除医疗点确认
     confirmDelete(index) {
+      console.log(this.medicalPoints[index].id + "")
       this.$confirm('确定要删除此医疗点？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.deleteMedicalPoint(this.medicalPoints[index].id);
-        this.fetchMedicalPoints();
+      }).then(async () => {
+        await this.deleteMedicalPoint(this.medicalPoints[index].id + "");
+        await this.fetchMedicalPoints();
       }).catch(() => {
         this.$message({
           type: 'info',

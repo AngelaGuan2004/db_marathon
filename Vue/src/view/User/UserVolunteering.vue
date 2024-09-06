@@ -1,6 +1,6 @@
 <template>
   <div id="UserVolunteering">
-    <div class='NotTable' v-if="this.loading && !this.Flag">
+    <div class='NotTable' v-if="(this.loading && !this.Flag) || !this.events.length">
       <div style=" display: table-cell;vertical-align: middle;width: 100vh;height: 300px;">
         未查询到志愿活动！
       </div>
@@ -10,13 +10,12 @@
         <div style="width: 100%; overflow: auto ;height:100%;margin-top: 20px;">
           <el-table :data="paginatedResults" v-loading='loading' class="table" row-class-name="clickable-row" stripe>
             <el-table-column prop="name" label="比赛名称" width="300"></el-table-column>
-            <el-table-column prop="event_Date" label="时间" width="150"></el-table-column>
-            <el-table-column prop="category" label="赛事类型" width="150"></el-table-column>
-            <el-table-column prop="scale" label="志愿规模" width="150"></el-table-column>
-            <el-table-column label="操作" width="150">
-              <template slot-scope="scope">
-                <span style="font-size: 14px;color: rgb(64, 158, 255);font-weight: bold;"
-                  @click="details(scope.row)">详情</span>
+            <el-table-column prop="event_Date" label="时间" width="200"></el-table-column>
+            <el-table-column prop="category" label="赛事类型" width="125"></el-table-column>
+            <el-table-column prop="scale" label="志愿规模" width="100"></el-table-column>
+            <el-table-column label="操作" width="125">
+              <template>
+                <span style="font-size: 14px;color: rgb(64, 158, 255);font-weight: bold;" @click="details()">详情</span>
               </template>
             </el-table-column>
           </el-table>
@@ -27,17 +26,24 @@
         </div>
       </el-main>
     </div>
-
+    <VolunteerDetailForAddStation v-if="dialogVisible" ref="VolunteerDetailForAddStation" :show-category-select="true"
+      @save="handleClose" />
   </div>
 </template>
+
 <script>
+import VolunteerDetailForAddStation from './VolunteerDetailForAddStation.vue';
 import { getMyVolunteering } from '@/api/UserCenter.js'
 export default {
   name: 'UserVolunteering',
+  components: {
+    VolunteerDetailForAddStation
+  },
   mounted() {
     this.ID = localStorage.getItem('UserId')
     getMyVolunteering(this.ID)
       .then((res) => {
+        console.log(res)
         this.events = res;
         this.loading = false
       })
@@ -54,21 +60,23 @@ export default {
       currentPage: 1,
       pageSize: 8,
       loading: true,
-      Flag: true
+      Flag: true,
+      dialogVisible: false
     }
   },
   methods: {
-    details(row) {
-      this.$router.push({
-        name: 'VolunteerDetailForAddStation',
-        params: {
-          event_id: row.event_id,
-        }
+    details() {
+      this.dialogVisible = false;  // 先关闭对话框
+      this.$nextTick(() => {       // 等待 DOM 完全更新后再打开对话框
+        this.dialogVisible = true; // 重新显示子组件
       });
     },
     handlePageChange(page) {
       this.currentPage = page;
     },
+    handleClose() {
+      this.dialogVisible = false;
+    }
   },
   computed: {
     paginatedResults() {

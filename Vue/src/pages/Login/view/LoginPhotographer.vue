@@ -61,7 +61,7 @@ export default {
         }
       } catch (error) {
         this.errorMessage = '登录失败，请重试'; // 处理登录失败情况
-        this.$message.error(this.errorMessage);
+        this.$message.error('登录失败，请重试');
       }
     }
   }

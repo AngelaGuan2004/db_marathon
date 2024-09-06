@@ -1,10 +1,14 @@
 <template>
   <div id="ShuttleDetail">
     <el-dialog title="接驳车详情" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
-      <el-table :data="shuttles">
-        <el-table-column prop="departure_Time" label="出发时间"></el-table-column>
+      <el-table :data="shuttles" v-if="shuttles.length" max-height="300">
+        <el-table-column prop=" departure_Time" label="出发时间"></el-table-column>
         <el-table-column prop="arrival_Time" label="到达时间"></el-table-column>
       </el-table>
+      <div v-else class="Empty">暂无数据</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -39,7 +43,7 @@ export default {
         }
       } catch (error) {
         console.error('加载接驳车详情失败:', error);
-        alert('加载接驳车详情失败');
+        this.$message.error('加载接驳车详情失败');
       }
     },
     handleClose() {
@@ -49,4 +53,23 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+@import "@/assets/css/Base.css";
+@import 'element-ui/lib/theme-chalk/index.css';
+
+#ShuttleDetail .Empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #999;
+  width: 100%;
+  text-align: center;
+}
+
+#ShuttleDetail .el-button {
+  font-size: 14px;
+}
+</style>

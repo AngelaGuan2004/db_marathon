@@ -10,14 +10,14 @@
     </div>
     <div class="RegistrationContainer">
       <h2 style="margin-left: 25px;margin-bottom: 5%;">赛事报名</h2>
-      <el-form :model="participant" label-width="175px">
+      <el-form :model="participant" label-width="175px" :rules="rules" ref="participantForm">
         <el-form-item label="选手姓名："><span>{{ participant.name }}</span></el-form-item>
         <el-form-item label="选手性别："><span>{{ participant.gender }}</span></el-form-item>
         <el-form-item label="选手年龄："><span> {{ participant.age }}</span></el-form-item>
         <el-form-item label="选手身份证号："><span>{{ participant.idCard }}</span> </el-form-item>
         <el-form-item label="地区："><span>{{ participant.region }}</span> </el-form-item>
         <el-form-item label="联系方式："><span>{{ participant.contact }}</span> </el-form-item>
-        <el-form-item label="参赛身份：">
+        <el-form-item label="参赛身份：" prop="role">
           <el-select v-model="participant.role" placeholder="请选择参赛身份">
             <el-option label="配速员" value="配速员"></el-option>
             <el-option label="精英" value="精英"></el-option>
@@ -37,7 +37,7 @@
 
 <script>
 import { getParticipantInfo, registerParticipant } from '@/api/EventRegistration';
-
+import { Message } from 'element-ui';
 export default {
   name: 'EventRegistration',
   data() {
@@ -91,7 +91,12 @@ export default {
         新疆维吾尔自治区: ['乌鲁木齐', '克拉玛依', '吐鲁番', '哈密', '昌吉回族自治州', '博尔塔拉蒙古自治州', '巴音郭楞蒙古自治州', '阿克苏地区', '克孜勒苏柯尔克孜自治州', '喀什地区', '和田地区', '伊犁哈萨克自治州', '塔城地区', '阿勒泰地区', '石河子', '阿拉尔', '图木舒克', '五家渠', '铁门关']
       },
       selectedProvince: '',
-      selectedCity: ''
+      selectedCity: '',
+      rules: {
+        role: [
+          { required: true, message: '请选择参赛身份', trigger: 'change' }
+        ],
+      }
     };
   },
   computed: {
@@ -131,26 +136,64 @@ export default {
       this.$bus.$emit('updateActiveIndex', '4');
     },
     async submitRegistration() {
+      const valid = await new Promise((resolve) => {
+        this.$refs.participantForm.validate((valid) => {
+          resolve(valid);
+        });
+      });
+
+      // 如果验证不通过，直接返回 false，阻止后续的代码执行
+      if (!valid) {
+        this.$message.warning('信息不完整，无法报名')
+        return false;
+      }
+
       const playerId = localStorage.getItem('UserId');
-      const eventId = this.$route.params.id
+      const eventId = this.$route.params.event_id
       try {
         // 创建一个包含只需要提交的字段的对象
         const registrationData = {
           role_: this.participant.role,
           player_Id: playerId,
-          event_Id: eventId // 这里可以动态设置 event_Id
+          Event_Id: eventId // 这里可以动态设置 event_Id
         };
 
         // 提交报名信息
-        await registerParticipant(registrationData);
-        this.$message.success('报名成功');
+        const res = await registerParticipant(registrationData);
+        if (res === 2) {
+          this.$message.warning('您已报名该赛事志愿者，无法报名选手')
+        }
+        else {
+          this.$message.success('报名成功');
+        }
         this.$router.back();
       } catch (error) {
         console.error('提交报名失败:', error);
         this.$message.error('报名失败');
       }
     }
-  }
+  },
+  beforeRouteEnter(to, from, next) {
+    let role = localStorage.getItem('UserRole') || 'Visitor';
+    if (role === 'Athlete') {
+      next(); // 允许进入  
+    }
+    else if (role === 'Visitor') {
+      Message({
+        type: 'warning',
+        message: '请先登录'
+      });
+      setTimeout(() => {
+        location.href = 'login.html';
+      }, 1500)
+    }
+    else {
+      Message({
+        type: 'warning',
+        message: '您不是选手，无法报名比赛'
+      });
+    }
+  },
 };
 </script>
 

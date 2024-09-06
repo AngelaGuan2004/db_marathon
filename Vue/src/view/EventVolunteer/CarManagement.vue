@@ -5,7 +5,7 @@
         <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
           this.$route.params.name }}</div>
         <div>
-          <el-table :data="paginatedCarPoint" class="Table">
+          <el-table :data="paginatedCarPoint" class="Table" max-height="350">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="departureTime" label="出发时间" width="150" align="center"
               header-align="center"></el-table-column>
@@ -99,8 +99,9 @@ export default {
     },
     async loadCarPoints() {
       try {
-        const eventId = "10001";
+        const eventId = this.$route.params.event_id;
         const response = await getAllCarPoints(eventId);
+
         this.carPoint = response.map(point => ({
           ...point,
           departureTime: point.departure_Time,

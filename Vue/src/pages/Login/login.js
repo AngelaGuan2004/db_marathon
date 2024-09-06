@@ -24,6 +24,16 @@ Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueRouter)
 
+// 消除el-radio-group组件报错
+Vue.directive('removeAriaHidden', {
+  bind(el, binding) {
+    let ariaEls = el.querySelectorAll('.el-radio__original');
+    ariaEls.forEach((item) => {
+      item.removeAttribute('aria-hidden');
+    });
+  }
+});
+
 new Vue({
   render: h => h(LoginTab),
   //store,

@@ -1,7 +1,7 @@
 <template>
   <div id="SupplypointManagement">
     <div class="management-container">
-      <div style="margin-bottom: 40px;font-weight: bold;font-size: 26px;">{{ event.Name }}</div>
+      <div style="margin-bottom: 30px;font-weight: bold;font-size: 26px;">{{ event.Name }}</div>
       <el-form :model="supplypointForm" label-width="120px">
         <el-form-item>
           <el-input v-model="supplypointForm.supplypointId" placeholder="请输入补给点ID"></el-input>
@@ -10,18 +10,34 @@
         </el-form-item>
       </el-form>
       <!-- 使用 v-if 确保 existingItems 和 newItems 有数据时才渲染表格 -->
-      <el-table v-if="items.length" :data="items" max-height="40vh">
-        <el-table-column prop="id" label="物品ID"></el-table-column>
-        <el-table-column prop="name" label="物品名"></el-table-column>
-        <el-table-column prop="amount" label="物品数量"></el-table-column>
-        <el-table-column prop="source" label="来源" :formatter="formatSource"></el-table-column>
-      </el-table>
-      <div v-else style="text-align: center;height: 10vh;line-height: 10vh;font-size: 18px;">暂无数据</div>
-      <div class="button-group">
-        <el-button type="primary" @click="showItemManagement">添加</el-button>
-        <el-button type="primary" @click="saveSupplypointDetails">保存</el-button>
+      <div class="existing-items">
+        <h3>已有的物品</h3>
+        <el-table v-if="existingItems.length" :data="existingItems" max-height="175">
+          <el-table-column prop="id" label="物品ID"></el-table-column>
+          <el-table-column prop="name" label="物品名"></el-table-column>
+          <el-table-column prop="amount" label="物品数量"></el-table-column>
+        </el-table>
+        <div v-else style="text-align: center;height: 15vh;line-height: 10vh;font-size: 18px;">暂无数据</div>
       </div>
-      <ItemManagement v-if="dialogVisible" ref="itemManagement" @save="handleSaveItems" />
+      <div class="new-items">
+        <h3>新添加的物品</h3>
+        <el-table v-if="newItems.length" :data="newItems" max-height="175">
+          <el-table-column prop="id" label="物品ID"></el-table-column>
+          <el-table-column prop="name" label="物品名"></el-table-column>
+          <el-table-column prop="amount" label="物品数量"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button type="danger" @click="removeNewItem(scope.$index)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div v-else style="text-align: center;height: 15vh;line-height: 10vh;font-size: 18px;">暂无数据</div>
+      </div>
+      <div class="button-group">
+        <el-button type="primary" @click="showItemManagement" :disabled="this.Flag">添加</el-button>
+        <el-button type="primary" @click="saveSupplypointDetails" :disabled="this.Flag">保存</el-button>
+      </div>
+      <ItemManagement v-if="dialogVisible" ref="itemManagement" :show-category-count="true" @save="handleSaveItems" />
     </div>
   </div>
 
@@ -46,6 +62,7 @@ export default {
       newItems: [],       // 新添加的物品
       dialogVisible: false,
       event: [],
+      Flag: true
     };
   },
   computed: {
@@ -79,13 +96,13 @@ export default {
       const { supplypointId } = this.supplypointForm;
       if (supplypointId) {
         try {
-          const response = await getSupplypointDetails(eventId, supplypointId);
+          const response = await getSupplypointDetails(eventId, eventId + supplypointId);
           if (response) {
             this.existingItems = response.map(item => ({
               ...item,
-              source: '已存在'  // 标记为已有物品
             }));
             console.log('Loaded supply point details:', this.existingItems);
+            this.Flag = false
           }
         } catch (error) {
           console.error('加载补给点详情失败:', error);
@@ -112,7 +129,6 @@ export default {
             id: selectedItem.id,
             name: selectedItem.name,
             amount: selectedItem.quantity,  // 确保设置了数量
-            source: '新添加'
           });
           console.log('Added new item:', selectedItem);
         }
@@ -131,19 +147,21 @@ export default {
       try {
         console.log('Saving supply point details with items:', supplypointData);
         await saveSupplypointDetails(supplypointData);
+        this.existingItems = [...this.existingItems, ...this.newItems];
+        this.newItems = [];
         this.$message.success('保存成功');
       } catch (error) {
         console.error('保存补给点详情失败:', error);
         this.$message.error('保存失败');
       }
     },
+    removeNewItem(index) {
+      this.newItems.splice(index, 1);
+    },
     resetItemManagement() {
       this.$refs.itemManagement.resetItems();
       console.log('ItemManagement component reset');
     },
-    formatSource(row) {
-      return row.source || '未知';
-    }
   }
 };
 </script>
@@ -160,7 +178,7 @@ export default {
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 105vh;
-  height: 70vh;
+  height: 78vh;
   margin-right: 50px;
   margin-bottom: 75px;
   font-size: 15px;
@@ -179,13 +197,13 @@ export default {
 }
 
 #SupplypointManagement .el-button:hover {
-  background-color: #a62828 !important;
+  background-color: #a62828;
   /* 悬停时的深红色背景 */
 }
 
 #SupplypointManagement .management-container {
   width: 100%;
-  height: 80%;
+  height: 85%;
   margin: 0 auto;
   padding: 30px 45px;
   padding-top: 0;
@@ -194,5 +212,16 @@ export default {
 #SupplypointManagement .button-group {
   text-align: right;
   margin-top: 20px;
+}
+
+#SupplypointManagement .new-items .el-button {
+  background-color: transparent;
+  color: rgb(64, 158, 255);
+  font-weight: bold;
+  padding: 5px;
+}
+
+#SupplypointManagement .new-items .el-button:hover {
+  background-color: transparent;
 }
 </style>

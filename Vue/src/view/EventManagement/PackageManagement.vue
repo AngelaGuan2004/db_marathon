@@ -210,6 +210,7 @@ export default {
   background-color: transparent;
   color: rgb(64, 158, 255);
   font-weight: bold;
+  padding: 5px;
 }
 
 #PackageManagement .new-items .el-button:hover {

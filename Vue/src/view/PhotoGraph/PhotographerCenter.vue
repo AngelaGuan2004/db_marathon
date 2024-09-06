@@ -20,13 +20,16 @@
       <div class="PhotographerContent">
         <div class="myPhotographyWorks" @click="navigateTo('/UserTab/myPhotographyWorks')">
           <h2 style="font-size: 24px;margin-left: 10px;">我的摄影作品</h2>
-          <div class="photo-bar">
-            <div class="photo-frame" v-for="(photo, index) in photos" :key="index">
-              <img :src="photo.address" alt="Photo" class="photo" />
+          <div v-if="recentPhotos.length">
+            <div class="photo-bar">
+              <div class="photo-frame" v-for="(photo, index) in recentPhotos" :key="index">
+                <img :src="photo.address" alt="Photo" class="photo" />
+              </div>
             </div>
+            <button @click="navigateTo('/UserTab/myPhotographyWorks')"
+              style="font-size: 16px; color: #007bff; background: none; border: none; margin-top:10px;">&gt;点击查看详情...</button>
           </div>
-          <button @click="navigateTo('/UserTab/myPhotographyWorks')"
-            style="font-size: 16px; color: #007bff; background: none; border: none; margin-top:10px;">&gt;点击查看详情...</button>
+          <div v-else class="Empty" style="height: 15vh;">暂无数据</div>
         </div>
         <div class="uploadNewPhotography">
           <h2 style="font-size: 24px;margin-left: 10px;">上传新摄影</h2>
@@ -51,7 +54,7 @@
                 </el-form-item>
                 <el-form-item>
                   <el-upload action="#" list-type="picture-card" :limit="1" :on-success="handleSuccess"
-                    :file-list="fileList" :on-change="handleChange" :auto-upload="false">
+                    :file-list="fileList" :on-change="handleChange" :auto-upload="false" enctype="multipart/form-data">
                     <i slot="default" class="el-icon-plus"></i>
                     <div slot="file" slot-scope="{file}">
                       <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -83,7 +86,7 @@
 </template>
 
 <script>
-import { getAllEvents, inquiryPhotoByPhotographer, inquiryPhotographerNameById } from '@/api/Photo';
+import { getAllEvents, inquiryPhotoByPhotographer, inquiryPhotographerNameById, uploadPhoto } from '@/api/Photo';
 
 export default {
   name: 'PhotographerCenter',
@@ -119,8 +122,53 @@ export default {
       }
     }
   },
-
+  computed: {
+    recentPhotos() {
+      // 将 myphotos 按日期降序排列，并取出最近的 6 张照片
+      return this.photos
+        .slice() // 创建 myphotos 的浅拷贝
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+    }
+  },
   methods: {
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份从 0 开始，所以需要加 1
+      const day = date.getDate().toString().padStart(2, '0'); // 日期如果是个位数，前面补 0
+
+      return `${year}/${month}/${day}`;
+    },
+    async getPhotos() {
+      try {
+        const response = await inquiryPhotoByPhotographer(this.photographer_Id, this.name);
+        // 处理时间数据，去掉具体时刻，只保留年月日
+        this.photos = response.map(photo => {
+          return {
+            ...photo,
+            time: photo.time.split(' ')[0],  // 只保留年月日部分
+            address: 'http://' + photo.address
+          };
+        });
+        console.log("收到的数据:", this.photos);
+      } catch (error) {
+        console.error('获所有照片时发生错误:', error);
+      }
+    },
+    async getEvents() {
+      try {
+        // 获取所有赛事
+        const eventsResponse = await getAllEvents();
+        this.events = eventsResponse.map(event => ({
+          id: event.id,
+          name: event.name
+        }));
+        console.log('赛事信息：', this.events);
+      } catch (error) {
+        console.error('获取赛事失败:', error);
+      }
+    },
     navigateTo(_path) {
       this.$router.push({ path: _path }, () => { })
     },
@@ -165,15 +213,33 @@ export default {
         this.fileList = this.fileList.filter(f => f.uid !== file.uid);
       }
     },
-    onSubmit() {
-      this.$refs.form.validate((valid) => {
+    async onSubmit() {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           if (!this.fileSelected) {
             this.$message.error('请上传摄影作品');
             return false;
           }
-          this.$message.success('上传成功');
-          this.formVisible = false;
+
+          try {
+            // 准备提交的数据
+            const Data = new FormData();
+            Data.append('file', this.fileList[0].raw); // 上传的文件
+            // 调用上传 API
+            const response = await uploadPhoto(this.form.event, this.formatDate(this.form.time), this.form.location, this.photographer_Id, Data);
+            // 根据返回的结果处理
+            if (response) {
+              this.$message.success('上传成功');
+              this.formVisible = false;
+              this.resetForm(); // 上传成功后重置表单
+              this.getPhotos()
+            } else {
+              this.$message.error('上传失败，请稍后再试');
+            }
+          } catch (error) {
+            console.error('上传过程中发生错误:', error);
+            this.$message.error('上传失败，请稍后再试');
+          }
         } else {
           this.$message.error('表单验证失败');
           return false;
@@ -193,30 +259,11 @@ export default {
   async mounted() {
     this.photographer_Id = localStorage.getItem('UserId')
     this.name = await inquiryPhotographerNameById(this.photographer_Id);
+    console.log('得到摄影师名', this.name);
 
-    try {
-      // 获取所有赛事
-      const eventsResponse = await getAllEvents();
-      this.events = eventsResponse.map(event => ({
-        id: event.id,
-        name: event.name
-      }));
-      console.log('赛事信息：', this.events);
-    } catch (error) {
-      console.error('获取赛事失败:', error);
-    }
+    await this.getPhotos();
 
-    //获取当前摄影师照片
-    const photoResponse = await inquiryPhotoByPhotographer(this.photographer_Id, this.name);
-
-    this.photos = photoResponse.map(photo => {
-      return {
-        ...photo,
-        time: photo.time.split(' ')[0],  // 只保留年月日部分
-        address: 'http://' + photo.address
-      };
-    });
-    console.log('收到的照片', this.photos);
+    await this.getEvents();
   },
 }
 </script>

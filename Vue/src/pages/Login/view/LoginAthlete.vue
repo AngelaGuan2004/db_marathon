@@ -1,7 +1,7 @@
 <template>
   <div id="LoginAthlete">
     <div class="LoginRightIndexFormTitle">
-      欢迎选手登录
+      欢迎用户登录
     </div>
     <div class="LoginRightIndexFormInput">
       <form @submit.prevent="LoginAthlete">
@@ -66,6 +66,7 @@ export default {
           }, 1000)
         }
       } catch (error) {
+        this.$message.error('登录失败，请重试')
         this.errorMessage = '登录失败，请检查用户名、身份证号和密码';
       }
     }

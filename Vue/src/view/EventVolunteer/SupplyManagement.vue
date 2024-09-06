@@ -5,7 +5,7 @@
         <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
           this.$route.params.name }}</div>
         <div>
-          <el-table :data="paginatedSupplyPoint" class="Table">
+          <el-table :data="paginatedSupplyPoint" class="Table" max-height="350">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="place" label="地点" width="200" align="center" header-align="center"></el-table-column>
             <el-table-column prop="type" label="类型" width="150" align="center" header-align="center"></el-table-column>
@@ -27,7 +27,7 @@
       <div v-else class="Empty">暂无数据</div>
       <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedSupplyPoint?.id || ''}号补给点志愿者名单`" width="50%"
         class="ManagementDialog">
-        <div v-if="selectedSupplyVolun">
+        <div v-if="selectionSupplyVolun.length > 0">
           <el-table :data="selectedSupplyVolun" class="Table" max-height="300">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="name" label="姓名" width="150" align="center" header-align="center"></el-table-column>

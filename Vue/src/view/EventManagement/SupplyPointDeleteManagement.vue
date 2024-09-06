@@ -2,7 +2,7 @@
   <div id="SupplyPointDeleteManagement">
     <div class="ManagementContainer">
       <div style="margin-bottom: 50px;font-weight: bold;font-size: 26px;">{{ this.$route.params.name }}</div>
-      <el-table v-if="supplyPoints" :data="supplyPoints" class='DeleteButton'>
+      <el-table v-if="supplyPoints.length" :data="supplyPoints" class='DeleteButton' max-height="350">
         <el-table-column prop="id" label="补给点ID"></el-table-column>
         <el-table-column prop="place" label="补给位置"></el-table-column>
         <el-table-column prop="kind" label="类型"></el-table-column>
@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       packageForm: {
-        Event_id: '10001' // 默认Event_id为10001
+        Event_id: this.$route.params.event_id // 默认Event_id为10001
       },
       supplyPoints: [
         // { id: '1', place: '起点', kind: '水站' },
@@ -99,10 +99,9 @@ export default {
       try {
         // 调用API添加补给点
         await add_supply_point({
-          eventId: this.packageForm.Event_id,
-          supplyPointID: this.newSupplyPoint.id,
-          supplyPointLocation: this.newSupplyPoint.place,
-          supplyPointType: this.newSupplyPoint.kind
+          id: this.newSupplyPoint.id,
+          place: this.newSupplyPoint.place,
+          kind: this.newSupplyPoint.kind
         });
         this.supplyPoints.push({ ...this.newSupplyPoint });
         this.dialogVisible = false;
@@ -130,18 +129,15 @@ export default {
         });
       });
     },
-    async deleteSupplyPoint() {
-      if (this.deleteIndex !== -1) {
-        try {
-          const supplyPointID = this.supplyPoints[this.deleteIndex].id;
-          await delete_supply_point(supplyPointID);
-          this.supplyPoints.splice(this.deleteIndex, 1);
-          this.confirmDialogVisible = false;
-          this.$message.success('删除成功!');
-        } catch (error) {
-          console.error('删除补给点失败:', error);
-          this.$message.error('删除补给点失败');
-        }
+    async deleteSupplyPoint(id) {
+      try {
+        await delete_supply_point(id);
+        this.supplyPoints.splice(this.deleteIndex, 1);
+        this.confirmDialogVisible = false;
+        this.$message.success('删除成功!');
+      } catch (error) {
+        console.error('删除补给点失败:', error);
+        this.$message.error('删除补给点失败');
       }
     }
   },

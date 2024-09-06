@@ -112,16 +112,24 @@
   margin-left: 20px;
 }
 
+#MyPhotographyWorks .photo-frame .el-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: transparent;
+  padding: 8px;
+  color: red;
+  border: 0;
+
+}
+
 #MyPhotographyWorks .photo {
   width: 100%;
   height: 73%;
   object-fit: cover;
   border-radius: 8px;
-  transition: transform 0.3s;
-}
-
-#MyPhotographyWorks .photo:hover {
-  transform: scale(1.05);
 }
 
 .info-box {

@@ -9,7 +9,7 @@
           <div class="LoginRightTab">
             <el-menu default-active="1" class="el-menu-demo" mode="horizontal" @select="handleSelect"
               active-text-color="rgb(219, 57, 56)">
-              <el-menu-item index="1">选手登录</el-menu-item>
+              <el-menu-item index="1">用户登录</el-menu-item>
               <el-menu-item index="2">摄影师登录</el-menu-item>
               <el-menu-item index="3">管理员登录</el-menu-item>
             </el-menu>

@@ -84,7 +84,7 @@ export default {
       if (role === 'Visitor')
         return '访客'
       else if (role === 'Athlete')
-        return '跑者'
+        return '用户'
       else if (role === 'Photographer')
         return '摄影师'
       else if (role === 'Admin')

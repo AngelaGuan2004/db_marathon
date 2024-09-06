@@ -49,7 +49,7 @@ export function likePhoto(id) {
   return request({
     url: '/PhotoView/like_photo',
     method: 'patch',
-    data: { id }
+    params: { id }
   })
 }
 
@@ -73,21 +73,15 @@ export function inquiryPhotographerNameById(id) {
 
 
 // 上传照片
-export function uploadPhoto(id, time, location, photographer_id, file) {
-  // 创建FormData对象
-  const formData = new FormData();
-  formData.append('id', id);
-  formData.append('time', time);
-  formData.append('location', location);
-  formData.append('photographer_id', photographer_id);
-  formData.append('file', file); // 将文件添加到表单数据中
+export function uploadPhoto(event_id, time, location, photographer_id, file) {
 
   return request({
     url: '/Photo/upload_photo',
     method: 'post',
-    data: formData,
+    data: file,
+    params: { event_id, time, location, photographer_id },
     headers: {
-      'Content-Type': 'multipart/form-data' // 指定内容类型为表单数据
+      'Content-Type': 'multipart/form-data',
     }
   });
 }
@@ -97,7 +91,7 @@ export function deletePhoto(id) {
   return request({
     url: '/Photo/delete_photo',
     method: 'delete',
-    data: { id }
+    params: { id }
   });
 }
 

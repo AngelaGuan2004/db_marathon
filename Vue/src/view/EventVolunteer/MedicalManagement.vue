@@ -5,7 +5,7 @@
         <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
           this.$route.params.name }}</div>
         <div>
-          <el-table :data="paginatedMedicalPoint" class="Table">
+          <el-table :data="paginatedMedicalPoint" class="Table" max-height="350">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="place" label="地点" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="selected" label="已排班志愿者" width="200" align="center" header-align="center">

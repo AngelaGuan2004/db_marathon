@@ -24,9 +24,9 @@ export function addInjury(data) {
         url: '/Medical/add_injury',
         method: 'post',
         data: {
-            // name: data.name,
-            player_Id: data.player_Id,
-            medicalpoint_Id: data.medicalPoint_Id
+            name: data.name,
+            IdNumber: data.IdNumber,
+            medicalPoint_Id: data.medicalPoint_Id
         }
     })
 }

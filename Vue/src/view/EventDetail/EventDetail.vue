@@ -205,6 +205,11 @@ export default {
       this.showSupplypointModal = false;
     },
     openVolunteerSignupModal() {
+      const userRole = localStorage.getItem('UserRole');
+      if (userRole !== 'Athlete') {
+        this.$message.warning('您的身份无法报名志愿者');
+        return;
+      }
       this.showVolunteerSignupModal = false
       this.$nextTick(() => {
         this.showVolunteerSignupModal = true; // 再设置为 true，确保弹窗能正确打开
@@ -214,7 +219,7 @@ export default {
       this.showVolunteerSignupModal = false
     },
     GoToEventRegistration() {
-      this.$router.push({ name: 'EventRegistration', params: { id: this.eventId } });
+      this.$router.push({ name: 'EventRegistration', params: { event_id: this.eventId } });
     },
     hilarity() {
       this.$message.warning({

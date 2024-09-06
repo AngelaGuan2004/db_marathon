@@ -4,7 +4,7 @@
 
 .RegistrationContainer {
   max-width: 600px;
-  margin: 50px auto;
+  margin: 35px auto 50px;
   padding: 10px 30px;
   background-color: white;
   border-radius: 8px;
@@ -39,4 +39,8 @@
 button {
   background-color: rgb(201, 64, 64);
   font-weight: bold;
+}
+
+#EventRegistration .el-form-item__error {
+  left: 20px;
 }

@@ -35,9 +35,8 @@
   padding: 30px 70px;
   padding-top: 10px;
   background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid grey;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
 }
 
 .RegistrationInformation {
@@ -48,7 +47,7 @@
 
 .RegistrationInformation b {
   display: inline-block;
-  width: 30%;
+  width: 35%;
   margin-top: 20px;
   margin-left: 20%;
 }
@@ -65,7 +64,7 @@
   /*important是为了覆盖原有的Element UI 的按钮组件有默认的样式优先级*/
   color: white;
   border: none !important;
-  margin: 0 15px;
+  margin: 0 17px;
   /* 去掉按钮边框 */
 }
 

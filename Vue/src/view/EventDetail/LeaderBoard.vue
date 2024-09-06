@@ -13,46 +13,48 @@
           <div style="font-size: 28px;font-weight: bold;margin: 25px;">{{ this.$route.params.name
             }}</div>
         </div>
-        <el-row :gutter="20" class="filter-container">
-          <el-col :span="6">
-            <el-select v-model="selectedGender" placeholder="性别">
-              <el-option label="全部" value="全部"></el-option>
-              <el-option label="男" value="男"></el-option>
-              <el-option label="女" value="女"></el-option>
-            </el-select>
-          </el-col>
-          <el-col :span="6">
-            <el-select v-model="sortType" placeholder="排序方式">
-              <el-option label="顺序排列" value="顺序排列"></el-option>
-              <el-option label="逆序排列" value="逆序排列"></el-option>
-            </el-select>
-          </el-col>
-        </el-row>
+        <div v-if="results.length">
+          <el-row :gutter="20" class="filter-container">
+            <el-col :span="6">
+              <el-select v-model="selectedGender" placeholder="性别">
+                <el-option label="全部" value="全部"></el-option>
+                <el-option label="男" value="男"></el-option>
+                <el-option label="女" value="女"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="6">
+              <el-select v-model="sortType" placeholder="排序方式">
+                <el-option label="顺序排列" value="顺序排列"></el-option>
+                <el-option label="逆序排列" value="逆序排列"></el-option>
+              </el-select>
+            </el-col>
+          </el-row>
 
-        <!-- 成绩排行榜 -->
-        <el-table :data="paginatedResults" :style="{ width: '100%' }" max-height="45vh">
-          <el-table-column label="姓名" header-align="center" align="center">
-            <template v-slot:default="scope">
-              <span>{{ scope.row.name }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="性别" header-align="center" align="center">
-            <template v-slot:default="scope">
-              <span>{{ scope.row.gender }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="比赛成绩" header-align="center" align="center">
-            <template v-slot:default="scope">
-              <span style=" color: rgb(168, 27, 31);font-weight: bold;">{{ scope.row.net_Result }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="比赛排名" header-align="center" align="center">
-            <template v-slot:default="scope">
-              <span style=" color: rgb(168, 27, 31);font-weight: bold;">{{ scope.row.rank }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-
+          <!-- 成绩排行榜 -->
+          <el-table :data="paginatedResults" :style="{ width: '100%' }" max-height="45vh">
+            <el-table-column label="姓名" header-align="center" align="center">
+              <template v-slot:default="scope">
+                <span>{{ scope.row.name }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="性别" header-align="center" align="center">
+              <template v-slot:default="scope">
+                <span>{{ scope.row.gender }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="比赛成绩" header-align="center" align="center">
+              <template v-slot:default="scope">
+                <span style="font-weight: bold;">{{ formatSeconds(scope.row.net_Result) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="比赛排名" header-align="center" align="center">
+              <template v-slot:default="scope">
+                <span style=" color: rgb(168, 27, 31);font-weight: bold;">{{ scope.row.rank }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div v-else class="Empty" style="height: 50vh;">暂无数据</div>
         <!-- 分页组件 -->
         <el-pagination background layout="prev, pager, next" :total="filteredResults.length" :page-size="10"
           @current-change="handlePageChange" class="Pagination"></el-pagination>
@@ -130,6 +132,17 @@ export default {
     },
     search() {
       this.fetchRaceResults(); // 在用户输入 event ID 后重新获取数据
+    },
+    formatSeconds(seconds) {
+      // 计算小时数
+      const hours = Math.floor(seconds / 3600);
+      // 计算剩余的分钟数
+      const minutes = Math.floor((seconds % 3600) / 60);
+      // 剩余的秒数
+      const secs = seconds % 60;
+
+      // 格式化为HH:MM:SS形式，确保个位数前面补0
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
   }
 };

@@ -2,20 +2,22 @@
   <div id="PacerSelection">
     <div style="display: flex;  width: 100%;">
       <el-main class="Content" v-if="paginatedParticipants.length > 0">
+        <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
+          this.$route.params.name }}</div>
         <div class="Button">
           <div style="margin-left: 65%;">
-            <el-button type="primary" @click="save" style="margin: 0 10px;">提交</el-button>
+            <el-button type="primary" @click="openConfirmDialog" style="margin: 0 10px;">提交</el-button>
             <el-button type="primary" @click="cancel">取消</el-button>
           </div>
         </div>
         <div>
-          <el-table :data="paginatedParticipants" class="Table" style="width: 100%">
+          <el-table :data="paginatedParticipants" class="Table" style="width: 100%" max-height="375">
             <el-table-column prop="id" label="ID" width="100"></el-table-column>
             <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-            <el-table-column prop="sex" label="性别" width="80"></el-table-column>
-            <el-table-column prop="age" label="年龄" width="80"></el-table-column>
-            <el-table-column prop="number" label="参赛号码" width="110"></el-table-column>
-            <el-table-column prop="history" label="历史成绩" width="120">
+            <el-table-column prop="sex" label="性别" width="100"></el-table-column>
+            <el-table-column prop="age" label="年龄" width="100"></el-table-column>
+            <el-table-column prop="number" label="参赛号码" width="120"></el-table-column>
+            <el-table-column prop="history" label="历史成绩" width="150">
               <template slot-scope="scope">
                 <el-button @click="showHistory(scope.row)">查看详情</el-button>
               </template>
@@ -31,15 +33,40 @@
         </div>
       </el-main>
       <div v-else class="Empty">暂无数据</div>
+
+      <el-dialog :visible.sync="confirmDialogVisible" title="确定配速员名单为" width="50%">
+        <div>
+          <el-table :data="selectedPacers" style="width: 100%">
+            <el-table-column prop="id" label="ID" width="100"></el-table-column>
+            <el-table-column prop="name" label="姓名" width="120"></el-table-column>
+            <el-table-column prop="sex" label="性别" width="80"></el-table-column>
+            <el-table-column prop="age" label="年龄" width="80"></el-table-column>
+            <el-table-column prop="number" label="参赛号码" width="110"></el-table-column>
+          </el-table>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="confirmDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="confirmSelection">确定</el-button>
+        </span>
+      </el-dialog>
+
       <el-dialog :visible.sync="historyDialogVisible" title="历史成绩" width="70%">
         <div v-if="selectedParticipantHistory.length > 0">
-          <el-table :data="selectedParticipantHistory" class="HistoryTable" style="width: 100%">
-            <el-table-column prop="index" label="序号" width="70"></el-table-column>
-            <el-table-column prop="eventDate" label="开赛时间" width="120"></el-table-column>
-            <el-table-column prop="eventName" label="赛事名称" width="225"></el-table-column>
-            <el-table-column prop="eventType" label="赛事类型" width="120"></el-table-column>
-            <el-table-column prop="result" label="成绩" width="100"></el-table-column>
-            <el-table-column prop="ranking" label="名次" width="70"></el-table-column>
+          <el-table :data="selectedParticipantHistory" class="HistoryTable" style="width: 100%" max-height="350">
+            <el-table-column prop="index" label="序号" width="100"></el-table-column>
+            <el-table-column prop="eventDate" label="开赛时间" width="125"></el-table-column>
+            <el-table-column prop="eventName" label="赛事名称" width="250"></el-table-column>
+            <el-table-column prop="eventType" label="赛事类型" width="125"></el-table-column>
+            <el-table-column prop="result" label="成绩" width="125">
+              <template slot-scope="scope">
+                <div style="font-weight: bold;">{{ formatSeconds(scope.row.result) }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="ranking" label="名次" width="100">
+              <template slot-scope="scope">
+                <div style="font-weight: bold;color: rgb(168, 27, 31);">{{ scope.row.ranking }}</div>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <div v-else class="Empty">
@@ -67,7 +94,9 @@ export default {
     return {
       totalParticipants: '',
       historyDialogVisible: false,
+      confirmDialogVisible: false, // 新增确认对话框的显示状态
       selectedParticipantHistory: '',
+      selectedPacers: [], // 保存选中的配速员信息
       participants: [],
       currentPage: 1,
       pageSize: 6
@@ -98,25 +127,32 @@ export default {
       this.selectedParticipantHistory = participant.history || [];
       this.historyDialogVisible = true;
     },
-    async save() {
+    openConfirmDialog() {
+      this.selectedPacers = this.participants.filter(p => p.isPacer);
+      if (this.selectedPacers.length > 0) {
+        this.confirmDialogVisible = true; // 打开确认对话框
+      } else {
+        this.$message.warning('请至少选择一个配速员');
+      }
+    },
+    async confirmSelection() {
       try {
-        // 构建要发送到后端的数据
-        const payload = this.participants
-          .filter(p => !p.isPacer)  // 过滤出 isPacer 为 false 的选手
-          .map(p => ({
-            Number_: p.number,
-            Role_: 'pacer',  // 因为我们只传 isPacer 为 false 的选手，所以 Role_ 固定为 'normal'
-            Player_Id: p.id,
-            Event_Id: this.$route.params.event_id,  // 固定的 event_Id
-          }));
+        const payload = this.selectedPacers.map(p => ({
+          Number_: p.number,
+          Role_: 'pacer',
+          Player_Id: p.id,
+          Event_Id: this.$route.params.event_id,
+        }));
+
         const response = await choosePacer(payload);
 
-        // 处理响应
         if (response === true) {
           this.$message.success('提交成功');
         } else {
           this.$message.error('提交失败，请稍后重试');
         }
+
+        this.confirmDialogVisible = false; // 关闭确认对话框
       } catch (error) {
         this.$message.error('提交过程中发生错误');
       }
@@ -177,6 +213,17 @@ export default {
       } catch (error) {
         console.error('Failed to load initial pacers data:', error);
       }
+    },
+    formatSeconds(seconds) {
+      // 计算小时数
+      const hours = Math.floor(seconds / 3600);
+      // 计算剩余的分钟数
+      const minutes = Math.floor((seconds % 3600) / 60);
+      // 剩余的秒数
+      const secs = seconds % 60;
+
+      // 格式化为HH:MM:SS形式，确保个位数前面补0
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
   },
   created() {

@@ -20,23 +20,35 @@
       <div v-if="filteredEvents.length > 0">
         <el-table :data="filteredEvents" class="EventInfoTable" @row-click="handleRowClick"
           row-class-name="clickable-row">
-          <el-table-column prop="date" label="开赛时间" width="150"></el-table-column>
           <el-table-column prop="name" label="比赛名称" width="250"></el-table-column>
-          <el-table-column prop="type" label="赛事类型" width="150"></el-table-column>
-          <el-table-column prop="scale" label="赛事规模" width="150"></el-table-column>
-          <el-table-column label="赛事成绩" width="100">
+          <el-table-column prop="start_date" label="报名开始时间" width="125"></el-table-column>
+          <el-table-column prop="end_date" label="报名结束时间" width="125"></el-table-column>
+          <el-table-column prop="date" label="开赛时间" width="125"></el-table-column>
+          <el-table-column prop="type" label="赛事类型" width="100"></el-table-column>
+          <el-table-column prop="scale" label="赛事规模" width="100"></el-table-column>
+          <el-table-column label="赛事总成绩" width="125">
             <template slot-scope="scope">
-              <div class="EventTableDetail" @click.prevent="handleLeaderBoard(scope.row, $event)">查看</div>
+              <el-button class="EventTableDetail" :class="{ 'disabled-btn': JudgeEventEndDate(scope.row.date) }"
+                style="background-color: transparent;padding: 0;border: 0;font-size: 16px;"
+                @click.prevent="handleLeaderBoard(scope.row, $event)">查看</el-button>
             </template>
           </el-table-column>
-          <el-table-column label="赛事管理" width="100">
+          <el-table-column label="赛事管理" width="100" v-if=JudgeAdmin()>
             <template slot-scope="scope">
               <div class="EventTableDetail" @click.prevent="handleEventManagement(scope.row, $event)">详情</div>
             </template>
           </el-table-column>
-          <el-table-column label="志愿管理" width="100">
+          <el-table-column label="志愿管理" width="100" v-if=JudgeAdmin()>
             <template slot-scope="scope">
               <div class="EventTableDetail" @click.prevent="handleEventVolunteer(scope.row, $event)">详情</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="前往报名" width="100" v-if=JudgeAthlete()>
+            <template slot-scope="scope">
+              <el-button class="EventTableDetail"
+                :class="{ 'disabled-btn': JudgeEventSignupDate(scope.row.start_date, scope.row.end_date) }"
+                style="color: rgb(168, 27, 31);background-color: transparent;padding: 0;border: 0;font-size: 16px;"
+                @click.prevent="handleRegistration(scope.row, $event)">报名</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -63,8 +75,9 @@ export default {
       searchName: '',
       events: [],
       currentPage: 1,
-      pageSize: 7,
+      pageSize: 10,
       my_id: '',
+
     };
   },
   created() {
@@ -129,7 +142,9 @@ export default {
           date: this.formatDate(Event.event_Date),
           name: Event.name,
           type: Event.category,
-          scale: Event.scale
+          scale: Event.scale,
+          start_date: this.formatDate(Event.start_Date),
+          end_date: this.formatDate(Event.end_Date),
         }))
       }).catch(error => {
         // 错误处理
@@ -150,26 +165,60 @@ export default {
     },
     handleEventManagement(row, event) {
       event.stopPropagation();
-      if (localStorage.getItem('UserRole') === 'Admin')
-        this.$router.push({ name: 'EventManagementTab', params: { event_id: row.id, name: row.name } });
-      else
-        this.$message.error('您不是管理员，没有权限')
+      this.$router.push({ name: 'EventManagementTab', params: { event_id: row.id, name: row.name } });
     },
     handleEventVolunteer(row, event) {
       event.stopPropagation();
-      if (localStorage.getItem('UserRole') === 'Admin')
-        this.$router.push({ name: 'EventVolunteerTab', params: { event_id: row.id, name: row.name } });
+      this.$router.push({ name: 'EventVolunteerTab', params: { event_id: row.id, name: row.name } });
+    },
+    handleRegistration(row, event) {
+      event.stopPropagation();
+      if (this.JudgeEventSignupDate(row.startDate, row.endDate))
+        this.$message.warning('现在不是报名时间')
       else
-        this.$message.error('您不是管理员，没有权限')
+        this.$router.push({ name: 'EventDetail', params: { event_id: row.id, name: row.name } });
     },
     handleLeaderBoard(row, event) {
       event.stopPropagation();
-      this.$router.push({ name: 'LeaderBoard', params: { event_id: row.id, name: row.name } });
+      if (this.JudgeEventEndDate(row.date))
+        this.$message.warning('赛事还未开始，暂无成绩列表')
+      else
+        this.$router.push({ name: 'LeaderBoard', params: { event_id: row.id, name: row.name } });
     },
     handleRowClick(event) {
       console.log(event)
       this.$router.push({ name: 'EventDetail', params: { event_id: event.id } });
     },
+    JudgeAdmin() {
+      return localStorage.getItem('UserRole') === 'Admin'
+    },
+    JudgeAthlete() {
+      return localStorage.getItem('UserRole') === 'Athlete'
+    },
+    JudgeEventSignupDate(startDate, endDate) {
+      const now = new Date(); // 获取当前时间
+      const start = new Date(startDate); // 报名开始时间
+      const end = new Date(endDate); // 报名结束时间
+      console.log(111, now >= start)
+      console.log(222, end)
+      console.log(333, now)
+      // 判断当前时间是否在报名时间范围内
+      if (now >= start && now <= end) {
+        return false; // 可报名，按钮不禁用
+      } else {
+        return true; // 不可报名，按钮禁用
+      }
+    },
+    JudgeEventEndDate(time) {
+      const now = new Date(); // 获取当前时间
+      const start = new Date(time); // 报名开始时间
+      // 判断当前时间是否在报名时间范围内
+      if (now >= start) {
+        return false; // 可报名，按钮不禁用
+      } else {
+        return true; // 不可报名，按钮禁用
+      }
+    }
   }
 };
 </script>

@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     ActiveIndex(index) {
-      if (this.IsLottery || index === '1' || index === '4' || index === '5') {
+      if (this.IsLottery || (index !== '2' && index !== '3')) {
         this.ActiveIndexForEventManagementTab = index; // 设置当前激活的菜单项
         this.$router.push({ name: this.EventManagementTabTitle[index - 1], params: { event_id: this.$route.params.event_id, name: this.$route.params.name } });
       }

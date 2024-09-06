@@ -11,7 +11,7 @@
           </div>
         </div>
         <div>
-          <el-table :data="paginatedVolunteers" class="Table" style="width: 100%">
+          <el-table :data="paginatedVolunteers" class="Table" style="width: 100%" max-height="350">
             <el-table-column prop="id" label="ID" width="125"></el-table-column>
             <el-table-column prop="name" label="姓名" width="150"></el-table-column>
             <el-table-column prop="telephone_Number" label="电话" width="200"></el-table-column>
@@ -83,8 +83,16 @@ export default {
     },
     async save() {
       try {
+        const selectedVolunteers = this.volunteers.filter(volunteer =>
+          volunteer.tosupply || volunteer.tomedical || volunteer.tocar
+        );
+
+        if (selectedVolunteers.length === 0) {
+          this.$message.warning('没有可以保存的信息');
+          return; // 如果没有勾选任何志愿者，直接返回
+        }
         const eventId = this.$route.params.event_id; // 固定的赛事ID
-        const savePromises = this.volunteers.map(volunteer => {
+        const savePromises = selectedVolunteers.map(volunteer => {
           let jobCategory = '';
 
           if (volunteer.tosupply) {
@@ -95,26 +103,32 @@ export default {
             jobCategory = '接驳车';
           }
 
-          if (jobCategory) {
-            return scheduleVolunteer({
-              Event_Id: eventId,
-              Volunteer_Id: volunteer.id,
-              Job_category: jobCategory
-            });
-          } else {
-            return Promise.resolve(); // 如果没有选择任务，直接返回 resolved 的 Promise
-          }
+          return scheduleVolunteer({
+            Event_Id: eventId,
+            Volunteer_Id: volunteer.id,
+            Job_category: jobCategory
+          });
         });
 
         await Promise.all(savePromises);
         this.$message.success('保存成功');
-        this.loadVolunteers();
+        this.loadVolunteers(); // 重新加载志愿者信息
+
       } catch (error) {
         console.error('Failed to save volunteer assignments:', error);
-        this.$message.error('保存失败，请稍后重试。');
+        this.$message.error('保存失败，请稍后重试');
       }
     },
     cancel() {
+      const anySelection = this.volunteers.some(volunteer =>
+        volunteer.tosupply || volunteer.tomedical || volunteer.tocar
+      );
+
+      if (!anySelection) {
+        this.$message.warning('没有任何勾选可以取消');
+        return; // 如果没有勾选任何志愿者，直接返回
+      }
+
       this.volunteers.forEach(p => {
         p.tosupply = false;
         p.tomedical = false;

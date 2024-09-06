@@ -1,21 +1,27 @@
 <template>
   <div id="PackageDetail">
     <el-dialog title="物资详情" :visible.sync="dialogVisible" width="40%" class="PackageDetailDialog">
-      <div style="display: flex;width: 55%;">
-        <el-table :data="competePackages">
-          <el-table-column prop="name" label="参赛物资"></el-table-column>
-        </el-table>
+      <div v-if="competePackages.length || finishPackages.length || supplyPackages.length">
+        <div style="display: flex;width: 55%;">
+          <el-table :data="competePackages" max-height="300">
+            <el-table-column prop="name" label="参赛物资"></el-table-column>
+          </el-table>
+        </div>
+        <div style="display: flex;width: 55%;">
+          <el-table :data="finishPackages" max-height="300">
+            <el-table-column prop="name" label="完赛物资"></el-table-column>
+          </el-table>
+        </div>
+        <div style="display: flex;width: 100%;">
+          <el-table :data="supplyPackages" max-height="300">
+            <el-table-column prop="name" label="补给物资"></el-table-column>
+          </el-table>
+        </div>
       </div>
-      <div style="display: flex;width: 55%;">
-        <el-table :data="finishPackages">
-          <el-table-column prop="name" label="完赛物资"></el-table-column>
-        </el-table>
-      </div>
-      <div style="display: flex;width: 100%;">
-        <el-table :data="supplyPackages">
-          <el-table-column prop="name" label="补给物资"></el-table-column>
-        </el-table>
-      </div>
+      <div v-else class="Empty">暂无数据</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -55,8 +61,7 @@ export default {
           this.finishPackages = response.filter(item => item.kind === '完赛');
           this.supplyPackages = response.filter(item => item.kind === '补给');
         } else {
-          console.warn('未收到有效的物资数据');
-          this.$message.error('未收到有效响应数据');
+          console.log('未收到有效的物资数据');
         }
       } catch (error) {
         console.error('加载物资详情失败:', error);
@@ -70,11 +75,30 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+@import "@/assets/css/Base.css";
+@import 'element-ui/lib/theme-chalk/index.css';
+
 #PackageDetail .el-dialog__body {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+#PackageDetail .Empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #999;
+  width: 100%;
+  text-align: center;
+}
+
+#PackageDetail .el-button {
+  font-size: 14px;
 }
 </style>

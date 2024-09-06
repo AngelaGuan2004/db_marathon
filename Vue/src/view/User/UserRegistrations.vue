@@ -1,6 +1,6 @@
 <template>
   <div id="UserRegistrations">
-    <div class='NotTable' v-if="this.loading && !this.Flag">
+    <div class='NotTable' v-if="(this.loading && !this.Flag) || !events.length">
       <div style=" display: table-cell;vertical-align: middle;width: 100vh;height: 300px;">
         未查询到报名比赛！
       </div>
@@ -10,16 +10,17 @@
         <div style="width: 100%; overflow: auto ;height: 100%;margin-top: 20px;">
           <el-table :data="paginatedResults" v-loading='loading' class="table" row-class-name="clickable-row" stripe>
             <el-table-column prop="name" label="比赛名称" width="300"></el-table-column>
-            <el-table-column prop="event_Date" label="时间" width="150"></el-table-column>
-            <el-table-column prop="category" label="赛事类型" width="150"></el-table-column>
+            <el-table-column prop="event_Date" label="开赛时间" width="175"></el-table-column>
+            <el-table-column prop="category" label="赛事类型" width="125"></el-table-column>
             <el-table-column prop="result" label="结果" width="150">
               <template slot-scope="scope">
-                <div v-if="scope.row.result === '已中签'" style="color: #c81623;font-weight: bold;">{{ scope.row.result }}
+                <div v-if="scope.row.result.response === '已中签'" style="color: #c81623;font-weight: bold;">
+                  {{ scope.row.result.response }}
                 </div>
-                <div v-else-if="scope.row.result === '未中签'" style="color:rgb(175,175,175);font-weight: bold;">{{
-                  scope.row.result }}</div>
-                <div v-else style="color:rgb(230, 162, 60);font-weight: bold;">{{
-                  scope.row.result }}</div>
+                <div v-else-if="scope.row.result.response === '未中签'" style="color:rgb(175,175,175);font-weight: bold;">
+                  {{ scope.row.result.response }}</div>
+                <div v-else style="color:rgb(230, 162, 60);font-weight: bold;">
+                  {{ scope.row.result.response }}</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="100">
@@ -36,14 +37,18 @@
         </div>
       </el-main>
     </div>
-
+    <UserRegistrationsDetail :event="selectedEvent" v-if="dialogVisible" @close="dialogVisible = false" />
   </div>
 </template>
 <script>
+import UserRegistrationsDetail from './UserRegistrationsDetail.vue';
 import { getMyRegistrations } from '@/api/UserCenter.js'
 import { getEventInfo } from '@/api/UserCenter.js'
 export default {
   name: 'UserRegistrations',
+  components: {
+    UserRegistrationsDetail
+  },
   mounted() {
     this.ID = localStorage.getItem('UserId')
     getMyRegistrations(this.ID)
@@ -65,16 +70,21 @@ export default {
       activeMenu: '2',
       searchName: '',
       events: [],
+      selectedEvent: null,
       currentPage: 1,
       pageSize: 8,
       loading: true,
-      Flag: true
+      Flag: true,
+      dialogVisible: false
     }
   },
   methods: {
-    handleRowClick(row) {
-      this.$router.push({ name: 'EventDetail', params: { event_id: (row.id).toString() } });
-      this.$bus.$emit('updateActiveIndex', '2');
+    handleRowClick(event) {
+      this.selectedEvent = event;  // Set the selected event
+      this.dialogVisible = false;  // 先关闭对话框
+      this.$nextTick(() => {       // 等待 DOM 完全更新后再打开对话框
+        this.dialogVisible = true; // 重新显示子组件
+      });
     },
     handlePageChange(page) {
       this.currentPage = page;
@@ -103,9 +113,16 @@ export default {
         .then(response => {
           // 根据实际的 API 返回结构解析 result 值
           if (response === "未中签" || response === "尚未抽签")
-            return response;
-          else
-            return "已中签";
+            return {
+              response,
+              eventNumber: '未中签'
+            };
+          else {
+            return {
+              response: '已中签',
+              eventNumber: response
+            };
+          }
         })
         .catch(error => {
           console.error(`获取赛事 ${eventId} 的结果失败:`, error);

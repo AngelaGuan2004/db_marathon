@@ -10,21 +10,11 @@
         <!-- 筛选和最佳成绩栏目 -->
         <div class="UserResultsRaceType">
           <span style="margin-right: 5px;">比赛类型：</span>
-          <el-select v-model="filterType" placeholder="选择比赛类型">
+          <el-select v-model="filterType" placeholder="选择比赛类型" @change="filterResults">
             <el-option label="全部" value="all"></el-option>
             <el-option label="全程马拉松" value="full"></el-option>
             <el-option label="半程马拉松" value="half"></el-option>
           </el-select>
-          <!-- 
-          <div class="UserResultsBestGrade" v-if="bestResultSelected">
-            <span>最好成绩：</span>
-            <span :class="['result_item', bestResult.type, 'best_result']">
-              {{ bestResult.name }}
-              <span class="highlight">{{ bestResult.time }}</span>
-              <span>&nbsp;</span>
-              <span class="highlight">{{ bestResult.rank }}名</span>
-            </span>
-          </div> -->
 
           <!-- 搜索框 -->
           <div class="UserResultsSearch">
@@ -44,7 +34,7 @@
             </el-table-column>
             <el-table-column prop="net_Result" label="净成绩" width="200">
               <template slot-scope="scope">
-                <div style="font-weight: bold;">{{ scope.row.net_Result }}</div>
+                <div style="font-weight: bold;">{{ formatSeconds(scope.row.net_Result) }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="rank" label="排名" width="150">
@@ -118,18 +108,21 @@ export default {
 
       try {
         let response;
-        const Player_ID = 1; // 保持一致的 Player_ID
-
+        const Player_ID = localStorage.getItem('UserId'); // 保持一致的 Player_ID
         if (type === 'full') {
           response = await getFullResults(Player_ID); // 获取全马成绩
+          this.filteredResults = response; // 更新筛选结果
         } else if (type === 'half') {
           response = await getHalfResults(Player_ID); // 获取半马成绩
+          this.filteredResults = response; // 更新筛选结果
+        } else if (type === 'best') {
+          // 筛选最佳成绩逻辑
+          this.filteredResults = this.results.sort((a, b) => a.net_Result - b.net_Result).slice(0, 1); // 根据净成绩筛选最佳成绩
         } else {
           // 如果选择 "全部"，则显示所有成绩
           this.filteredResults = this.results;
-          return;
         }
-        this.filteredResults = response.data; // 更新筛选结果
+        console.log(response)
       } catch (error) {
         console.error('筛选比赛成绩失败:', error);
       }
@@ -139,15 +132,26 @@ export default {
     },
     getRaceType(type) {
       return type === 'full' ? '全马' : '半马';
-    }
+    },
+    formatSeconds(seconds) {
+      // 计算小时数
+      const hours = Math.floor(seconds / 3600);
+      // 计算剩余的分钟数
+      const minutes = Math.floor((seconds % 3600) / 60);
+      // 剩余的秒数
+      const secs = seconds % 60;
 
+      // 格式化为HH:MM:SS形式，确保个位数前面补0
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
   },
   computed: {
     paginatedResults() {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = start + this.pageSize;
       return this.filteredResults.slice(start, end);
-    }
+    },
+
   }
 
 }

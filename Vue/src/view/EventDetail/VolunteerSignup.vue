@@ -71,22 +71,26 @@ export default {
         }
 
         // 发送包含 Event_Id 和 Volunteer_Id 的请求到后端
-        await registerVolunteer({
+        const res = await registerVolunteer({
           Event_Id: eventId,
           Volunteer_Id: volunteerId
         });
-
-        this.$message.success('报名成功');
+        if (res === 2) {
+          this.$message.warning('您已为该比赛选手，无法报名志愿者');
+          this.$router.back()
+        }
+        else
+          this.$message.success('报名成功');
       } catch (error) {
         console.error('Error submitting registration:', error);
         this.$message.error('报名失败');
       }
     },
     modifyInfo() {
+      this.$router.push({ name: 'UserInfo' })
       this.$bus.$emit('updateActiveIndex', '4');
-      this.$router.push({ name: 'UserTab' });
     }
-  }
+  },
 };
 </script>
 

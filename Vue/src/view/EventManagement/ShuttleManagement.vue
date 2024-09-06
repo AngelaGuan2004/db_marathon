@@ -2,7 +2,7 @@
   <div id="ShuttleManagement">
     <div class="ManagementContainer">
       <div style="margin-bottom: 50px;font-weight: bold;font-size: 26px;">{{ this.$route.params.name }}</div>
-      <el-table v-if="shuttleBuses" :data="shuttleBuses" class='DeleteButton'>
+      <el-table v-if="shuttleBuses.length" :data="shuttleBuses" class='DeleteButton' max-height="350">
         <el-table-column prop="event_Id" label="赛事ID"></el-table-column>
         <el-table-column prop="id" label="接驳车ID"></el-table-column>
         <el-table-column prop="departure_Time" label="出发时间"></el-table-column>
@@ -19,17 +19,24 @@
       </div>
       <el-dialog :visible.sync="dialogVisible" width="40%" title="添加接驳车" class="Dialog">
         <el-form :model="newShuttle" label-width="150px">
-          <el-form-item label="赛事ID">
-            <el-input v-model="newShuttle.eventId" placeholder="输入赛事ID"></el-input>
-          </el-form-item>
           <el-form-item label="接驳车ID">
             <el-input v-model="newShuttle.shuttleId" placeholder="输入接驳车ID"></el-input>
           </el-form-item>
           <el-form-item label="出发时间">
-            <el-input v-model="newShuttle.departureTime" placeholder="输入出发时间"></el-input>
+            <el-time-select v-model="newShuttle.departureTime" :picker-options="{
+              start: '08:00',
+              step: '00:15',
+              end: '18:30'
+            }" placeholder="选择出发时间">
+            </el-time-select>
           </el-form-item>
           <el-form-item label="到达时间">
-            <el-input v-model="newShuttle.arrivalTime" placeholder="输入到达时间"></el-input>
+            <el-time-select v-model="newShuttle.arrivalTime" :picker-options="{
+              start: '08:00',
+              step: '00:15',
+              end: '18:30'
+            }" placeholder="选择到达时间">
+            </el-time-select>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -48,7 +55,7 @@ export default {
   data() {
     return {
       searchForm: {
-        Event_id: '10001'
+        Event_id: this.$route.params.event_id
       },
       shuttleBuses: [
         //{ eventId: '1', shuttleId: '101', departureTime: '08:00', arrivalTime: '09:00' },
@@ -58,7 +65,6 @@ export default {
       confirmDialogVisible: false,
       deleteIndex: -1,
       newShuttle: {
-        Event_id: '10001',
         shuttleId: '',
         departureTime: '',
         arrivalTime: ''
@@ -72,6 +78,7 @@ export default {
           const response = await get_shuttleInfo(this.searchForm.Event_id);
           this.shuttleBuses = response; // 假设API返回的数据在data属性中
         } catch (error) {
+          this.$message.error('获取接驳车信息失败');
           console.error('获取接驳车信息失败:', error);
         }
       }
@@ -80,18 +87,24 @@ export default {
       this.dialogVisible = true;
     },
     async addShuttleBus() {
-      if (this.newShuttle.Event_id && this.newShuttle.shuttleId) {
+      if (this.newShuttle.shuttleId) {
         try {
-          await add_shuttleInfo({
-            Event_id: this.newShuttle.Event_id,
-            shuttlecar_id: this.newShuttle.shuttleId,
+          const response = await add_shuttleInfo({
+            Event_id: this.searchForm.Event_id,
+            shuttlecar_id: parseInt(this.newShuttle.shuttleId),
             departtime: this.newShuttle.departureTime,
             arrivetime: this.newShuttle.arrivalTime
           });
-          this.shuttleBuses.push({ ...this.newShuttle });
-          this.dialogVisible = false;
-          this.newShuttle = { Event_id: '10001', shuttleId: '', departureTime: '', arrivalTime: '' };
-          this.$message.success('添加接驳车成功!');
+          if (response) {
+            this.shuttleBuses.push({ ...this.newShuttle });
+            this.dialogVisible = false;
+            this.newShuttle = { Event_id: this.$route.params.event_id, shuttleId: '', departureTime: '', arrivalTime: '' };
+            this.$message.success('添加接驳车成功!');
+            await this.fetchShuttleBuses()
+          }
+          else {
+            this.$message.warning('该接驳车id已存在');
+          }
         } catch (error) {
           console.error('添加接驳车失败:', error);
           this.$message.error('添加接驳车失败');
@@ -106,8 +119,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.deleteShuttleBus(this.shuttleBuses[index].shuttleId);
-        this.fetchShuttleBuses();
+        this.deleteShuttleBus(this.shuttleBuses[index].id);
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -115,18 +127,20 @@ export default {
         });
       });
     },
-    async deleteShuttleBus() {
-      if (this.deleteIndex !== -1) {
-        try {
-          const shuttlecar_ID = this.shuttleBuses[this.deleteIndex].shuttleId;
-          await delete_shuttleInfo(shuttlecar_ID);
+    async deleteShuttleBus(id) {
+      try {
+        const res = await delete_shuttleInfo(id);
+        if (!res.success)
+          this.$message.error('该接驳车已排班，无法删除');
+        else {
           this.shuttleBuses.splice(this.deleteIndex, 1);
           this.confirmDialogVisible = false;
           this.$message.success('删除成功!');
-        } catch (error) {
-          console.error('删除接驳车失败:', error);
-          this.$message.error('删除接驳车失败');
+          await this.fetchShuttleBuses();
         }
+      } catch (error) {
+        console.error('删除接驳车失败:', error);
+        this.$message.error('删除接驳车失败');
       }
     },
     searchShuttleBuses() {

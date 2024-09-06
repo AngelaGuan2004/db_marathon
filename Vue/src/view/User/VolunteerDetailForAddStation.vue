@@ -46,14 +46,18 @@ export default {
     'this.$route.params.event_id': 'loadAidStation'
   },
   methods: {
+    reset() {
+      this.aidStation = null;  // 重置 aidStation 数据
+    },
     loadVolunteerInformation() {
+      this.reset();  // 调用重置方法
       const volunteerId = localStorage.getItem('UserId');
       const eventId = this.$route.params.event_id;
 
       acquireVolunteerInformation(eventId, volunteerId)
         .then(response => {
           console.log(response)
-          this.aidStation = response; // 将后端返回的数据赋值给 aidStation
+          this.aidStation = response;  // 将后端返回的数据赋值给 aidStation
         })
         .catch(error => {
           console.error('Error loading volunteer info:', error);
@@ -61,7 +65,7 @@ export default {
         });
     },
     handleClose() {
-      this.$router.back()
+      this.dialogTableVisible = false
     },
     aidStationChange(res) {
       if (res === 1)

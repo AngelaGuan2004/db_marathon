@@ -7,19 +7,27 @@
         <el-button type="primary" @click="drawLots" :disabled="isDrawn === '是'">抽签</el-button>
       </div>
       <div v-if="paginatedParticipants.length > 0">
-        <el-table :data="paginatedParticipants" class="ParticipantLotteryTable">
+        <el-table :data="paginatedParticipants" class="ParticipantLotteryTable" max-height="400">
           <el-table-column prop="id" label="ID" width="100"></el-table-column>
           <el-table-column prop="name" label="姓名" width="120"></el-table-column>
           <el-table-column prop="sex" label="性别" width="100"></el-table-column>
           <el-table-column prop="age" label="年龄" width="100"></el-table-column>
           <el-table-column prop="role" label="参赛身份" width="150"></el-table-column>
-          <el-table-column prop="state" label="报名状态" width="120"></el-table-column>
+          <el-table-column prop="state" label="报名状态" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.state === '已中签'" style="font-weight: bold;color: rgb(168, 27, 31);">
+                {{ scope.row.state }}</div>
+              <div v-else-if="scope.row.state === '未中签'" style="font-weight: bold;color:rgb(175,175,175)">
+                {{ scope.row.state }}</div>
+              <div v-else style="font-weight: bold;color:rgb(230, 162, 60);">{{ scope.row.state }}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="number" label="参赛号码" width="150"></el-table-column>
         </el-table>
         <el-pagination class="Pagination" background layout="prev, pager, next" :total="totalParticipantsCount"
           :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
       </div>
-      <div v-else class="ParticipantLotteryTableEmpty">
+      <div v-else class="Empty" style="margin-top: 50px;">
         暂无数据
       </div>
     </el-main>
@@ -45,6 +53,9 @@ export default {
       return this.participants.length;
     },
     paginatedParticipants() {
+      if (!Array.isArray(this.participants) || this.participants.length === 0) {
+        return []; // 如果participants为空或不是数组，返回空数组
+      }
       const start = (this.currentPage - 1) * this.pageSize;
       const end = this.currentPage * this.pageSize;
       return this.participants.slice(start, end);
@@ -122,7 +133,8 @@ export default {
             );
             return Promise.all(playerPromises);
           } else {
-            throw new Error('Invalid response format or no participants found');
+            this.$message.warning('未找到选手数据')
+            this.isDrawn = '是'
           }
         })
         .then(players => {
