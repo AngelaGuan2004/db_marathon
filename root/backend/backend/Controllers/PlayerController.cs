@@ -39,7 +39,7 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_participate([FromBody] Participate participate)
         {
-            _logger.LogInformation("收到参赛数据: {@Participate.Player_Id}", participate.Player_Id); // 记录收到的数据
+            // _logger.LogInformation("收到参赛数据: {@Participate.Player_Id}", participate.Player_Id); // 记录收到的数据
 
             try
             {
@@ -49,20 +49,33 @@ namespace MarathonMaster.Controllers
                                          .ToListAsync();
                 if (query.Count == 0) //不是志愿者
                 {
-                    await _db.Insertable(participate).ExecuteCommandAsync();
-                    _logger.LogInformation("成功报名: {@participate.Player_Id}", participate.Player_Id); // 记录插入成功
-                    return Ok(true);
+                    // 查询数据库，获取指定选手ID报名的所有比赛ID列表
+                    var eventids = await _db.Queryable<Participate>()
+                                           .Where(p => p.Player_Id == participate.Player_Id)
+                                           .Select(p => p.Event_Id)
+                                           .ToListAsync();
+                    if (eventids.Count == 0) //该选手没有报名该赛事
+                    {
+                        await _db.Insertable(participate).ExecuteCommandAsync();
+                        // _logger.LogInformation("成功报名: {@participate.Player_Id}", participate.Player_Id); // 记录插入成功
+                        return Ok(true);
+                    }
+                    else
+                    {
+                        // _logger.LogInformation("报名失败，该用户已经报名过该赛事: {@participate.Player_Id}", participate.Player_Id); // 记录插入成功
+                        return Ok(3);
+                    }                   
                 }
                 else
                 {
-                    _logger.LogInformation("报名失败，该用户已是该赛事的志愿者: {@participate.Player_Id}", participate.Player_Id); // 记录插入成功
+                    // _logger.LogInformation("报名失败，该用户已是该赛事的志愿者: {@participate.Player_Id}", participate.Player_Id); // 记录插入成功
                     return Ok(2);
                 }
                 
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "报名失败: {@Participate}", participate); // 记录错误信息
+                // _logger.LogError(ex, "报名失败: {@Participate}", participate); // 记录错误信息
 
                 return StatusCode(500,ex.Message);
             }
@@ -133,13 +146,13 @@ namespace MarathonMaster.Controllers
                                  .Where(e => eventIds.Contains(e.Id))
                                  .ToListAsync();
                     
-                _logger.LogInformation("查询成功, 选手ID: {PlayerId}, 比赛列表: {@Events}", Id, events);
+                // _logger.LogInformation("查询成功, 选手ID: {PlayerId}, 比赛列表: {@Events}", Id, events);
                 return Ok(events);
                    
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询选手ID: {PlayerId} 的报名记录时出错", Id);
+                // _logger.LogError(ex, "查询选手ID: {PlayerId} 的报名记录时出错", Id);
                 return BadRequest("查询失败");
             }
         }
@@ -162,12 +175,12 @@ namespace MarathonMaster.Controllers
 
                 if (participateRecord.Number_ != null)
                 {
-                    _logger.LogInformation("查询成功, 比赛ID: {EventId}, 选手ID: {PlayerId}, 比赛号码: {Number}", eventId, playerId, participateRecord);
+                    // _logger.LogInformation("查询成功, 比赛ID: {EventId}, 选手ID: {PlayerId}, 比赛号码: {Number}", eventId, playerId, participateRecord);
                     return Ok(participateRecord.Number_); // 返回比赛号码
                 }
                 else if(_event.Is_Drawn=="是")//已经抽签
                 {
-                    _logger.LogWarning("未找到比赛ID: {EventId} 和选手ID: {PlayerId} 对应的比赛号码", eventId, playerId);
+                    // _logger.LogWarning("未找到比赛ID: {EventId} 和选手ID: {PlayerId} 对应的比赛号码", eventId, playerId);
                     return Ok("未中签");
                 }
                 else
@@ -177,7 +190,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询比赛ID: {EventId} 和选手ID: {PlayerId} 的比赛号码时出错", eventId, playerId);
+                // _logger.LogError(ex, "查询比赛ID: {EventId} 和选手ID: {PlayerId} 的比赛号码时出错", eventId, playerId);
                 return BadRequest("查询失败");
             }
         }

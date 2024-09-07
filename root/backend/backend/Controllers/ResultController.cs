@@ -59,12 +59,12 @@ namespace MarathonMaster.Controllers
 
             if (resultsWithEventNames.Count > 0)
             {
-                _logger.LogInformation("查找Player_Id对应的成绩信息成功: {@resultsWithEventNames}", resultsWithEventNames);
+                // _logger.LogInformation("查找Player_Id对应的成绩信息成功: {@resultsWithEventNames}", resultsWithEventNames);
                 return Ok(resultsWithEventNames);
             }
             else
             {
-                _logger.LogInformation("无信息");
+                // _logger.LogInformation("无信息");
                 return Ok("无信息");
             }
         }
@@ -92,12 +92,12 @@ namespace MarathonMaster.Controllers
 
             if (halfMarathonResults.Count > 0)
             {
-                _logger.LogInformation("查找Player_Id对应的半马成绩信息成功: {@halfMarathonResults}", halfMarathonResults);
+                // _logger.LogInformation("查找Player_Id对应的半马成绩信息成功: {@halfMarathonResults}", halfMarathonResults);
                 return Ok(halfMarathonResults);
             }
             else
             {
-                _logger.LogInformation("无半马成绩信息");
+                // _logger.LogInformation("无半马成绩信息");
                 return Ok("无信息");
             }
         }
@@ -125,12 +125,12 @@ namespace MarathonMaster.Controllers
 
             if (fullMarathonResults.Count > 0)
             {
-                _logger.LogInformation("查找Player_Id对应的全马成绩信息成功: {@fullMarathonResults}", fullMarathonResults);
+                // _logger.LogInformation("查找Player_Id对应的全马成绩信息成功: {@fullMarathonResults}", fullMarathonResults);
                 return Ok(fullMarathonResults);
             }
             else
             {
-                _logger.LogInformation("无全马成绩信息");
+                // _logger.LogInformation("无全马成绩信息");
                 return Ok("无信息");
             }
         }
@@ -140,7 +140,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> search_result([FromQuery] int Player_Id, [FromQuery] string Event_id)
         {
-            _logger.LogInformation("收到的数据: {@Player_Id}", Player_Id); // 记录收到的数据
+            // _logger.LogInformation("收到的数据: {@Player_Id}", Player_Id); // 记录收到的数据
 
             try
             {
@@ -149,18 +149,18 @@ namespace MarathonMaster.Controllers
                                   .SingleAsync(); ;
                 if (results != null)
                 {
-                    _logger.LogInformation("査找的成绩信息:{ @results}", results);
+                    // _logger.LogInformation("査找的成绩信息:{ @results}", results);
                     return Ok(results);
                 }
                 else
                 {
-                    _logger.LogInformation("无信息");
+                    // _logger.LogInformation("无信息");
                     return Ok("无信息");
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "失败: {@Player_Id}", Player_Id); // 记录错误信息
+                // _logger.LogError(ex, "失败: {@Player_Id}", Player_Id); // 记录错误信息
 
                 return BadRequest(false);
             }
@@ -171,14 +171,14 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_result([FromBody] List<Result_> resultList)
         {
-            _logger.LogInformation("收到成绩数据: {@Volunteer}", resultList); // 记录收到的数据
+            // _logger.LogInformation("收到成绩数据: {@Volunteer}", resultList); // 记录收到的数据
 
             try
             {
                 foreach (var result_ in resultList)
                 {
                     await _db.Insertable(result_).ExecuteCommandAsync();
-                    _logger.LogInformation("成功插入成绩数据: {@result}", result_); // 记录插入成功
+                    // _logger.LogInformation("成功插入成绩数据: {@result}", result_); // 记录插入成功
 
                 }
 
@@ -186,7 +186,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "失败: {@result}", resultList); // 记录错误信息
+                // _logger.LogError(ex, "失败: {@result}", resultList); // 记录错误信息
 
                 return BadRequest($"更改数据失败: {ex.Message}");
             }
@@ -196,7 +196,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_top_players([FromQuery] string event_id, [FromQuery] int topN, [FromQuery] string gender)
         {
-            _logger.LogInformation("收到请求: event_id={@event_id}, topN={@topN}", event_id, topN);
+            // _logger.LogInformation("收到请求: event_id={@event_id}, topN={@topN}", event_id, topN);
 
             try
             {
@@ -230,18 +230,18 @@ namespace MarathonMaster.Controllers
 
                 if (topPlayers != null)
                 {
-                    _logger.LogInformation("成功获取前{@topN}名选手数据: {@topPlayers}", topN, topPlayers);
+                    // _logger.LogInformation("成功获取前{@topN}名选手数据: {@topPlayers}", topN, topPlayers);
                     return Ok(topPlayers);
                 }
                 else
                 {
-                    _logger.LogInformation("未找到符合条件的选手");
+                    // _logger.LogInformation("未找到符合条件的选手");
                     return NotFound(null);
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "获取前{@topN}名选手数据失败: event_id={@event_id}", topN, event_id);
+                // _logger.LogError(ex, "获取前{@topN}名选手数据失败: event_id={@event_id}", topN, event_id);
                 return BadRequest($"获取数据失败: {ex.Message}");
             }
         }
@@ -249,7 +249,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_last_players([FromQuery] string event_id, [FromQuery] int lastN)
         {
-            _logger.LogInformation("收到请求: event_id={@event_id}, lastN={@lastN}", event_id, lastN);
+            // _logger.LogInformation("收到请求: event_id={@event_id}, lastN={@lastN}", event_id, lastN);
 
             try
             {
@@ -261,18 +261,18 @@ namespace MarathonMaster.Controllers
 
                 if (lastPlayers.Count > 0)
                 {
-                    _logger.LogInformation("成功获取最后{@lastN}名选手数据: {@lastPlayers}", lastN, lastPlayers);
+                    // _logger.LogInformation("成功获取最后{@lastN}名选手数据: {@lastPlayers}", lastN, lastPlayers);
                     return Ok(lastPlayers);
                 }
                 else
                 {
-                    _logger.LogInformation("未找到符合条件的选手");
+                    // _logger.LogInformation("未找到符合条件的选手");
                     return NotFound(null);
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "获取最后{@lastN}名选手数据失败: event_id={@event_id}", lastN, event_id);
+                // _logger.LogError(ex, "获取最后{@lastN}名选手数据失败: event_id={@event_id}", lastN, event_id);
                 return BadRequest($"获取数据失败: {ex.Message}");
             }
         }
@@ -281,7 +281,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_all_results_by_eventid([FromQuery] string event_id)
         {
-            _logger.LogInformation("收到请求: event_id={@event_id}", event_id);
+            // _logger.LogInformation("收到请求: event_id={@event_id}", event_id);
 
             try
             {
@@ -304,18 +304,18 @@ namespace MarathonMaster.Controllers
 
                 if (allResults.Count > 0)
                 {
-                    _logger.LogInformation("成功获取赛事ID为{@event_id}的所有成绩数据", event_id);
+                    // _logger.LogInformation("成功获取赛事ID为{@event_id}的所有成绩数据", event_id);
                     return Ok(allResults);
                 }
                 else
                 {
-                    _logger.LogInformation("未找到赛事ID为{@event_id}的成绩数据", event_id);
+                    // _logger.LogInformation("未找到赛事ID为{@event_id}的成绩数据", event_id);
                     return NotFound("未找到对应的成绩数据");
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "获取赛事ID为{@event_id}的成绩数据失败", event_id);
+                // _logger.LogError(ex, "获取赛事ID为{@event_id}的成绩数据失败", event_id);
                 return BadRequest($"获取数据失败: {ex.Message}");
             }
         }

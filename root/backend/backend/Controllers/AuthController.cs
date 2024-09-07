@@ -40,7 +40,7 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_player([FromBody] PlayerLogin player0)
         {
-            _logger.LogInformation("收到选手数据: {@Player}", player0); // 记录收到的数据
+            // _logger.LogInformation("收到选手数据: {@Player}", player0); // 记录收到的数据
 
             try
             {
@@ -52,7 +52,7 @@ namespace MarathonMaster.Controllers
 
                 if (existingPlayer != null)
                 {
-                    _logger.LogWarning("重复注册，选手已存在: {@Player}", existingPlayer); // 记录重复注册信息
+                    // _logger.LogWarning("重复注册，选手已存在: {@Player}", existingPlayer); // 记录重复注册信息
                     return Ok(0);
                 }
                 /*
@@ -77,13 +77,13 @@ namespace MarathonMaster.Controllers
                 await _db.Insertable(player).ExecuteCommandAsync();
 
                 var newPlayer = await _db.Queryable<Player>().OrderByDescending(p => p.Id).FirstAsync();
-                _logger.LogInformation("成功插入选手数据: {@Player}", newPlayer);
+                // _logger.LogInformation("成功插入选手数据: {@Player}", newPlayer);
 
                 return Ok(newPlayer.Id);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入选手数据失败"); // 记录错误信息
+                // _logger.LogError(ex, "插入选手数据失败"); // 记录错误信息
 
                 return BadRequest(ex.Message);
             }
@@ -94,17 +94,17 @@ namespace MarathonMaster.Controllers
         //[HttpPost]
         //public async Task<IActionResult> add_volunteer([FromBody] Volunteer volunteer)
         //{
-        //    _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
+        //    // _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
 
         //    try
         //    {
         //        await _db.Insertable(volunteer).ExecuteCommandAsync();
-        //        _logger.LogInformation("成功插入志愿者数据: {@Volunteer}", volunteer); // 记录插入成功
+        //        // _logger.LogInformation("成功插入志愿者数据: {@Volunteer}", volunteer); // 记录插入成功
         //        return Ok(true);
         //    }
         //    catch (System.Exception ex)
         //    {
-        //        _logger.LogError(ex, "插入志愿者数据失败: {@Volunteer}", volunteer); // 记录错误信息
+        //        // _logger.LogError(ex, "插入志愿者数据失败: {@Volunteer}", volunteer); // 记录错误信息
 
         //        return BadRequest(false);
         //    }
@@ -116,7 +116,7 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> login_player([FromBody] Player player)
         {
-            _logger.LogInformation("收到选手数据: {@Player}", player); // 记录收到的数据
+            // _logger.LogInformation("收到选手数据: {@Player}", player); // 记录收到的数据
 
             try
             {
@@ -126,18 +126,18 @@ namespace MarathonMaster.Controllers
 
                 if (existingPlayer != null)
                 {
-                    _logger.LogInformation("选手登录成功: {@Player}", player); // 记录登录成功
+                    // _logger.LogInformation("选手登录成功: {@Player}", player); // 记录登录成功
                     return Ok(JsonSerializer.Serialize(existingPlayer));
                 }
                 else
                 {
-                    _logger.LogWarning("登录失败: 无效的用户名或密码或身份证号");
+                    // _logger.LogWarning("登录失败: 无效的用户名或密码或身份证号");
                     return Ok(2);
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "选手登登录录失败: {@LoginRequest}", player); // 记录错误信息
+                // _logger.LogError(ex, "选手登登录录失败: {@LoginRequest}", player); // 记录错误信息
 
                 return BadRequest(false);
             }
@@ -147,7 +147,7 @@ namespace MarathonMaster.Controllers
         //[HttpPost]
         //public async Task<IActionResult> login_volunteer([FromBody] Volunteer volunteer)
         //{
-        //    _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
+        //    // _logger.LogInformation("收到志愿者数据: {@Volunteer}", volunteer); // 记录收到的数据
 
         //    try
         //    {
@@ -157,18 +157,18 @@ namespace MarathonMaster.Controllers
 
         //        if (existingVolunteer != null)
         //        {
-        //            _logger.LogInformation("志愿者登录成功: {@Volunteer}", volunteer); // 记录登录成功
+        //            // _logger.LogInformation("志愿者登录成功: {@Volunteer}", volunteer); // 记录登录成功
         //            return Ok(true);
         //        }
         //        else
         //        {
-        //            _logger.LogWarning("登录失败: 无效的用户名或密码或手机号");
+        //            // _logger.LogWarning("登录失败: 无效的用户名或密码或手机号");
         //            return Unauthorized(false);
         //        }
         //    }
         //    catch (System.Exception ex)
         //    {
-        //        _logger.LogError(ex, "志愿者登录失败: {@LoginRequest}", volunteer); // 记录错误信息
+        //        // _logger.LogError(ex, "志愿者登录失败: {@LoginRequest}", volunteer); // 记录错误信息
 
         //        return BadRequest(false);
         //    }
@@ -178,7 +178,7 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> login_photographer([FromBody] Photographer photographer)
         {
-            _logger.LogInformation("收到摄影师数据: {@Photographer}", photographer); // 记录收到的数据
+            // _logger.LogInformation("收到摄影师数据: {@Photographer}", photographer); // 记录收到的数据
 
             try
             {
@@ -188,18 +188,18 @@ namespace MarathonMaster.Controllers
 
                 if (existingPhotographer != null)
                 {
-                    _logger.LogInformation("摄影师登录成功: {@Volunteer}", photographer); // 记录登录成功
+                    // _logger.LogInformation("摄影师登录成功: {@Volunteer}", photographer); // 记录登录成功
                     return Ok(JsonSerializer.Serialize(existingPhotographer));
                 }
                 else
                 {
-                    _logger.LogWarning("登录失败: 无效的用户名或密码");
+                    // _logger.LogWarning("登录失败: 无效的用户名或密码");
                     return Ok(2);
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "志愿者登录失败: {@LoginRequest}", photographer); // 记录错误信息
+                // _logger.LogError(ex, "志愿者登录失败: {@LoginRequest}", photographer); // 记录错误信息
 
                 return BadRequest(false);
             }
@@ -209,17 +209,17 @@ namespace MarathonMaster.Controllers
         [HttpPatch]
         public async Task<IActionResult> update_player([FromBody] Player player)
         {
-            _logger.LogInformation("收到选手数据: {@Player}", player); // 记录收到的数据
+            // _logger.LogInformation("收到选手数据: {@Player}", player); // 记录收到的数据
 
             try
             {
                 await _db.Updateable(player).ExecuteCommandAsync();
-                _logger.LogInformation("成功更改选手数据: {@Player}", player); // 记录插入成功
+                // _logger.LogInformation("成功更改选手数据: {@Player}", player); // 记录插入成功
                 return Ok(true);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "更改选手数据失败: {@Player}", player); // 记录错误信息
+                // _logger.LogError(ex, "更改选手数据失败: {@Player}", player); // 记录错误信息
 
                 return BadRequest(false);
             }
@@ -229,17 +229,17 @@ namespace MarathonMaster.Controllers
         //[HttpPatch]
         //public async Task<IActionResult> update_volunteer([FromBody] Volunteer volunteer)
         //{
-        //    _logger.LogInformation("收到选手数据: {@Volunteer}", volunteer); // 记录收到的数据
+        //    // _logger.LogInformation("收到选手数据: {@Volunteer}", volunteer); // 记录收到的数据
 
         //    try
         //    {
         //        await _db.Updateable(volunteer).ExecuteCommandAsync();
-        //        _logger.LogInformation("成功更改选手数据: {@Volunteer}", volunteer); // 记录插入成功
+        //        // _logger.LogInformation("成功更改选手数据: {@Volunteer}", volunteer); // 记录插入成功
         //        return Ok(true);
         //    }
         //    catch (System.Exception ex)
         //    {
-        //        _logger.LogError(ex, "更改选手数据失败: {@Volunteer}", volunteer); // 记录错误信息
+        //        // _logger.LogError(ex, "更改选手数据失败: {@Volunteer}", volunteer); // 记录错误信息
 
         //        return BadRequest(false);
         //    }
@@ -249,17 +249,17 @@ namespace MarathonMaster.Controllers
         //[HttpPatch]
         //public async Task<IActionResult> update_photographer([FromBody] Photographer photographer)
         //{
-        //    _logger.LogInformation("收到数据: {@Photographer}", photographer); // 记录收到的数据
+        //    // _logger.LogInformation("收到数据: {@Photographer}", photographer); // 记录收到的数据
 
         //    try
         //    {
         //        await _db.Updateable(photographer).ExecuteCommandAsync();
-        //        _logger.LogInformation("成功更改数据: {@Photographer}", photographer); // 记录插入成功
+        //        // _logger.LogInformation("成功更改数据: {@Photographer}", photographer); // 记录插入成功
         //        return Ok(true);
         //    }
         //    catch (System.Exception ex)
         //    {
-        //        _logger.LogError(ex, "更改数据失败: {@Photographer}", photographer); // 记录错误信息
+        //        // _logger.LogError(ex, "更改数据失败: {@Photographer}", photographer); // 记录错误信息
 
         //        return BadRequest(false);
         //    }

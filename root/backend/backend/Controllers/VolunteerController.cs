@@ -44,7 +44,7 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_volunteer([FromBody] Schedule Schedulei) //收到一个schedule类的值schedulei，其job_category的值为null
         {
-            _logger.LogInformation("收到志愿者报名的Schedule数据: {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录收到的数据
+            // _logger.LogInformation("收到志愿者报名的数据: {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录收到的数据
 
             try
             {
@@ -55,13 +55,28 @@ namespace MarathonMaster.Controllers
 
                 if (query.Count == 0) //不是跑者
                 {
-                    await _db.Insertable(Schedulei).ExecuteCommandAsync();
-                    _logger.LogInformation("成功插入志愿者报名的Schedule数据: {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录插入成功
-                    return Ok(true); //true表示成功
+                    // 查询数据库，获取指定选手ID报名的所有比赛ID列表
+                    var eventids = await _db.Queryable<Schedule>()
+                                           .Where(s => s.Volunteer_Id == Schedulei.Volunteer_Id )
+                                           .Select(s => s.Event_Id)
+                                           .ToListAsync();
+
+                    if (eventids.Count == 0)
+                    {
+                        await _db.Insertable(Schedulei).ExecuteCommandAsync();
+                        // _logger.LogInformation("成功插入志愿者报名的数据: {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录插入成功
+                        return Ok(true); //true表示成功
+                    }
+                    else
+                    {
+                        // _logger.LogInformation("志愿者报名失败，因为该志愿者已报名该赛事: {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录插入失败
+                        return Ok(3);
+                    }
+                   
                 }
                 else
                 {
-                    _logger.LogWarning("报名失败，该用户已是该赛事的跑者:  {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录插入成功
+                    // _logger.LogWarning("报名失败，该用户已是该赛事的跑者:  {@Schedulei.Volunteer_Id}", Schedulei.Volunteer_Id); // 记录插入成功
                     return Ok(2);
                 }
 
@@ -69,7 +84,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入志愿者报名的Schedule数据失败: {@Schedulei}", Schedulei); // 记录错误信息
+                // _logger.LogError(ex, "插入志愿者报名的Schedule数据失败: {@Schedulei}", Schedulei); // 记录错误信息
 
                 return BadRequest(false); //false表示失败
             }
@@ -79,18 +94,18 @@ namespace MarathonMaster.Controllers
         [HttpPatch]
         public async Task<IActionResult> schedule_volunteer([FromBody] Schedule Schedulei)// 收到的也是一个schedule类型的值，此时要更新他的job_category
         {
-            _logger.LogInformation("收到志愿者排班的Schedule数据: {@Schedulei}", Schedulei); // 记录收到的数据
+            // _logger.LogInformation("收到志愿者排班的Schedule数据: {@Schedulei}", Schedulei); // 记录收到的数据
 
             try
             {
                 //await _db.Insertable(Schedulei).ExecuteCommandAsync();
                 await _db.Updateable(Schedulei).ExecuteCommandAsync();//根据主键更新
-                _logger.LogInformation("成功更新志愿者排班的Schedule数据: {@Schedulei}", Schedulei); // 记录更新成功
+                // _logger.LogInformation("成功更新志愿者排班的Schedule数据: {@Schedulei}", Schedulei); // 记录更新成功
                 return Ok(true);  //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "更新志愿者排班的Schedule数据失败: {@Schedulei}", Schedulei); // 记录错误信息
+                // _logger.LogError(ex, "更新志愿者排班的Schedule数据失败: {@Schedulei}", Schedulei); // 记录错误信息
 
                 return BadRequest(false); //false表示失败
             }
@@ -100,17 +115,17 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_volunteer_supplypoint([FromBody] VolunteerSupplypoint p)
         {
-            _logger.LogInformation("收到志愿者排班的VolunteerSupplypoint：数据: {@p}", p); // 记录收到的数据
+            // _logger.LogInformation("收到志愿者排班的VolunteerSupplypoint：数据: {@p}", p); // 记录收到的数据
 
             try
             {                                
                 await _db.Insertable(p).ExecuteCommandAsync();           
-                _logger.LogInformation("成功更新志愿者排班的VolunteerSupplypoint数据: {@p}", p); // 记录插入成功
+                // _logger.LogInformation("成功更新志愿者排班的VolunteerSupplypoint数据: {@p}", p); // 记录插入成功
                 return Ok(true);  //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "更新志愿者排班的VolunteerSupplypoint数据失败: {@p}", p); // 记录错误信息
+                // _logger.LogError(ex, "更新志愿者排班的VolunteerSupplypoint数据失败: {@p}", p); // 记录错误信息
 
                 return BadRequest(false); //false表示失败
             }
@@ -120,17 +135,17 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_volunteer_medicalpoint([FromBody] VolunteerMedicalpoint p)
         {
-            _logger.LogInformation("收到志愿者排班的VolunteerMedicalpoint：数据: {@p}", p); // 记录收到的数据
+            // _logger.LogInformation("收到志愿者排班的VolunteerMedicalpoint：数据: {@p}", p); // 记录收到的数据
 
             try
             {
                 await _db.Insertable(p).ExecuteCommandAsync();
-                _logger.LogInformation("成功更新志愿者排班的VolunteerMedicalpoint数据: {@p}", p); // 记录插入成功
+                // _logger.LogInformation("成功更新志愿者排班的VolunteerMedicalpoint数据: {@p}", p); // 记录插入成功
                 return Ok(true);  //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "更新志愿者排班的VolunteerMedicalpoint数据失败: {@p}", p); // 记录错误信息
+                // _logger.LogError(ex, "更新志愿者排班的VolunteerMedicalpoint数据失败: {@p}", p); // 记录错误信息
                 return BadRequest(false); //false表示失败
             }
         }
@@ -139,17 +154,17 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_drive([FromBody] Drive p)
         {
-            _logger.LogInformation("收到志愿者排班的Drive：数据: {@p}", p); // 记录收到的数据
+            // _logger.LogInformation("收到志愿者排班的Drive：数据: {@p}", p); // 记录收到的数据
 
             try
             {
                 await _db.Insertable(p).ExecuteCommandAsync();
-                _logger.LogInformation("成功更新志愿者排班的Drive数据: {@p}", p); // 记录插入成功
+                // _logger.LogInformation("成功更新志愿者排班的Drive数据: {@p}", p); // 记录插入成功
                 return Ok(true);  //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "更新志愿者排班的Drive数据失败: {@p}", p); // 记录错误信息
+                // _logger.LogError(ex, "更新志愿者排班的Drive数据失败: {@p}", p); // 记录错误信息
                 return BadRequest(false); //false表示失败
             }
         }
@@ -159,7 +174,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> acquire_volunteer_information([FromQuery] int volunteer_id, string event_id)   //收到志愿者id和赛事id
         {
-            _logger.LogInformation("收到志愿者排班的Drive：数据: {@volunteer_id}", volunteer_id); // 记录收到的数据
+            // _logger.LogInformation("收到志愿者排班的Drive：数据: {@volunteer_id}", volunteer_id); // 记录收到的数据
 
             Schedule p =await _db.Queryable<Schedule>().SingleAsync(it => it.Volunteer_Id == volunteer_id && it.Event_Id == event_id); //查询单条记录，没有返回Null，如果结果大于1条会抛出错误
 
@@ -198,12 +213,12 @@ namespace MarathonMaster.Controllers
                     }
 
                 }
-                _logger.LogInformation("成功查询志愿者相关信息: {@p}", p); // 记录插入成功
+                // _logger.LogInformation("成功查询志愿者相关信息: {@p}", p); // 记录插入成功
                 return Ok(new { Status=status, Job_category = job_category, Is_scheduled= is_scheduled, Partners=partners });  //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询志愿者相关信息数据失败: {@p}", p); // 记录错误信息
+                // _logger.LogError(ex, "查询志愿者相关信息数据失败: {@p}", p); // 记录错误信息
                 return BadRequest(false); //false表示失败
             }
         }
@@ -233,7 +248,7 @@ namespace MarathonMaster.Controllers
                 }
                 catch (System.Exception ex)
                 {
-                    _logger.LogError(ex, "接驳车搭档查找失败"); // 记录错误信息
+                    // _logger.LogError(ex, "接驳车搭档查找失败"); // 记录错误信息
                     return partners;
                 }
             }
@@ -257,7 +272,7 @@ namespace MarathonMaster.Controllers
                 }
                 catch (System.Exception ex)
                 {
-                    _logger.LogError(ex, "补给点搭档查找失败"); // 记录错误信息
+                    // _logger.LogError(ex, "补给点搭档查找失败"); // 记录错误信息
                     return partners;
                 }
             }
@@ -281,7 +296,7 @@ namespace MarathonMaster.Controllers
                 }
                 catch (System.Exception ex)
                 {
-                    _logger.LogError(ex, "医疗点搭档查找失败"); // 记录错误信息
+                    // _logger.LogError(ex, "医疗点搭档查找失败"); // 记录错误信息
                     return partners;
                 }
             }
@@ -292,7 +307,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> inquiry_volunteer_by_eventid([FromQuery] string event_id) //收到一个schedule类的值schedulei，其job_category的值为null
         {
-            _logger.LogInformation("收到查询赛事志愿者数据: {@event_id)}", event_id); // 记录收到的数据
+            // _logger.LogInformation("收到查询赛事志愿者数据: {@event_id)}", event_id); // 记录收到的数据
 
             try
             {
@@ -307,12 +322,12 @@ namespace MarathonMaster.Controllers
                         Name = v.Name
                     }).ToListAsync();
 
-                _logger.LogInformation("成功查询赛事志愿者数据: {@event_id}", event_id); // 记录插入成功
+                // _logger.LogInformation("成功查询赛事志愿者数据: {@event_id}", event_id); // 记录插入成功
                 return Ok(volunteers); //true表示成功？？
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询赛事志愿者数据失败: {@event_id}", event_id); // 记录错误信息
+                // _logger.LogError(ex, "查询赛事志愿者数据失败: {@event_id}", event_id); // 记录错误信息
 
                 return BadRequest(false); //false表示失败
             }
@@ -341,13 +356,13 @@ namespace MarathonMaster.Controllers
                })
                .ToListAsync();
 
-                _logger.LogInformation("查找志愿者报名的赛事成功：{@information_of_photos}", events);
+                // _logger.LogInformation("查找志愿者报名的赛事成功：{@information_of_photos}", events);
 
                 return Ok(events); //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查找志愿者报名的赛事失败"); // 记录错误信息
+                // _logger.LogError(ex, "查找志愿者报名的赛事失败"); // 记录错误信息
 
                 return BadRequest(ex); //false表示失败
             }
@@ -357,7 +372,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_supply_volunteer([FromQuery] string? Event_Id, [FromQuery] string? supplypoint_id = null)
         {
-            _logger.LogInformation("收到查补给志愿者信息");
+            // _logger.LogInformation("收到查补给志愿者信息");
 
             try
             {
@@ -368,18 +383,18 @@ namespace MarathonMaster.Controllers
                 }
                 if (supplypoint_id != null)
                 {
-                    _logger.LogInformation("根据补给点id查");
+                    // _logger.LogInformation("根据补给点id查");
                     volunteerSupplypoints = await _db.Queryable<VolunteerSupplypoint>().Where(e => e.supplypoint_id == supplypoint_id).ToListAsync();
                 }
                 else
                 {
-                    _logger.LogInformation("根据赛事id查");
+                    // _logger.LogInformation("根据赛事id查");
                     volunteerSupplypoints = await _db.Queryable<VolunteerSupplypoint>().Where(s => s.supplypoint_id.StartsWith(Event_Id)).ToListAsync();
                 }
                 List<Volunteer> volunteers = new List<Volunteer>();
                 if (volunteerSupplypoints == null || volunteerSupplypoints.Count == 0)
                 {
-                    // _logger.LogInformation("为空");
+                    // // _logger.LogInformation("为空");
                     return Ok(volunteers);
                 }
                 else
@@ -399,7 +414,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询某场赛事所有（某个补给点）的志愿者");
+                // _logger.LogError(ex, "查询某场赛事所有（某个补给点）的志愿者");
                 return BadRequest(ex.Message);
             }
         }
@@ -408,7 +423,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_medical_volunteer([FromQuery] string? Event_Id, [FromQuery] string? medicalpoint_id = null)
         {
-            _logger.LogInformation("收到查补给志愿者信息");
+            // _logger.LogInformation("收到查补给志愿者信息");
 
             try
             {
@@ -419,18 +434,18 @@ namespace MarathonMaster.Controllers
                 }
                 if (medicalpoint_id != null)
                 {
-                    _logger.LogInformation("根据医疗点id查");
+                    // _logger.LogInformation("根据医疗点id查");
                     volunteerMedicalpoints = await _db.Queryable<VolunteerMedicalpoint>().Where(e => e.medicalpoint_id == medicalpoint_id).ToListAsync();
                 }
                 else
                 {
-                    _logger.LogInformation("根据赛事id查");
+                    // _logger.LogInformation("根据赛事id查");
                     volunteerMedicalpoints = await _db.Queryable<VolunteerMedicalpoint>().Where(s => s.medicalpoint_id.StartsWith(Event_Id)).ToListAsync();
                 }
                 List<Volunteer> volunteers = new List<Volunteer>();
                 if (volunteerMedicalpoints == null || volunteerMedicalpoints.Count == 0)
                 {
-                    // _logger.LogInformation("为空");
+                    // // _logger.LogInformation("为空");
                     return Ok(volunteers);
                 }
                 else
@@ -450,7 +465,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "某场赛事所有（某个医疗点）的志愿者失败");
+                // _logger.LogError(ex, "某场赛事所有（某个医疗点）的志愿者失败");
                 return BadRequest(ex.Message);
             }
         }
@@ -458,7 +473,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_shuttlecar_volunteer([FromQuery] string? Event_Id, [FromQuery] int? shuttlecar_id = null)
         {
-            _logger.LogInformation("收到查接驳车志愿者信息");
+            // _logger.LogInformation("收到查接驳车志愿者信息");
 
             try
             {
@@ -469,12 +484,12 @@ namespace MarathonMaster.Controllers
                 }
                 if (shuttlecar_id != null)
                 {
-                    _logger.LogInformation("根据接驳车id查");
+                    // _logger.LogInformation("根据接驳车id查");
                     drives = await _db.Queryable<Drive>().Where(e => e.Shuttlecar_Id == shuttlecar_id).ToListAsync();
                 }
                 else
                 {
-                    _logger.LogInformation("根据赛事id查接驳车");
+                    // _logger.LogInformation("根据赛事id查接驳车");
                     drives = await _db.Queryable<Drive>()
                         .LeftJoin<Volunteer>((d,v)=>d.Volunteer_Id == v.Id)
                         .LeftJoin<Shuttlecar>((d, v,s) => d.Shuttlecar_Id  == s.Id && s.Event_Id == Event_Id)                      
@@ -488,7 +503,7 @@ namespace MarathonMaster.Controllers
                 List<Volunteer> volunteers = new List<Volunteer>();
                 if (drives == null || drives.Count == 0)
                 {
-                    // _logger.LogInformation("为空");
+                    // // _logger.LogInformation("为空");
                     return Ok(volunteers);
                 }
                 else
@@ -508,7 +523,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询某场赛事所有（某个接驳车）的志愿者失败");
+                // _logger.LogError(ex, "查询某场赛事所有（某个接驳车）的志愿者失败");
                 return BadRequest(ex.Message);
             }
         }

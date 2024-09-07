@@ -40,7 +40,7 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> upload_photo([FromQuery]  string time, string location, int photographer_id,string event_id, IFormFile file)  //IFormFile file 参数表示上传的文件，这里指photo
         {
-            _logger.LogInformation("收到要上传的照片"); // 记录收到的数据
+            // _logger.LogInformation("收到要上传的照片"); // 记录收到的数据
 
             if (file == null || file.Length == 0)  //检查文件是否为空或文件大小是否为零
                 return Unauthorized("No file uploaded.");
@@ -84,12 +84,12 @@ namespace MarathonMaster.Controllers
             try
             {
                 await _db.Insertable(photo).ExecuteCommandAsync();
-                _logger.LogInformation("成功上传照片数据"); // 照片信息插入成功
+                // _logger.LogInformation("成功上传照片数据"); // 照片信息插入成功
                 return Ok(true); //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "上传照片失败"); // 记录错误信息
+                // _logger.LogError(ex, "上传照片失败"); // 记录错误信息
 
                 return BadRequest(false); //false表示失败
             }
@@ -99,17 +99,17 @@ namespace MarathonMaster.Controllers
         [HttpDelete]
         public async Task<IActionResult> delete_photo([FromQuery] int id) 
         {
-            _logger.LogInformation("收到要删除的照片id: {@id}", id); // 记录收到的数据
+            // _logger.LogInformation("收到要删除的照片id: {@id}", id); // 记录收到的数据
 
             try
             {
                 await _db.Deleteable<Photo>(new Photo() { Id = id }).ExecuteCommandAsync(); //删除id匹配的照片数据
-                _logger.LogInformation("成功删除照片数据: {@id}", id); // 照片信息删除成功
+                // _logger.LogInformation("成功删除照片数据: {@id}", id); // 照片信息删除成功
                 return Ok(true); //true表示成功
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "删除照片数据失败: {@id}", id); // 记录错误信息
+                // _logger.LogError(ex, "删除照片数据失败: {@id}", id); // 记录错误信息
 
                 return BadRequest(false); //false表示失败
             }
@@ -119,7 +119,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPhoto([FromQuery] string filename)
         {
-            _logger.LogInformation("收到要的照片id: {@filename}", filename); // 记录收到的数据
+            // _logger.LogInformation("收到要的照片id: {@filename}", filename); // 记录收到的数据
             var photoPath = Path.Combine(_photoDirectory, filename);
 
             if (System.IO.File.Exists(photoPath))
@@ -138,7 +138,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_photo_by_id([FromQuery] int photo_id)
         {
-            _logger.LogInformation("收到要的照片id: {@photo_id}", photo_id); // 记录收到的数据
+            // _logger.LogInformation("收到要的照片id: {@photo_id}", photo_id); // 记录收到的数据
             Photo p =await _db.Queryable<Photo>().
                    SingleAsync(it => it.Id == photo_id);
             string filename = p.Address;
@@ -148,7 +148,7 @@ namespace MarathonMaster.Controllers
             if (System.IO.File.Exists(photoPath))
             {
                 var imageFileStream = new FileStream(photoPath, FileMode.Open, FileAccess.Read);
-                _logger.LogInformation("成功找到的照片id: {@photo_id}", photo_id); // 记录收到的数据
+                // _logger.LogInformation("成功找到的照片id: {@photo_id}", photo_id); // 记录收到的数据
                 return Ok("http://113.44.75.241:8080/91/1.jpg/");
             }
             else

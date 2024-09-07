@@ -32,7 +32,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> upsert_item([FromBody] Item item)
         {//只用id 名称
 
-            _logger.LogInformation("收到物品数据");
+            // _logger.LogInformation("收到物品数据");
 
             try
             {
@@ -41,23 +41,23 @@ namespace MarathonMaster.Controllers
                 var updateCount = await storage.AsUpdateable.ExecuteCommandAsync();//存在更新
                 if (insertCount > 0)
                 {
-                    _logger.LogInformation("成功插入: {@Item}", item);
+                    // _logger.LogInformation("成功插入: {@Item}", item);
                     return Ok(new { status = true, type = "Inserted" });
                 }
                 else if (updateCount > 0)
                 {
-                    _logger.LogInformation("成功更新: {@Item}", item);
+                    // _logger.LogInformation("成功更新: {@Item}", item);
                     return Ok(new { status = true, type = "Updated" });
                 }
                 else
                 {
-                    _logger.LogInformation("无变更操作: {@Item}", item);
+                    // _logger.LogInformation("无变更操作: {@Item}", item);
                     return Ok(new { status = false, type = "NoChange", message = "后端不报错但无插入" });
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入数据失败: {@Item}", item); // 记录错误信息
+                // _logger.LogError(ex, "插入数据失败: {@Item}", item); // 记录错误信息
 
                 return Ok(new { status = false, type = "NoChange", message = $"插入数据失败: {ex.Message}" });
             }
@@ -78,7 +78,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "删除数据失败");
+                // _logger.LogError(ex, "删除数据失败");
                 return Ok(new { status = false, message = $"删除数据失败: {ex.Message}" });
             }
         }
@@ -88,7 +88,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> supply_entry([FromBody] Supply record)
         {//物资id 物资点id 数量
 
-            _logger.LogInformation("收到补给录入数据");
+            // _logger.LogInformation("收到补给录入数据");
 
             try
             {
@@ -97,23 +97,23 @@ namespace MarathonMaster.Controllers
                 var updateCount = await storage.AsUpdateable.ExecuteCommandAsync();//存在更新
                 if (insertCount > 0)
                 {
-                    _logger.LogInformation("成功插入: {@Supply}", record);
+                    // _logger.LogInformation("成功插入: {@Supply}", record);
                     return Ok(new { status = true, type = "Inserted" });
                 }
                 else if (updateCount > 0)
                 {
-                    _logger.LogInformation("成功更新: {@Supply}", record);
+                    // _logger.LogInformation("成功更新: {@Supply}", record);
                     return Ok(new { status = true, type = "Updated" });
                 }
                 else
                 {
-                    _logger.LogInformation("无变更操作: {@Supply}", record);
+                    // _logger.LogInformation("无变更操作: {@Supply}", record);
                     return Ok(new { status = false, type = "NoChange", message = "后端不报错但无插入" });
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入数据失败: {@Supply}", record); // 记录错误信息
+                // _logger.LogError(ex, "插入数据失败: {@Supply}", record); // 记录错误信息
 
                 return Ok(new { status = false, type = "NoChange", message = $"插入数据失败: {ex.Message}" });
             }
@@ -124,7 +124,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> package_entry([FromBody] Event_Item record)
         {//物资id 赛事id 类型
 
-            _logger.LogInformation("收到参赛包录入数据");
+            // _logger.LogInformation("收到参赛包录入数据");
 
             try
             {
@@ -133,23 +133,23 @@ namespace MarathonMaster.Controllers
                 var updateCount = await storage.AsUpdateable.ExecuteCommandAsync();//存在更新
                 if (insertCount > 0)
                 {
-                    _logger.LogInformation("成功插入: {@Event_Item}", record);
+                    // _logger.LogInformation("成功插入: {@Event_Item}", record);
                     return Ok(new { status = true, type = "Inserted" });
                 }
                 else if (updateCount > 0)
                 {
-                    _logger.LogInformation("成功更新: {@Event_Item}", record);
+                    // _logger.LogInformation("成功更新: {@Event_Item}", record);
                     return Ok(new { status = true, type = "Updated" });
                 }
                 else
                 {
-                    _logger.LogInformation("无变更操作: {@Event_Item}", record);
+                    // _logger.LogInformation("无变更操作: {@Event_Item}", record);
                     return Ok(new { status = false, type = "NoChange", message = "后端不报错但无插入" });
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入数据失败: {@Event_Item}", record); // 记录错误信息
+                // _logger.LogError(ex, "插入数据失败: {@Event_Item}", record); // 记录错误信息
 
                 return Ok(new { status = false, type = "NoChange", message = $"插入数据失败: {ex.Message}" });
             }
@@ -161,17 +161,17 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> add_supplypoint([FromBody] Supplypoint supplypoint)
         {// 伤员id 补给点id
 
-            _logger.LogInformation("收到补给点数据");
+            // _logger.LogInformation("收到补给点数据");
 
             try
             {
                 await _db.Insertable(supplypoint).ExecuteCommandAsync();
-                _logger.LogInformation("成功插入补给点数据");
+                // _logger.LogInformation("成功插入补给点数据");
                 return Ok(new { status = true });
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入数据失败: {@Supplypoint}", supplypoint); // 记录错误信息
+                // _logger.LogError(ex, "插入数据失败: {@Supplypoint}", supplypoint); // 记录错误信息
 
                 return Ok(new { status = false, message = $"插入数据失败: {ex.Message}" });
             }
@@ -183,7 +183,7 @@ namespace MarathonMaster.Controllers
         {
             try
             {
-                int count = await _db.Deleteable<Medicalpoint>().Where(it => it.Id == Id).ExecuteCommandAsync();
+                int count = await _db.Deleteable<Supplypoint>().Where(it => it.Id == Id).ExecuteCommandAsync();
                 if (count == 1)
                     return Ok(new { status = true });
                 else
@@ -191,7 +191,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "删除数据失败");
+                // _logger.LogError(ex, "删除数据失败");
                 return BadRequest($"删除数据失败: {ex.Message}");
             }
         }
@@ -201,7 +201,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_all_supplypoint([FromQuery] string Event_Id)
         {//收到赛事id，返回对应的补给点信息
-            _logger.LogInformation("收到补给点查询请求：Event_Id = {Event_Id}", Event_Id); // 记录收到的数据
+            // _logger.LogInformation("收到补给点查询请求：Event_Id = {Event_Id}", Event_Id); // 记录收到的数据
 
             try
             {
@@ -213,12 +213,12 @@ namespace MarathonMaster.Controllers
                 var point_list = query.ToList();
 
 
-                _logger.LogInformation("成功找到或返回空列表");
+                // _logger.LogInformation("成功找到或返回空列表");
                 return Ok(point_list);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询数据失败");
+                // _logger.LogError(ex, "查询数据失败");
                 return BadRequest($"查询失败: {ex.Message}");
             }
         }
@@ -228,13 +228,13 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> get_package_by_eventid([FromQuery] string event_id, string? type = null)
         {//传入赛事id 物资包类型(可空）；返回物资id name 参赛包种类
 
-            _logger.LogInformation("收到查询物资包请求");
+            // _logger.LogInformation("收到查询物资包请求");
             try
             {
                 List<Event_Item_With_Name> package_list;
                 if (type == null)
                 {
-                    _logger.LogInformation("所有物资包");
+                    // _logger.LogInformation("所有物资包");
                     package_list = await _db.Queryable<Event_Item>()
                      .InnerJoin<Item>((ei, i) => ei.Item_Id == i.Id)
                      .Where(ei => ei.Event_Id == event_id)
@@ -256,12 +256,12 @@ namespace MarathonMaster.Controllers
                     return Ok(false);
                 }
                 */
-                _logger.LogInformation("成功找到");
+                // _logger.LogInformation("成功找到");
                 return Ok(package_list);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询数据失败");
+                // _logger.LogError(ex, "查询数据失败");
                 return BadRequest($"查询失败: {ex.Message}");
             }
         }
@@ -271,7 +271,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> get_supply_by_eventid([FromQuery] string event_id, string? supplypoint_Id = null)
         {//传入赛事id 补给点id(可空）；返回补给id name 数量
 
-            _logger.LogInformation("收到查询补给请求");
+            // _logger.LogInformation("收到查询补给请求");
             try
             {
                 List<Supply_With_Name> package_list;
@@ -297,12 +297,12 @@ namespace MarathonMaster.Controllers
                     return Ok(false);
                 }
                 */
-                _logger.LogInformation("成功找到");
+                // _logger.LogInformation("成功找到");
                 return Ok(package_list);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询数据失败");
+                // _logger.LogError(ex, "查询数据失败");
                 return BadRequest($"查询失败: {ex.Message}");
             }
         }
@@ -312,7 +312,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> supply_entry_multi([FromBody] List<Supply> records)
         {//物资id 物资点id 数量
 
-            _logger.LogInformation("收到补给批量录入数据");
+            // _logger.LogInformation("收到补给批量录入数据");
 
             try
             {
@@ -325,7 +325,7 @@ namespace MarathonMaster.Controllers
                 // 提交事务
                 _db.Ado.CommitTran();
 
-                _logger.LogInformation("成功批量插入数据: {@Records}", records);
+                // _logger.LogInformation("成功批量插入数据: {@Records}", records);
                 return Ok(new { status = true });
             }
             catch (System.Exception ex)
@@ -333,7 +333,7 @@ namespace MarathonMaster.Controllers
                 // 回滚事务
                 _db.Ado.RollbackTran();
 
-                _logger.LogError(ex, "批量插入数据失败，全部回滚: {@Records}", records);
+                // _logger.LogError(ex, "批量插入数据失败，全部回滚: {@Records}", records);
                 return Ok(new { status = false, message = $"插入失败: {ex.Message}" });
             }
         }
@@ -343,7 +343,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> package_entry_multi([FromBody] List<Event_Item> records)
         {//物资id 赛事id 类型
 
-            _logger.LogInformation("收到物资包批量录入数据");
+            // _logger.LogInformation("收到物资包批量录入数据");
 
             try
             {
@@ -356,7 +356,7 @@ namespace MarathonMaster.Controllers
                 // 提交事务
                 _db.Ado.CommitTran();
 
-                _logger.LogInformation("成功批量插入数据: {@Records}", records);
+                // _logger.LogInformation("成功批量插入数据: {@Records}", records);
                 return Ok(new { status = true });
             }
             catch (System.Exception ex)
@@ -364,7 +364,7 @@ namespace MarathonMaster.Controllers
                 // 回滚事务
                 _db.Ado.RollbackTran();
 
-                _logger.LogError(ex, "批量插入数据失败，全部回滚: {@Records}", records);
+                // _logger.LogError(ex, "批量插入数据失败，全部回滚: {@Records}", records);
                 return Ok(new { status = false, message = $"插入失败: {ex.Message}" });
             }
         }
@@ -374,7 +374,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> supply_delete_multi([FromBody] List<Supply> records)
         {//物资id 物资点id 数量
 
-            _logger.LogInformation("收到补给批量删除数据");
+            // _logger.LogInformation("收到补给批量删除数据");
 
             try
             {
@@ -387,7 +387,7 @@ namespace MarathonMaster.Controllers
                 // 提交事务
                 _db.Ado.CommitTran();
 
-                _logger.LogInformation("成功批量删除数据");
+                // _logger.LogInformation("成功批量删除数据");
                 return Ok(new { status = true });
             }
             catch (System.Exception ex)
@@ -395,7 +395,7 @@ namespace MarathonMaster.Controllers
                 // 回滚事务
                 _db.Ado.RollbackTran();
 
-                _logger.LogError(ex, "批量删除数据失败，全部回滚");
+                // _logger.LogError(ex, "批量删除数据失败，全部回滚");
                 return Ok(new { status = false, message = $"删除失败: {ex.Message}" });
             }
         }
@@ -405,7 +405,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> package_delete_multi([FromBody] List<Event_Item> records)
         {//物资id 赛事id 类型
 
-            _logger.LogInformation("收到物资包批量删除数据");
+            // _logger.LogInformation("收到物资包批量删除数据");
 
             try
             {
@@ -418,7 +418,7 @@ namespace MarathonMaster.Controllers
                 // 提交事务
                 _db.Ado.CommitTran();
 
-                _logger.LogInformation("成功批量删除数据: {@List<Event_Item>}", records);
+                // _logger.LogInformation("成功批量删除数据: {@List<Event_Item>}", records);
                 return Ok(new { status = true });
             }
             catch (System.Exception ex)
@@ -426,7 +426,7 @@ namespace MarathonMaster.Controllers
                 // 回滚事务
                 _db.Ado.RollbackTran();
 
-                _logger.LogError(ex, "批量删除数据失败，全部回滚: {@List<Event_Item>}", records);
+                // _logger.LogError(ex, "批量删除数据失败，全部回滚: {@List<Event_Item>}", records);
                 return Ok(new { status = false, message = $"删除失败: {ex.Message}" });
             }
         }
@@ -436,7 +436,7 @@ namespace MarathonMaster.Controllers
         public async Task<IActionResult> get_item([FromQuery] int? amount = null)
         {//传入需要返回的物品条数（若空返回全部），返回物品list和条数
 
-            _logger.LogInformation("收到返回物品请求");
+            // _logger.LogInformation("收到返回物品请求");
             try
             {
                 List<Item> item_list;
@@ -455,12 +455,12 @@ namespace MarathonMaster.Controllers
                     return Ok(new { data = item_list, status = false, total = 0 });//平台无物品
                 }
 
-                _logger.LogInformation("成功找到");
+                // _logger.LogInformation("成功找到");
                 return Ok(new { data = item_list, status = true, total = all_count });//total是平台已有的所有物品
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询数据失败");
+                // _logger.LogError(ex, "查询数据失败");
                 List<Item> null_list = [];
                 return Ok(new { data = null_list, status = false, total = 0, message = $"查询失败: {ex.Message}" });
             }

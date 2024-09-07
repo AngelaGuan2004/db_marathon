@@ -39,7 +39,7 @@ namespace MarathonMaster.Controllers
         [HttpPatch]
         public async Task<IActionResult> ballot([FromBody] List<Participate> participateList)
         {
-            _logger.LogInformation("收到参赛数据: {@ParticipateList}", participateList); // 记录收到的数据
+            // _logger.LogInformation("收到参赛数据: {@ParticipateList}", participateList); // 记录收到的数据
 
             try
             {
@@ -49,7 +49,7 @@ namespace MarathonMaster.Controllers
                     {
                         // 选手有参赛号码，更新其信息
                         await _db.Updateable(participate).ExecuteCommandAsync();
-                        _logger.LogInformation("成功参赛: {@Participate}", participate); // 记录成功参赛的选手
+                        // _logger.LogInformation("成功参赛: {@Participate}", participate); // 记录成功参赛的选手
                     }
                     else
                     {
@@ -58,7 +58,7 @@ namespace MarathonMaster.Controllers
                         {
                             participate.Role_ = "normal";
                             await _db.Updateable(participate).ExecuteCommandAsync();
-                            _logger.LogInformation("未抽中，身份更新为normal: {@Participate}", participate); // 记录更新身份的选手
+                            // _logger.LogInformation("未抽中，身份更新为normal: {@Participate}", participate); // 记录更新身份的选手
                         }
                     }
                 }
@@ -67,7 +67,7 @@ namespace MarathonMaster.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "失败: {@ParticipateList}", participateList); // 记录错误信息
+                // _logger.LogError(ex, "失败: {@ParticipateList}", participateList); // 记录错误信息
 
                 return BadRequest($"更改数据失败: {ex.Message}");
             }
@@ -78,7 +78,7 @@ namespace MarathonMaster.Controllers
         [HttpPatch]
         public async Task<IActionResult> choose_pacer([FromBody] List<Participate> pacerList)
         {
-            _logger.LogInformation("收到落选的特殊身份数据: {PacerList}", pacerList); // 记录收到的数据
+            // _logger.LogInformation("收到落选的特殊身份数据: {PacerList}", pacerList); // 记录收到的数据
 
             try
             {
@@ -91,8 +91,11 @@ namespace MarathonMaster.Controllers
                         role_ = participate.Role_;
                         participate.Role_ = "normal_";
                         //await _db.Updateable(participate).ExecuteCommandAsync();
-                        await _db.Updateable<Participate>().Where(p => p.Player_Id == participate.Player_Id && p.Event_Id == participate.Event_Id).ExecuteCommandAsync();
-                        _logger.LogInformation("身份更新为normal_: {Participate}", participate); // 记录更新身份的选手
+                        if (participate.Player_Id != 0)
+                        {
+                            await _db.Updateable<Participate>().SetColumns(p => p.Role_ == "normal_").Where(p => p.Player_Id == participate.Player_Id && p.Event_Id == participate.Event_Id).ExecuteCommandAsync();
+                            // _logger.LogInformation("身份更新为normal_: {Participate}", participate); // 记录更新身份的选手
+                        }
                         event_id = participate.Event_Id;
                     }
 
@@ -101,23 +104,28 @@ namespace MarathonMaster.Controllers
                     .Where(it => it.Id == event_id)
                     .FirstAsync();
                 if (role_ == "pacer")
+                {
                     existingevent.Pacer_Is_Chosen = "是";
+                    await _db.Updateable<Event>().SetColumns(p => p.Pacer_Is_Chosen == "是").Where(p => p.Id == existingevent.Id).ExecuteCommandAsync();
+                }
                 else if (role_ == "first_aid")
+                {
                     existingevent.Aid_Is_Chosen = "是";
+                    await _db.Updateable<Event>().SetColumns(p => p.Aid_Is_Chosen == "是").Where(p => p.Id == existingevent.Id).ExecuteCommandAsync();
+                }
 
-                await _db.Updateable(existingevent).ExecuteCommandAsync();
                 return Ok(true);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "失败: {PacerList}", pacerList); // 记录错误信息
-                _logger.LogError("详细错误信息: {ErrorDetails}", ex.ToString()); // 打印详细的错误信息
+                // _logger.LogError(ex, "失败: {PacerList}", pacerList); // 记录错误信息
+                // _logger.LogError("详细错误信息: {ErrorDetails}", ex.ToString()); // 打印详细的错误信息
                 return BadRequest($"更改数据失败: {ex.Message}");
             }
 
         }
 
-    
+
 
         //查看特殊身份选拔信息
         [HttpGet]
@@ -176,7 +184,7 @@ namespace MarathonMaster.Controllers
             catch (System.Exception ex)
             {
                 // 记录错误日志
-                _logger.LogError(ex, "获取选手列表失败");
+                // _logger.LogError(ex, "获取选手列表失败");
 
                 // 返回错误响应
                 return StatusCode(500, "获取选手列表失败");

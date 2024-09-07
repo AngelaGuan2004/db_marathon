@@ -31,17 +31,17 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> AddStudent([FromBody] Student student)
         {
-            _logger.LogInformation("收到学生数据: {@Student}", student); // 记录收到的数据
+            // _logger.LogInformation("收到学生数据: {@Student}", student); // 记录收到的数据
 
             try
             {
                 await _db.Insertable(student).ExecuteCommandAsync();
-                _logger.LogInformation("成功插入学生数据: {@Student}", student); // 记录插入成功
+                // _logger.LogInformation("成功插入学生数据: {@Student}", student); // 记录插入成功
                 return Ok("插入成功");
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入学生数据失败: {@Student}", student); // 记录错误信息
+                // _logger.LogError(ex, "插入学生数据失败: {@Student}", student); // 记录错误信息
 
                 return BadRequest($"插入失败: {ex.Message}");
             }
@@ -50,7 +50,7 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStudent([FromQuery] string Id)
         {
-            _logger.LogInformation("收到查询请求：ID = {Id}", Id); // 记录收到的数据
+            // _logger.LogInformation("收到查询请求：ID = {Id}", Id); // 记录收到的数据
 
             try
             {
@@ -63,12 +63,12 @@ namespace MarathonMaster.Controllers
                     return Ok("未找到学生");
                 }
 
-                _logger.LogInformation("成功找到学生:{stu[0].name}", stu[0].Name);
+                // _logger.LogInformation("成功找到学生:{stu[0].name}", stu[0].Name);
                 return Ok(stu[0]);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "查询学生数据失败");
+                // _logger.LogError(ex, "查询学生数据失败");
                 return BadRequest($"查询失败: {ex.Message}");
             }
         }

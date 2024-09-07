@@ -30,19 +30,19 @@ namespace MarathonMaster.Controllers
         [HttpGet]
         public async Task<IActionResult> get_weather([FromQuery] string event_id)
         {
-            _logger.LogInformation("收到查天气关键字信息: {@event_id}", event_id); // 记录收到的数据
+            // _logger.LogInformation("收到查天气关键字信息: {@event_id}", event_id); // 记录收到的数据
             List<Weather> weathers = new List<Weather>();
 
             try
             {
                 weathers = await _db.Queryable<Weather>().Where(p => p.Id == event_id).ToListAsync();
 
-                _logger.LogInformation("查找天气信息成功: {@event_id}", event_id); 
+                // _logger.LogInformation("查找天气信息成功: {@event_id}", event_id); 
                 return Ok(weathers); 
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex.Message, "查找天气信息失败:"); // 记录错误信息
+                // _logger.LogError(ex.Message, "查找天气信息失败:"); // 记录错误信息
                 
 
                 return BadRequest(weathers); //false表示失败
@@ -53,7 +53,7 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> upsert_weather([FromBody] Weather weather)
         {
-            _logger.LogInformation("收到改天气关键字信息: {@weather}", weather); // 记录收到的数据
+            // _logger.LogInformation("收到改天气关键字信息: {@weather}", weather); // 记录收到的数据
             
 
             try
@@ -63,23 +63,23 @@ namespace MarathonMaster.Controllers
                 var updateCount = await storage.AsUpdateable.ExecuteCommandAsync();//存在更新
                 if (insertCount > 0)
                 {
-                    _logger.LogInformation("成功插入: {@weather}", weather);
+                    // _logger.LogInformation("成功插入: {@weather}", weather);
                     return Ok(new { status = true, type = "Inserted" });
                 }
                 else if (updateCount > 0)
                 {
-                    _logger.LogInformation("成功更新: {@weather}", weather);
+                    // _logger.LogInformation("成功更新: {@weather}", weather);
                     return Ok(new { status = true, type = "Updated" });
                 }
                 else
                 {
-                    _logger.LogInformation("无变更操作: {@weather}", weather);
+                    // _logger.LogInformation("无变更操作: {@weather}", weather);
                     return Ok(new { status = false, type = "NoChange", message = "后端不报错但无插入" });
                 }
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex.Message, "更改天气信息失败:"); // 记录错误信息
+                // _logger.LogError(ex.Message, "更改天气信息失败:"); // 记录错误信息
 
 
                 return BadRequest(new { status = false }); //false表示失败

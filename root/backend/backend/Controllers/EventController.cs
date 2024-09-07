@@ -38,17 +38,17 @@ namespace MarathonMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> add_event([FromBody] Event event_)
         {
-            _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
+            // _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
 
             try
             {
                 await _db.Insertable(event_).ExecuteCommandAsync();
-                _logger.LogInformation("成功插入赛事数据: {@Event}", event_); // 记录插入成功
+                // _logger.LogInformation("成功插入赛事数据: {@Event}", event_); // 记录插入成功
                 return Ok(true);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "插入赛事失败: {@Event}", event_); // 记录错误信息
+                // _logger.LogError(ex, "插入赛事失败: {@Event}", event_); // 记录错误信息
 
                 return BadRequest(false);
             }
@@ -59,17 +59,17 @@ namespace MarathonMaster.Controllers
         [HttpPatch]
         public async Task<IActionResult> update_event([FromBody] Event event_)
         {
-            _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
+            // _logger.LogInformation("收到赛事数据: {@Event}", event_); // 记录收到的数据
 
             try
             {
                 await _db.Updateable(event_).ExecuteCommandAsync();
-                _logger.LogInformation("成功更改赛事数据: {@Event}", event_); // 记录更改成功
+                // _logger.LogInformation("成功更改赛事数据: {@Event}", event_); // 记录更改成功
                 return Ok(true);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "更改选赛事据失败: {@Event}", event_); // 记录错误信息
+                // _logger.LogError(ex, "更改选赛事据失败: {@Event}", event_); // 记录错误信息
 
                 return BadRequest(false);
             }
@@ -143,7 +143,7 @@ namespace MarathonMaster.Controllers
             catch (System.Exception ex)
             {
                 // 记录错误日志
-                _logger.LogError(ex, "获取赛事列表失败");
+                // _logger.LogError(ex, "获取赛事列表失败");
 
                 // 返回错误响应
                 return StatusCode(500, "获取赛事列表失败");
