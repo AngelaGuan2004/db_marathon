@@ -2,10 +2,10 @@
   <div id="SupplyManagement">
     <div style="display: flex;  width: 100%;">
       <el-main class="Content" v-if="paginatedSupplyPoint.length > 0">
-        <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
+        <div style="margin: 25px 15px;font-weight: bold;font-size: 26px;">{{
           this.$route.params.name }}</div>
         <div>
-          <el-table :data="paginatedSupplyPoint" class="Table" max-height="350">
+          <el-table :data="paginatedSupplyPoint" class="Table" max-height="400">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="place" label="地点" width="200" align="center" header-align="center"></el-table-column>
             <el-table-column prop="type" label="类型" width="150" align="center" header-align="center"></el-table-column>
@@ -25,9 +25,9 @@
         </div>
       </el-main>
       <div v-else class="Empty">暂无数据</div>
-      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedSupplyPoint?.id || ''}号补给点志愿者名单`" width="50%"
+      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedSupplyPoint?.id || ''}号补给点志愿者名单`" width="45%"
         class="ManagementDialog">
-        <div v-if="selectionSupplyVolun.length > 0">
+        <div v-if="selectedSupplyVolun.length > 0">
           <el-table :data="selectedSupplyVolun" class="Table" max-height="300">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="name" label="姓名" width="150" align="center" header-align="center"></el-table-column>
@@ -42,7 +42,7 @@
           <el-button @click="SelectedVolunVisible = false">关闭</el-button>
         </span>
       </el-dialog>
-      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="50%" class="ManagementDialog">
+      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="45%" class="ManagementDialog">
         <div v-if="selectionSupplyVolun.length > 0">
           <el-table :data="selectionSupplyVolun" class="Table" max-height="300">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
@@ -73,7 +73,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      pageSize: 8,
+      pageSize: 5,
       supplyPoint: [],
       selectedSupplyPoint: null,
       SelectedVolunVisible: false,
@@ -163,7 +163,7 @@ export default {
         console.log(data);
         await addVolunteerToSupplyPoint(data);
         this.$message.success('志愿者已成功添加到补给点');
-        this.showSelectionSupply()
+        this.selectionSupplyVolun = this.selectionSupplyVolun.filter(v => v.id !== volunteer.id);
       } catch (error) {
         console.error('Failed to add volunteer to supply point:', error);
         this.$message.error('添加志愿者到补给点失败，请稍后重试。');

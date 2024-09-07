@@ -6,8 +6,8 @@
           :disabled="isDrawn === '是'"></el-input>
         <el-button type="primary" @click="drawLots" :disabled="isDrawn === '是'">抽签</el-button>
       </div>
-      <div v-if="paginatedParticipants.length > 0">
-        <el-table :data="paginatedParticipants" class="ParticipantLotteryTable" max-height="400">
+      <div v-if="paginatedParticipants.length > 0 || isLoading">
+        <el-table :data="paginatedParticipants" class="ParticipantLotteryTable" max-height="420" v-loading="isLoading">
           <el-table-column prop="id" label="ID" width="100"></el-table-column>
           <el-table-column prop="name" label="姓名" width="120"></el-table-column>
           <el-table-column prop="sex" label="性别" width="100"></el-table-column>
@@ -45,12 +45,17 @@ export default {
       participants: [],
       currentPage: 1,
       pageSize: 8,
-      isDrawn: '否'
+      isDrawn: '否',
+      isLoading: false
     }
   },
   computed: {
     totalParticipantsCount() {
-      return this.participants.length;
+      if (!Array.isArray(this.participants) || this.participants.length === 0) {
+        return 1; // 如果participants为空或不是数组，返回空数组
+      }
+      else
+        return this.participants.length;
     },
     paginatedParticipants() {
       if (!Array.isArray(this.participants) || this.participants.length === 0) {
@@ -71,25 +76,28 @@ export default {
 
       return `${day}-${month}月-${year}`;
     },
-    loadEvent() {
+    async loadEvent() {
       const eventId = this.$route.params.event_id;
-      return fetchEventById(eventId)
-        .then(event => {
-          console.log('Event fetched:', event);
-          this.isDrawn = event.Event.Is_Drawn;
-          if (this.isDrawn === '是') {
-            this.participants.forEach(p => {
-              p.state = '已抽签';
-            });
-            this.$message.warning('该赛事已经进行过选手抽签')
-          }
-        })
-        .catch(error => {
-          console.error('Failed to load event:', error);
-          this.$message.error('加载赛事信息失败，请稍后重试。');
-        });
+      try {
+        this.isLoading = true;  // 开始加载时
+        const event = await fetchEventById(eventId);
+        console.log('Event fetched:', event);
+        this.isDrawn = event.Event.Is_Drawn;
+        if (this.isDrawn === '是') {
+          this.participants.forEach(p => {
+            p.state = '已抽签';
+          });
+          this.$message.warning('该赛事已经进行过选手抽签');
+        }
+      } catch (error) {
+        console.error('Failed to load event:', error);
+        this.$message.error('加载赛事信息失败，请稍后重试。');
+      } finally {
+        this.isLoading = false;  // 加载完成后
+      }
     },
     loadParticipants() {
+      this.isLoading = true;  // 开始加载
       const eventId = this.$route.params.event_id;
       fetchPlayersByEvent(eventId)
         .then(response => {
@@ -98,10 +106,9 @@ export default {
               fetchPlayerDetails(player.player_Id).then(detail => {
                 let numberPromise;
                 if (this.isDrawn === '是') {
-                  console.log(`Fetching number with Player_Id=${player.player_Id}, Event_Id=${eventId}`);
+                  this.isLoading = true;
                   numberPromise = getNumberByEventIdAndPlayerId(player.player_Id, eventId)
                     .then(res => {
-                      console.log('Player number:', res);
                       return res;
                     })
                     .catch(err => {
@@ -117,7 +124,7 @@ export default {
                 }
 
                 return numberPromise.then(number => {
-                  const state = number != '-' ? '已中签' : '未中签'; // 根据是否有号码决定报名状态
+                  const state = number != '未中签' ? '已中签' : '未中签'; // 根据是否有号码决定报名状态
                   return {
                     id: detail.Id,
                     name: detail.Name,
@@ -125,8 +132,8 @@ export default {
                     age: detail.Age,
                     role: player.role_ === 'charity' ? '慈善跑者' : '普通跑者', // 根据 role_ 字段显示身份
                     originalRole: player.role_,
-                    state: this.isDrawn === '是' ? state : '待抽签',
-                    number: number || '-' // 如果有号码显示号码，否则显示 "-"
+                    state: player.role_ === 'charity' ? '-' : (this.isDrawn === '是' ? (number === '未中签' ? '未中签' : '已中签') : '待抽签'),
+                    number: number && number !== '未中签' ? number : '-',
                   };
                 });
               })
@@ -139,10 +146,16 @@ export default {
         })
         .then(players => {
           this.participants = players;
+          if (!(!Array.isArray(this.participants) || this.participants.length === 0)) {
+            this.participants.sort((a, b) => a.id - b.id);
+          }
         })
         .catch(error => {
           console.error('Failed to load participants:', error);
           this.$message.error('加载选手信息失败，请稍后重试。');
+        })
+        .finally(() => {
+          this.isLoading = false;  // 加载结束
         });
     },
     async drawLots() {  // 将这里标记为 async
@@ -226,7 +239,7 @@ export default {
           ...unselectedParticipants,
           ...charityParticipants
         ].map(p => ({
-          number_: p.number,
+          number_: p.number === '-' ? '' : p.number,
           role_: p.originalRole,
           player_Id: p.id,
           event_Id: this.$route.params.event_id  // 固定的 event_Id
@@ -251,9 +264,11 @@ export default {
             end_Date: this.formatDate(event.Event.End_Date),
             event_Date: this.formatDate(event.Event.Event_Date),
             is_Drawn: "是",
+            Pacer_Is_Chosen: "否",
+            Aid_Is_Chosen: "否",
             scale: event.Event.Scale
           };
-
+          updatedEvent.sort((a, b) => a.id - b.id);
           // 更新赛事信息
           const response = await updateEvent(updatedEvent);
 
@@ -281,9 +296,8 @@ export default {
     },
   },
   created() {
-    this.loadEvent().then(() => {
-      this.loadParticipants();
-    });
+    this.loadEvent();
+    this.loadParticipants();
   }
 }
 </script>

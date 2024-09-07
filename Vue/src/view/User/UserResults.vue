@@ -9,13 +9,6 @@
       <div>
         <!-- 筛选和最佳成绩栏目 -->
         <div class="UserResultsRaceType">
-          <span style="margin-right: 5px;">比赛类型：</span>
-          <el-select v-model="filterType" placeholder="选择比赛类型" @change="filterResults">
-            <el-option label="全部" value="all"></el-option>
-            <el-option label="全程马拉松" value="full"></el-option>
-            <el-option label="半程马拉松" value="half"></el-option>
-          </el-select>
-
           <!-- 搜索框 -->
           <div class="UserResultsSearch">
             <el-input v-model="searchQuery" placeholder="搜索比赛..." class="search_input" @keyup.enter.native="search" />
@@ -26,18 +19,23 @@
         <!-- 比赛成绩表格 -->
         <div>
           <el-table :data="paginatedResults" v-loading='loading' class="table" row-class-name="clickable-row" stripe>
-            <el-table-column prop="event_Name" label="比赛名称" width="350"></el-table-column>
-            <el-table-column prop="type" label="比赛类型" width="150">
+            <el-table-column prop="event_Name" label="比赛名称" width="325"></el-table-column>
+            <el-table-column prop="type" label="枪声成绩" width="150">
               <template slot-scope="scope">
-                <div>{{ getRaceType(scope.row.type) }}</div>
+                <div style="font-weight: bold;">{{ formatSeconds(scope.row.gun_Result) }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="net_Result" label="净成绩" width="200">
+            <el-table-column prop="net_Result" label="净成绩" width="150">
               <template slot-scope="scope">
                 <div style="font-weight: bold;">{{ formatSeconds(scope.row.net_Result) }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="rank" label="排名" width="150">
+            <el-table-column prop="rank" label="性别排名" width="125">
+              <template slot-scope="scope">
+                <div style="font-weight: bold;">{{ scope.row.gender_Rank }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="rank" label="总排名" width="125">
               <template slot-scope="scope">
                 <div style="color: #c81623;font-weight: bold;">{{ scope.row.rank }}</div>
               </template>
@@ -81,6 +79,7 @@ export default {
       try {
         const Player_ID = localStorage.getItem('UserId');
         const response = await getMyResults(Player_ID);
+        console.log(111, response)
         this.results = response; // 假设 API 返回的数据在 data 属性中
         this.filteredResults = this.results; // 初始化筛选结果
         this.loading = false
@@ -115,14 +114,11 @@ export default {
         } else if (type === 'half') {
           response = await getHalfResults(Player_ID); // 获取半马成绩
           this.filteredResults = response; // 更新筛选结果
-        } else if (type === 'best') {
-          // 筛选最佳成绩逻辑
-          this.filteredResults = this.results.sort((a, b) => a.net_Result - b.net_Result).slice(0, 1); // 根据净成绩筛选最佳成绩
         } else {
           // 如果选择 "全部"，则显示所有成绩
           this.filteredResults = this.results;
         }
-        console.log(response)
+        console.log(111, this.filteredResults)
       } catch (error) {
         console.error('筛选比赛成绩失败:', error);
       }

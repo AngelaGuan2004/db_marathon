@@ -11,7 +11,7 @@
           </div>
         </div>
         <div>
-          <el-table :data="paginatedVolunteers" class="Table" style="width: 100%" max-height="350">
+          <el-table :data="paginatedVolunteers" class="Table" style="width: 100%" max-height="400">
             <el-table-column prop="id" label="ID" width="125"></el-table-column>
             <el-table-column prop="name" label="姓名" width="150"></el-table-column>
             <el-table-column prop="telephone_Number" label="电话" width="200"></el-table-column>
@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      pageSize: 8,
+      pageSize: 7,
       volunteers: [] // 存储从 Vuex 中获取的志愿者数据
     };
   },

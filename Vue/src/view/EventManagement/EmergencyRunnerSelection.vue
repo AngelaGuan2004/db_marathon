@@ -4,14 +4,18 @@
       <el-main class="Content" v-if="paginatedParticipants.length > 0">
         <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
           this.$route.params.name }}</div>
-        <div class="Button">
+        <div class="Button" v-if="aid_is_chosen === '否'">
           <div style="margin-left: 65%;">
-            <el-button type="primary" @click="openConfirmDialog" style="margin: 0 10px;">提交</el-button>
-            <el-button type="primary" @click="cancel">取消</el-button>
+            <el-button type="primary" @click="openConfirmDialog" style="margin: 0 10px;"
+              :disabled="aid_is_chosen === '是'">提交</el-button>
+            <el-button type="primary" @click="cancel" :disabled="aid_is_chosen === '是'">取消</el-button>
           </div>
         </div>
+        <div v-else style="text-align: left;">
+          <div style="margin-bottom: 20px; margin-left: 15px;font-weight: bold;font-size: 26px;">急救跑者名单</div>
+        </div>
         <div>
-          <el-table :data="paginatedParticipants" class="Table" style="width: 100%" max-height="375">
+          <el-table :data="paginatedParticipants" class="Table" style="width: 100%" max-height="400">
             <el-table-column prop="id" label="ID" width="100"></el-table-column>
             <el-table-column prop="name" label="姓名" width="120"></el-table-column>
             <el-table-column prop="sex" label="性别" width="100"></el-table-column>
@@ -22,9 +26,9 @@
                 <el-button @click="showHistory(scope.row)">查看详情</el-button>
               </template>
             </el-table-column>
-            <el-table-column label="选为急救跑者" width="120">
+            <el-table-column label="选为急救跑者" width="120" v-if="aid_is_chosen === '否'">
               <template slot-scope="scope">
-                <el-checkbox v-model="scope.row.isEmergencyRunner"></el-checkbox>
+                <el-checkbox v-model="scope.row.isEmergencyRunner" :disabled="aid_is_chosen === '是'"></el-checkbox>
               </template>
             </el-table-column>
           </el-table>
@@ -101,7 +105,8 @@ export default {
       selectedEmergencyRunners: [], // 保存选中的急救跑者信息
       participants: [],
       currentPage: 1,
-      pageSize: 6,
+      pageSize: 5,
+      aid_is_chosen: '否',
     };
   },
   computed: {
@@ -139,12 +144,20 @@ export default {
     },
     async confirmSelection() {
       try {
-        const payload = this.selectedEmergencyRunners.map(p => ({
+        const notselected = this.participants.filter(p => !p.isEmergencyRunner);
+        const payload = notselected.map(p => ({
           Number_: p.number,
           Role_: 'first_aid',
           Player_Id: p.id,
           Event_Id: this.$route.params.event_id,
         }));
+
+        payload.push({
+          Number_: null,
+          Role_: 'first_aid',
+          Player_Id: 0,
+          Event_Id: this.$route.params.event_id,
+        });
 
         const response = await choosePacer(payload);
 
@@ -155,6 +168,8 @@ export default {
         }
 
         this.confirmDialogVisible = false; // 关闭确认对话框
+        this.loadInitialData();
+        this.loadEvent();
       } catch (error) {
         this.$message.error('提交过程中发生错误');
       }
@@ -162,6 +177,21 @@ export default {
     cancel() {
       this.participants.forEach(p => p.isEmergencyRunner = false);
       this.$message.info('已取消所有勾选');
+    },
+    loadEvent() {
+      const eventId = this.$route.params.event_id;
+      return fetchEventById(eventId)
+        .then(event => {
+          console.log('Event fetched:', event);
+          this.aid_is_chosen = event.Event.Aid_Is_Chosen;
+          if (this.aid_is_chosen === '是') {
+            this.$message.warning('该赛事已经进行过急救跑者选拔')
+          }
+        })
+        .catch(error => {
+          console.error('Failed to load event:', error);
+          this.$message.error('加载赛事信息失败，请稍后重试。');
+        });
     },
     async loadInitialData() {
       try {
@@ -171,7 +201,8 @@ export default {
 
         const emergencyRunnerDetailsPromises = emergencyRunners.map(async (runner) => {
           const details = await fetchPlayerDetails(runner.player_Id);
-          const history = await fetchPlayerHistory(runner.player_Id);
+          let history = await fetchPlayerHistory(runner.player_Id);
+          history = Array.isArray(history) ? history : [];
 
           const historyWithEventDetailsPromises = history.map(async (h, index) => {
             const eventDetails = await fetchEventById(h.event_Id);
@@ -229,6 +260,7 @@ export default {
     }
   },
   created() {
+    this.loadEvent();
     this.loadInitialData().then(() => {
       console.log('Rendering emergency runners:', this.participants);
     });

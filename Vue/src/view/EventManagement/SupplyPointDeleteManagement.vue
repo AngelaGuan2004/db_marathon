@@ -66,7 +66,6 @@ export default {
       ],
       dialogVisible: false,
       confirmDialogVisible: false,
-      deleteIndex: -1,
       newSupplyPoint: {
         id: '',      // 添加补给点时的ID
         place: '',   // 添加补给点时的位置
@@ -90,13 +89,14 @@ export default {
     },
     async addSupplyPoint() {
       // 检查补给点ID是否已存在
-      const existingPoint = this.supplyPoints.find(point => point.id === this.newSupplyPoint.id);
+      const existingPoint = this.supplyPoints.find(point => point.id === (this.packageForm.Event_id + this.newSupplyPoint.id));
       if (existingPoint) {
         this.$message.error('补给点ID已存在，请使用唯一ID');
         return;
       }
 
       try {
+        this.newSupplyPoint.id = this.packageForm.Event_id + this.newSupplyPoint.id
         // 调用API添加补给点
         await add_supply_point({
           id: this.newSupplyPoint.id,
@@ -115,13 +115,14 @@ export default {
       this.newSupplyPoint = { id: '', place: '', kind: '' };
     },
     confirmDelete(index) {
+      console.log(111, this.supplyPoints[index].id + "")
       this.$confirm('确定要删除此补给点？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.deleteSupplyPoint(this.supplyPoints[index].id);
-        this.fetchSupplyPoints();
+      }).then(async () => {
+        await this.deleteSupplyPoint(this.supplyPoints[index].id + "");
+        await this.fetchSupplyPoints();
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -132,7 +133,6 @@ export default {
     async deleteSupplyPoint(id) {
       try {
         await delete_supply_point(id);
-        this.supplyPoints.splice(this.deleteIndex, 1);
         this.confirmDialogVisible = false;
         this.$message.success('删除成功!');
       } catch (error) {

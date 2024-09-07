@@ -2,10 +2,10 @@
   <div id="MedicalManagement">
     <div style="display: flex;  width: 100%;">
       <el-main class="Content" v-if="paginatedMedicalPoint.length > 0">
-        <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
+        <div style="margin: 25px 15px;font-weight: bold;font-size: 26px;">{{
           this.$route.params.name }}</div>
         <div>
-          <el-table :data="paginatedMedicalPoint" class="Table" max-height="350">
+          <el-table :data="paginatedMedicalPoint" class="Table" max-height="400">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="place" label="地点" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="selected" label="已排班志愿者" width="200" align="center" header-align="center">
@@ -24,7 +24,7 @@
         </div>
       </el-main>
       <div v-else class="Empty">暂无数据</div>
-      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedMedicalPoint?.id || ''}号医疗点志愿者名单`" width="50%"
+      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedMedicalPoint?.id || ''}号医疗点志愿者名单`" width="45%"
         class="ManagementDialog">
         <div v-if="selectedMedicalVolun.length > 0">
           <el-table :data="selectedMedicalVolun" class="Table" max-height="300">
@@ -39,7 +39,7 @@
           <el-button @click="SelectedVolunVisible = false">关闭</el-button>
         </span>
       </el-dialog>
-      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="50%" class="ManagementDialog">
+      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="45%" class="ManagementDialog">
         <div v-if="selectionMedicalVolun.length > 0">
           <el-table :data="selectionMedicalVolun" class="Table" max-height="300">
             <el-table-column prop="id" label="ID" width="175" align="center" header-align="center"></el-table-column>
@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      pageSize: 8,
+      pageSize: 5,
       medicalPoint: [],
       selectedMedicalPoint: null,
       SelectedVolunVisible: false,

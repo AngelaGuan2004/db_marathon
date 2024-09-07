@@ -77,10 +77,14 @@ export default {
         });
         if (res === 2) {
           this.$message.warning('您已为该比赛选手，无法报名志愿者');
+        }
+        else if (res === 3) {
+          this.$message.warning('您已报名该比赛志愿者');
+        }
+        else if (res) {
+          this.$message.success('报名成功');
           this.$router.back()
         }
-        else
-          this.$message.success('报名成功');
       } catch (error) {
         console.error('Error submitting registration:', error);
         this.$message.error('报名失败');

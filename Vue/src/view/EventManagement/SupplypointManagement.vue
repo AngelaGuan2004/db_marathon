@@ -140,7 +140,7 @@ export default {
       const { supplypointId } = this.supplypointForm;
       const supplypointData = this.items.map(item => ({
         item_Id: item.id,
-        supplypoint_Id: supplypointId,
+        supplypoint_Id: this.$route.params.event_id + supplypointId,
         amount: item.amount
       }));
 

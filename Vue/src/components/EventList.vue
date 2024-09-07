@@ -173,7 +173,7 @@ export default {
     },
     handleRegistration(row, event) {
       event.stopPropagation();
-      if (this.JudgeEventSignupDate(row.startDate, row.endDate))
+      if (this.JudgeEventSignupDate(row.start_date, row.end_date))
         this.$message.warning('现在不是报名时间')
       else
         this.$router.push({ name: 'EventDetail', params: { event_id: row.id, name: row.name } });
@@ -199,9 +199,6 @@ export default {
       const now = new Date(); // 获取当前时间
       const start = new Date(startDate); // 报名开始时间
       const end = new Date(endDate); // 报名结束时间
-      console.log(111, now >= start)
-      console.log(222, end)
-      console.log(333, now)
       // 判断当前时间是否在报名时间范围内
       if (now >= start && now <= end) {
         return false; // 可报名，按钮不禁用

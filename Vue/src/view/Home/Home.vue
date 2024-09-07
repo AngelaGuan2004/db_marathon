@@ -3,12 +3,14 @@
     <div class="Carousel">
       <el-carousel :interval="4000" height="600px">
         <el-carousel-item v-for="CarouselPicture in CarouselPictures" :key="CarouselPicture.id">
-          <img :src="require(`@/assets/images/${CarouselPicture.url}`)" alt="" class="CarouselPictures">
-          <div class="CarouselTextOutside">
-            <div class="CarouselText">
-              <p style="color: white;">{{ CarouselPicture.text }}</p>
+          <a :href="CarouselPicture.herf" target="_blank">
+            <img :src="require(`@/assets/images/${CarouselPicture.url}`)" alt="" class="CarouselPictures">
+            <div class="CarouselTextOutside">
+              <div class="CarouselText">
+                <p style="color: white;">{{ CarouselPicture.text }}</p>
+              </div>
             </div>
-          </div>
+          </a>
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -124,22 +126,26 @@ export default {
         {
           id: "01",
           url: "CarouselOne.png",
-          text: "刷新赛会纪录！2023中国10公里精英赛总决赛圆满收官"
+          text: "刷新赛会纪录！2023中国10公里精英赛总决赛圆满收官",
+          herf: 'https://www.runchina.org.cn/#/news/race-news/detail/XW202325011'
         },
         {
           id: "02",
           url: "CarouselTwo.jpg",
-          text: "第五届中国马拉松博览会 暨2024福建省路跑产业博览会"
+          text: "第五届中国马拉松博览会 暨2024福建省路跑产业博览会",
+          herf: 'https://mp.weixin.qq.com/s/hvXYqcqVcMzNidg9kr247A'
         },
         {
           id: "03",
           url: "CarouselThree.jpg",
-          text: "国内最好男女半马成绩出现！男子前三刷新赛会纪录！2024“仁马”新年首马，比快更快！"
+          text: "国内最好男女半马成绩出现！男子前三刷新赛会纪录！2024“仁马”新年首马，比快更快！",
+          herf: 'https://mp.weixin.qq.com/s/JYn13xlvrXl3cDTbowOfXA'
         },
         {
           id: "04",
           url: "CarouselFour.png",
-          text: `2024无锡马拉松|何杰2:06:57再度打破全国纪录，中国男子马拉松进入206时代`
+          text: `2024无锡马拉松|何杰2:06:57再度打破全国纪录，中国男子马拉松进入206时代`,
+          href: 'https://mp.weixin.qq.com/s/E7-u5Qp3j0-ATkbetQzAJA'
         }
       ],
       events: [],

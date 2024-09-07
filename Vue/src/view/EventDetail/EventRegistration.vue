@@ -163,10 +163,13 @@ export default {
         if (res === 2) {
           this.$message.warning('您已报名该赛事志愿者，无法报名选手')
         }
-        else {
-          this.$message.success('报名成功');
+        else if (res === 3) {
+          this.$message.warning('您已报名过该赛事')
         }
-        this.$router.back();
+        else if (res) {
+          this.$message.success('报名成功');
+          this.$router.back();
+        }
       } catch (error) {
         console.error('提交报名失败:', error);
         this.$message.error('报名失败');

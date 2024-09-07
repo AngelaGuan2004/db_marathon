@@ -130,9 +130,9 @@ export default {
     async deleteShuttleBus(id) {
       try {
         const res = await delete_shuttleInfo(id);
-        if (!res.success)
+        if (res === 2)
           this.$message.error('该接驳车已排班，无法删除');
-        else {
+        else if (res) {
           this.shuttleBuses.splice(this.deleteIndex, 1);
           this.confirmDialogVisible = false;
           this.$message.success('删除成功!');

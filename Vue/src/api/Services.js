@@ -30,3 +30,16 @@ export function addInjury(data) {
         }
     })
 }
+
+
+// 删除伤员数据
+export function deleteInjury(IdNumber, medicalPoint_Id) {
+    return request({
+        url: '/Medical/delete_injury',
+        method: 'delete',
+        params: {
+            IdNumber,
+            medicalPoint_Id
+        }
+    })
+}

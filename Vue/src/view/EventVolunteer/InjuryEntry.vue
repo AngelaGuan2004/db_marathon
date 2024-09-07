@@ -15,10 +15,8 @@
             <el-table-column prop="medicalPoint" label="医疗点" width="150"></el-table-column>
             <el-table-column label="操作" width="150">
               <template slot-scope="scope">
-                <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
-                  style="color: rgb(64, 158, 255);" plain>编辑</el-button>
-                <!-- <el-button size="small" type="primary" @click.native.prevent="handleDelete(scope.$index, scope.row)"
-                style="color: rgb(207, 34, 46);" plain>删除</el-button> -->
+                <el-button type="primary" size="small" @click.native.prevent="handleDelete(scope.$index, scope.row)"
+                  style="color: rgb(168, 27, 31);" plain>删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -31,7 +29,7 @@
       </div>
 
       <el-dialog :visible.sync="formVisible" width="40%" title="添加伤员" class="InjuryEntryDialog">
-        <el-form ref="form" :model="form" :rules="rules" label-width="25%" :row-key="getRowKey">
+        <el-form ref="InjuryForm" :model="form" :rules="rules" label-width="25%" :row-key="getRowKey">
           <el-form-item label="伤员姓名" prop="name">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
@@ -55,7 +53,7 @@
 </template>
 
 <script>
-import { getAllMedicalPoints, addInjury, getInjury } from '@/api/Services';
+import { getAllMedicalPoints, addInjury, getInjury, deleteInjury } from '@/api/Services';
 
 export default {
   name: 'InjuryEntry',
@@ -120,40 +118,46 @@ export default {
     navigateTo(_path) {
       this.$router.push({ path: _path }, () => { })
     },
-    handleEdit(index, row) {
-      this.editingId = row.ID;  // 记录当前正在编辑的行的唯一 ID
-      this.editingIndex = index;
-      this.form = {
-        name: row.name,
-        ID: row.ID,
-        medicalPoint: row.medicalPoint
-      };
-      this.editingMode = true;
-      this.formVisible = true;
-    },
     handleDelete(index, row) {
       this.$confirm(`确认删除选手 ${row.name} 吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-      }).then(() => {
-        const deleteIndex = this.injuredPlayers.findIndex(item => item.ID === row.ID);
-        if (deleteIndex !== -1) {
-          this.injuredPlayers.splice(deleteIndex, 1);
+      }).then(async () => {
+        try {
+          console.log(111, row)
+          // 发送删除请求
+          const response = await deleteInjury(
+            (row.ID + ""),
+            this.medicalPoints.find(point => point.place === row.medicalPoint).id // 查找对应的医疗点名称
+          );
+
+          // 根据后端返回的状态处理结果
+          if (response.status === true) {
+            const deleteIndex = this.injuredPlayers.findIndex(item => item.ID === row.ID);
+            if (deleteIndex !== -1) {
+              this.injuredPlayers.splice(deleteIndex, 1);
+            }
+            this.$message.success('删除成功!');
+          } else if (response.status === false) {
+            this.$message.error(`删除失败: ${response.message}`);
+          }
+        } catch (error) {
+          this.$message.error('删除失败，请稍后再试');
+          console.error('Error deleting data:', error);
         }
-        this.$message.success('删除成功!');
       }).catch(() => {
         this.$message.info('已取消删除');
       });
     },
     handleAddRow() {
       this.formVisible = true;
+      this.resetForm();
     },
     async onSubmit() {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.InjuryForm.validate(async (valid) => {
         if (valid) {
           try {
-            console.log(111, this.form)
             // 使用表单中的数据调用 addInjury 函数
             const response = await addInjury({
               medicalPoint_Id: this.form.medicalPoint, // 传递医疗点ID
@@ -186,7 +190,7 @@ export default {
       });
     },
     resetForm() {
-      this.$refs.form.resetFields();
+      this.$refs.InjuryForm.resetFields();
       this.form = {
         name: '',
         ID: '',

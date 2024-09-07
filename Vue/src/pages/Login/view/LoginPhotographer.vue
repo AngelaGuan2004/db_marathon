@@ -51,7 +51,10 @@ export default {
       // 调用API进行登录
       try {
         const response = await loginPhotographer(data);
-        if (response) {
+        if (response === 2) {
+          this.$message.warning('该用户不是摄影师')
+        }
+        else if (response) {
           this.$message.success('登录成功！')
           localStorage.setItem('UserRole', 'Photographer');
           localStorage.setItem('UserId', response.Id);

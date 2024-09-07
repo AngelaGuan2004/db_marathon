@@ -16,14 +16,14 @@
         <div v-if="results.length">
           <el-row :gutter="20" class="filter-container">
             <el-col :span="6">
-              <el-select v-model="selectedGender" placeholder="性别">
+              <el-select v-model="selectedGender" placeholder="性别" @change="filterResults">
                 <el-option label="全部" value="全部"></el-option>
                 <el-option label="男" value="男"></el-option>
                 <el-option label="女" value="女"></el-option>
               </el-select>
             </el-col>
             <el-col :span="6">
-              <el-select v-model="sortType" placeholder="排序方式">
+              <el-select v-model="sortType" placeholder="排序方式" @change="sortResults">
                 <el-option label="顺序排列" value="顺序排列"></el-option>
                 <el-option label="逆序排列" value="逆序排列"></el-option>
               </el-select>
@@ -94,12 +94,11 @@ export default {
       try {
         const Event_id = this.$route.params.event_id;
         console.log(this.$route.params)
-        const topN = 1;
-        const gender = this.selectedGender === '全部' ? '女' : this.selectedGender;
+        const topN = 50;
+        const gender = this.selectedGender === '全部' ? '全部' : this.selectedGender;
 
         // 调用 API 获取数据
-        const response = await getRank(Event_id, topN, gender);
-        this.results = response;
+        this.results = (await getRank(Event_id, topN, gender));
         this.filterResults(this.results); // 获取数据后进行初步筛选
       } catch (error) {
         console.error('获取比赛成绩失败:', error);

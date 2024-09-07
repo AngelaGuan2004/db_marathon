@@ -2,7 +2,7 @@
   <div id="ShuttleDetail">
     <el-dialog title="接驳车详情" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
       <el-table :data="shuttles" v-if="shuttles.length" max-height="300">
-        <el-table-column prop=" departure_Time" label="出发时间"></el-table-column>
+        <el-table-column prop="departure_Time" label="出发时间"></el-table-column>
         <el-table-column prop="arrival_Time" label="到达时间"></el-table-column>
       </el-table>
       <div v-else class="Empty">暂无数据</div>

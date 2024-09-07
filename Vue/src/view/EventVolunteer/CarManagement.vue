@@ -2,10 +2,10 @@
   <div id="CarManagement">
     <div style="display: flex;  width: 100%;">
       <el-main class="Content" v-if="paginatedCarPoint.length > 0">
-        <div style="margin-bottom: 25px;margin-left: 15px;;font-weight: bold;font-size: 26px;">{{
+        <div style="margin: 25px 15px;font-weight: bold;font-size: 26px;">{{
           this.$route.params.name }}</div>
         <div>
-          <el-table :data="paginatedCarPoint" class="Table" max-height="350">
+          <el-table :data="paginatedCarPoint" class="Table" max-height="400">
             <el-table-column prop="id" label="ID" width="150" align="center" header-align="center"></el-table-column>
             <el-table-column prop="departureTime" label="出发时间" width="150" align="center"
               header-align="center"></el-table-column>
@@ -27,7 +27,7 @@
         </div>
       </el-main>
       <div v-else class="Empty">暂无数据</div>
-      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedCarPoint?.id || ''}号摆渡车志愿者名单`" width="50%"
+      <el-dialog :visible.sync="SelectedVolunVisible" :title="`${selectedCarPoint?.id || ''}号摆渡车志愿者名单`" width="45%"
         class="ManagementDialog">
         <div v-if="selectedCarVolun.length > 0">
           <el-table :data="selectedCarVolun" class="Table" max-height="300">
@@ -44,7 +44,7 @@
           <el-button @click="SelectedVolunVisible = false">关闭</el-button>
         </span>
       </el-dialog>
-      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="50%" class="ManagementDialog">
+      <el-dialog :visible.sync="SelectionVolunVisible" title="待排班志愿者名单" width="45%" class="ManagementDialog">
         <div v-if="selectionCarVolun.length > 0">
           <el-table :data="selectionCarVolun" class="Table" max-height="300">
             <el-table-column prop="id" label="ID" width="175" align="center" header-align="center"></el-table-column>
@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      pageSize: 8,
+      pageSize: 5,
       carPoint: [],
       selectedCarPoint: null,
       SelectedVolunVisible: false,

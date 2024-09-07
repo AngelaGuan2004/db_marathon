@@ -10,18 +10,15 @@
               <el-checkbox v-model="scope.row.selected" @change="handleSelectChange(scope.row)"></el-checkbox>
             </div>
             <div v-if="scope.row.selected" class="input-container">
-              <el-form :model="scope.row" :rules="rules" ref="ruleForm" class="demo-ruleForm">
-                <el-form-item prop="count" v-if="showCategoryCount">
-                  <el-input v-model="scope.row.quantity" placeholder="输入数量"
-                    style="margin-left: 20px; width: 150px;"></el-input>
-                </el-form-item>
-                <el-form-item prop="select" v-if="showCategorySelect">
-                  <el-select v-model="scope.row.category" placeholder="选择类别" style="margin-left: 20px; width: 150px;">
-                    <el-option label="参赛物资" value="参赛物资"></el-option>
-                    <el-option label="完赛物资" value="完赛物资"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-form>
+              <form :model="scope.row" ref="ruleForm" class="demo-ruleForm">
+                <el-input v-if="showCategoryCount" v-model="scope.row.quantity" placeholder="输入数量"
+                  style="margin-left: 20px; width: 150px;"></el-input>
+                <el-select v-if="showCategorySelect" v-model="scope.row.category" placeholder="选择类别"
+                  style="margin-left: 20px; width: 150px;">
+                  <el-option label="参赛物资" value="参赛物资"></el-option>
+                  <el-option label="完赛物资" value="完赛物资"></el-option>
+                </el-select>
+              </form>
             </div>
           </template>
         </el-table-column>
@@ -52,14 +49,6 @@ export default {
     return {
       items: [],
       dialogVisible: true,
-      rules: {
-        count: [
-          { required: true, message: '请输入物品数量', trigger: 'blur' },
-        ],
-        select: [
-          { required: true, message: '请选择物品种类', trigger: 'change' },
-        ],
-      }
     };
   },
   created() {
@@ -90,20 +79,6 @@ export default {
       }
     },
     saveItems() {
-      let isValid = true;
-      this.items.forEach((item, index) => {
-        if (item.selected) {
-          this.$refs[`ruleForm_${index}`]?.validate((valid) => {
-            if (!valid) {
-              isValid = false;
-            }
-          });
-        }
-      });
-
-      if (!isValid) {
-        return; // 如果验证未通过，终止保存操作
-      }
       // 创建一个临时对象用于合并相同物品ID的数量
       const itemMap = {};
 
