@@ -146,7 +146,7 @@ foreign key (event_id) references event(id)
 create table weather
  (
     id char(5) not null,               
-time integer not null,              
+time varchar(50) not null,              
     temperature integer,              
 condition varchar(20),                
 whether_to_proceed integer,         
