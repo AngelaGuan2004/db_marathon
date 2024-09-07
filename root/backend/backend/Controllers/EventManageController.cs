@@ -54,11 +54,11 @@ namespace MarathonMaster.Controllers
                     else
                     {
                         // 选手没有参赛号码，检查其身份并更新role
-                        if (participate.Role_ != "runner")
+                        if (participate.Role_ != "normal")
                         {
-                            participate.Role_ = "runner";
+                            participate.Role_ = "normal";
                             await _db.Updateable(participate).ExecuteCommandAsync();
-                            _logger.LogInformation("未抽中，身份更新为runner: {@Participate}", participate); // 记录更新身份的选手
+                            _logger.LogInformation("未抽中，身份更新为normal: {@Participate}", participate); // 记录更新身份的选手
                         }
                     }
                 }
@@ -74,38 +74,83 @@ namespace MarathonMaster.Controllers
 
         }
 
-
         //特殊身份选拔
         [HttpPatch]
         public async Task<IActionResult> choose_pacer([FromBody] List<Participate> pacerList)
         {
-            _logger.LogInformation("收到落选的特殊身份数据: {@PacerList}", pacerList); // 记录收到的数据
+            _logger.LogInformation("收到落选的特殊身份数据: {PacerList}", pacerList); // 记录收到的数据
 
             try
             {
+                string event_id = "0";
+                string role_ = "0";
                 foreach (var participate in pacerList)
                 {
                     if (participate.Role_ != "normal")
                     {
-                        participate.Role_ = "normal";
-                        await _db.Updateable(participate).ExecuteCommandAsync();
-                        _logger.LogInformation("身份更新为normal: {@Participate}", participate); // 记录更新身份的选手
+                        role_ = participate.Role_;
+                        participate.Role_ = "normal_";
+                        //await _db.Updateable(participate).ExecuteCommandAsync();
+                        await _db.Updateable<Participate>().Where(p => p.Player_Id == participate.Player_Id && p.Event_Id == participate.Event_Id).ExecuteCommandAsync();
+                        _logger.LogInformation("身份更新为normal_: {Participate}", participate); // 记录更新身份的选手
+                        event_id = participate.Event_Id;
                     }
-                }
 
+                }
+                var existingevent = await _db.Queryable<Event>()
+                    .Where(it => it.Id == event_id)
+                    .FirstAsync();
+                if (role_ == "pacer")
+                    existingevent.Pacer_Is_Chosen = "是";
+                else if (role_ == "first_aid")
+                    existingevent.Aid_Is_Chosen = "是";
+
+                await _db.Updateable(existingevent).ExecuteCommandAsync();
                 return Ok(true);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, "失败: {@PacerList}", pacerList); // 记录错误信息
-
+                _logger.LogError(ex, "失败: {PacerList}", pacerList); // 记录错误信息
+                _logger.LogError("详细错误信息: {ErrorDetails}", ex.ToString()); // 打印详细的错误信息
                 return BadRequest($"更改数据失败: {ex.Message}");
             }
 
         }
 
-        //
-        // 
+    
+
+        //查看特殊身份选拔信息
+        [HttpGet]
+        public async Task<IActionResult> search_role([FromQuery] int Player_Id, [FromQuery] string Event_Id)
+        {
+            var existingParticipate = await _db.Queryable<Participate>()
+                .Where(it => it.Player_Id == Player_Id && it.Event_Id == Event_Id)
+                .FirstAsync();
+
+            var existingEvent = await _db.Queryable<Event>()
+                .Where(it => it.Id == Event_Id)
+                .FirstAsync();
+            if (existingParticipate.Role_ == "normal_")
+                return Ok("未被选上");
+            else
+            {
+                if (existingParticipate.Role_ == "pacer")
+                {
+                    if (existingEvent.Pacer_Is_Chosen == "否")
+                        return Ok("尚未选拔");
+                    else
+                        return Ok("未被选上");
+                }
+                else
+                {
+                    if (existingEvent.Aid_Is_Chosen == "否")
+                        return Ok("尚未选拔");
+                    else
+                        return Ok("未被选上");
+                }
+            }
+        }
+        //查询某个赛事的所有参与者
         [HttpGet]
         public async Task<IActionResult> get_players_by_event(string eventId)
         {

@@ -219,6 +219,27 @@ namespace MarathonMaster.Controllers
                 return BadRequest(ex); //false表示失败
             }
         }
+        //根据摄影师id，查询摄影师名字
+        [HttpGet]
+        public async Task<IActionResult> get_photographer_name_by_id([FromQuery] int id)
+        {
+
+            _logger.LogInformation("收到要查询的摄影师id: {@id}", id); // 记录收到的数据
+
+            try
+            {
+                Photographer p = await _db.Queryable<Photographer>().SingleAsync(it => it.Id == id);
+
+                _logger.LogInformation("查找摄影师id对应的摄影师姓名成功: {@id}", id); // 查找赛事名称对应的照片信息成功
+                return Ok(p.Name); //true表示成功
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "查找摄影师id对应的摄影师姓名失败: {@id}", id); // 记录错误信息
+
+                return BadRequest(ex); //false表示失败
+            }
+        }
 
     }
 }

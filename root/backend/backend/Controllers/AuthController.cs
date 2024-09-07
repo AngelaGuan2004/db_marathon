@@ -44,6 +44,19 @@ namespace MarathonMaster.Controllers
 
             try
             {
+
+                // 检查是否存在相同的身份证号
+                var existingPlayer = await _db.Queryable<Player>()
+                                              .Where(it => it.Id_Number == player0.Id_Number)
+                                              .FirstAsync();
+
+                if (existingPlayer != null)
+                {
+                    _logger.LogWarning("重复注册，选手已存在: {@Player}", existingPlayer); // 记录重复注册信息
+                    return Ok(0);
+                }
+                /*
+                // 不要啦！直接用触发器
                 // 查询数据库中的最大 Player_Id
                 var maxPlayerId = await _db.Queryable<Player>()
                                            .MaxAsync(it => it.Id);
@@ -51,26 +64,28 @@ namespace MarathonMaster.Controllers
                 // 如果数据库中还没有记录，设置初始值为1
                 int newPlayerId = (maxPlayerId != 0) ? maxPlayerId + 1 : 1;
 
+                // 为新选手设置唯一的 Player_Id
+                player.Id = newPlayerId;
+                */
                 Player player = new Player();
                 player.Name = player0.Name;
                 player.Id_Number = player0.Id_Number;
                 player.Gender = player0.Gender;
                 player.Password = player0.Password;
 
-                // 为新选手设置唯一的 Player_Id
-                player.Id = newPlayerId;
-
                 // 插入新选手数据
                 await _db.Insertable(player).ExecuteCommandAsync();
-                _logger.LogInformation("成功插入选手数据: {@Player}", player); // 记录插入成功
 
-                return Ok(newPlayerId);
+                var newPlayer = await _db.Queryable<Player>().OrderByDescending(p => p.Id).FirstAsync();
+                _logger.LogInformation("成功插入选手数据: {@Player}", newPlayer);
+
+                return Ok(newPlayer.Id);
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex, "插入选手数据失败"); // 记录错误信息
 
-                return BadRequest(-1);
+                return BadRequest(ex.Message);
             }
 
         }
@@ -112,12 +127,12 @@ namespace MarathonMaster.Controllers
                 if (existingPlayer != null)
                 {
                     _logger.LogInformation("选手登录成功: {@Player}", player); // 记录登录成功
-                    return Ok(JsonSerializer.Serialize(player));
+                    return Ok(JsonSerializer.Serialize(existingPlayer));
                 }
                 else
                 {
                     _logger.LogWarning("登录失败: 无效的用户名或密码或身份证号");
-                    return Unauthorized(false);
+                    return Ok(2);
                 }
             }
             catch (System.Exception ex)
@@ -174,12 +189,12 @@ namespace MarathonMaster.Controllers
                 if (existingPhotographer != null)
                 {
                     _logger.LogInformation("摄影师登录成功: {@Volunteer}", photographer); // 记录登录成功
-                    return Ok(JsonSerializer.Serialize(photographer));
+                    return Ok(JsonSerializer.Serialize(existingPhotographer));
                 }
                 else
                 {
                     _logger.LogWarning("登录失败: 无效的用户名或密码");
-                    return Unauthorized(false);
+                    return Ok(2);
                 }
             }
             catch (System.Exception ex)
