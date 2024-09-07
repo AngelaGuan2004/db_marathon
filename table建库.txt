@@ -285,3 +285,23 @@ BEGIN
         telephone_number = :NEW.telephone_number
     WHERE id = :OLD.id;
 END;
+
+ALTER TABLE event
+ADD PACER_IS_CHOSEN varchar2(20) DEFAULT '·ñ' NOT NULL;
+
+ALTER TABLE event
+ADD AID_IS_CHOSEN varchar2(20) DEFAULT '·ñ' NOT NULL;
+
+--idÉú³É´¥·¢Æ÷
+CREATE SEQUENCE player_id_seq
+START WITH 1
+INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER player_id_trigger
+BEFORE INSERT ON player
+FOR EACH ROW
+BEGIN
+  SELECT player_id_seq.NEXTVAL
+  INTO :NEW.Id
+  FROM dual;
+END;
