@@ -1,0 +1,152 @@
+<template>
+  <div id="MyPhotographyWorks">
+    <div style="display: flex;">
+      <div class="MyPhotographyWorksContent">
+        <div class="recent-works">
+          <h2 style=" color: black;">近期作品</h2>
+          <el-carousel v-if="myphotos.length" :interval="4000" type="card" height="260px"
+            style="width: 90%;margin-left: 40px;">
+            <el-carousel-item v-for="(photo, index) in recentPhotos" :key="index">
+              <img :src="photo.address" alt="Photo" class="carousel-image" />
+            </el-carousel-item>
+          </el-carousel>
+          <div v-else class="Empty" style="height: 25vh;">暂无数据</div>
+        </div>
+
+        <div class="all-works">
+          <div style="display: flex;justify-content: space-between;">
+            <h2 style=" color: black;">全部作品</h2>
+            <el-select v-model="select" slot="prepend" style="width:80px;margin-top: 15px;margin-right: 50px;"
+              @change="sortPhotos">
+              <el-option label="最新" value="1"></el-option>
+              <el-option label="最热" value="2"></el-option>
+            </el-select>
+          </div>
+          <div v-if="myphotos.length">
+            <div style="
+              flex: 1 1 auto;
+              display: flex;
+              flex-wrap: wrap;
+              column-gap: 16px; 
+              row-gap: 15px;
+              padding: 10px;
+              width: 1200px;">
+              <div class="photo-frame" v-for="(photo, index) in myphotos" :key="index">
+                <el-button @click="handleDelete(photo.id, index)">x</el-button>
+                <img :src="photo.address" alt="Photo" class="photo" @click="openPreview(photo)" />
+                <div class="info-box">
+                  <div
+                    style="text-align: left; font-size: 14px; padding-left: 15px; padding-top: 2px;line-height: 10px;">
+                    <p>日期：{{ photo.time }}</p>
+                    <p>地点：{{ photo.location }}</p>
+                    <p style="color:crimson">❤️：{{ photo.likes }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 10px;">
+              <el-pagination background layout="prev, pager, next" :total="10">
+              </el-pagination>
+            </div>
+          </div>
+          <div v-else class="Empty" style="width: 1200px;height: 30vh;">暂无数据</div>
+          <!-- 图片预览框 -->
+          <el-dialog :visible.sync="dialogVisible" width="60%" center>
+            <img :src="currentPhoto.address" alt="Preview" style="width: 100%;" />
+          </el-dialog>
+          <!-- 翻页 -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import { inquiryPhotoByPhotographer, inquiryPhotographerNameById, deletePhoto } from '@/api/Photo';
+export default {
+  name: 'MyPhotographyWorks',
+  data() {
+    return {
+      name: '',
+      photographer_Id: '',
+      myphotos: [],
+      select: '2', // 默认排序为最热
+      dialogVisible: false,
+      currentPhoto: {}
+    }
+  },
+  computed: {
+    recentPhotos() {
+      // 将 myphotos 按日期降序排列，并取出最近的 6 张照片
+      return this.myphotos
+        .slice() // 创建 myphotos 的浅拷贝
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 6);
+    }
+  },
+  async mounted() {
+    this.photographer_Id = localStorage.getItem('UserId')
+    this.name = await inquiryPhotographerNameById(this.photographer_Id);
+    await this.getMyPhotos();
+  },
+  methods: {
+    async getMyPhotos() {
+      try {
+        const response = await inquiryPhotoByPhotographer(this.photographer_Id, this.name);
+        // 处理时间数据，去掉具体时刻，只保留年月日
+        this.myphotos = response.map(photo => {
+          return {
+            ...photo,
+            time: photo.time.split(' ')[0],  // 只保留年月日部分
+            address: 'http://' + photo.address
+          };
+        });
+        console.log("收到的数据:", this.myphotos);
+      } catch (error) {
+        console.error('获所有照片时发生错误:', error);
+      }
+    },
+    navigateTo(_path) {
+      this.$router.push({ path: _path }, () => { })
+    },
+    sortPhotos() {
+      if (this.select === '1') {
+        // 按日期排序，最新的在前
+        this.myphotos.sort((a, b) => new Date(b.time) - new Date(a.time));
+      } else if (this.select === '2') {
+        // 按点赞数排序，最多的在前
+        this.myphotos.sort((a, b) => b.likes - a.likes);
+      }
+    },
+    openPreview(photo) {
+      this.currentPhoto = photo;
+      this.dialogVisible = true;
+    },
+    async handleDelete(photoId, index) {
+      this.$confirm(`确认删除该照片吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        try {
+          await deletePhoto(photoId);
+          this.myphotos.splice(index, 1);
+          this.$message.success('照片删除成功');
+        } catch (error) {
+          console.error('删除照片时发生错误:', error);
+          this.$message.error('删除失败，请重试');
+        }
+      }).catch(() => {
+        this.$message.info('已取消删除');
+      });
+    }
+  }
+}
+</script>
+
+
+<style scoped>
+@import 'element-ui/lib/theme-chalk/index.css';
+@import "@/assets/css/Base.css";
+@import "@/assets/css/MyPhotographyWorks.css";
+</style>

@@ -1,0 +1,16 @@
+create table supply(
+    item_id integer, 
+    supplypcoint_id integer,
+    amount integer,
+    primary key (item_id,supplypoint_id),
+    foreign key (item_id) references item,
+    foreign key (supplypoint_id) references supplypoint
+);
+
+create table medical_service(
+    medicalpoint_id integer,
+    player_id integer,
+    primary key (medicalpoint_id,player_id),
+    foreign key (medicalpoint_id) references medicalpoint,
+    foreign key (player_id) references player
+);
